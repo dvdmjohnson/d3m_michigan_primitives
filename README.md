@@ -57,6 +57,7 @@ Primitives Included
     # Unsupervised Learning Primitives
     spider.unsupervised_learning.grasta
     spider.unsupervised_learning.grasta_masked
+    spider.unsupervised_learning.grouse
 
 Executables Created
 
