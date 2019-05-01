@@ -1,7 +1,8 @@
 import typing
-from d3m.metadata import hyperparams, base as metadata_module, params
 from d3m.primitive_interfaces import base, featurization
 from d3m import container, utils
+import d3m.metadata.base as metadata_module
+import d3m.metadata.hyperparams as hyperparams
 
 import numpy as np
 import math
@@ -38,6 +39,20 @@ class AudioFeaturizationHyperparams(hyperparams.Hyperparams):
 
 class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs, AudioFeaturizationHyperparams]):
 
+    """
+    Audio featurization primitive for extracting the following bag of features:
+      - Zero Crossing Rate
+      - Energy
+      - Entropy of Energy
+      - Spectral Centroid
+      - Spectral Spread
+      - Spectral Entropy
+      - Spectral Flux
+      - Spectral Rolloff
+      - MFCCs
+      - Chroma Vector
+      - Chroma Deviation
+    """
     metadata = metadata_module.PrimitiveMetadata({
         "id": "2363d81d-7b05-361d-969b-72f3b5070107",
         'version': '0.0.5',
@@ -88,7 +103,7 @@ class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inp
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.feature_extraction.audio_featurization.umich',
+        'python_path': 'd3m.primitives.feature_extraction.audio_featurization.Umich',
         'hyperparams_to_tune': ['frame_length'],
         'algorithm_types': [metadata_module.PrimitiveAlgorithmType.INFORMATION_ENTROPY,
                                metadata_module.PrimitiveAlgorithmType.SIGNAL_ENERGY,
@@ -98,20 +113,7 @@ class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inp
     })
 
     def __init__(self, *, hyperparams: AudioFeaturizationHyperparams, random_seed: int = 0, docker_containers: typing.Dict[str, base.DockerContainer] = None) -> None:
-        """
-        Audio featurization primitive for extracting the following bag of features:
-          - Zero Crossing Rate
-          - Energy
-          - Entropy of Energy
-          - Spectral Centroid
-          - Spectral Spread
-          - Spectral Entropy
-          - Spectral Flux
-          - Spectral Rolloff
-          - MFCCs
-          - Chroma Vector
-          - Chroma Deviation
-        """
+
         super().__init__(hyperparams=hyperparams, random_seed=random_seed, docker_containers=docker_containers)
 
         self._sampling_rate: int = hyperparams['sampling_rate']
@@ -162,10 +164,10 @@ class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inp
                 )
 
             #construct output DataFrame and label designate each feature column as an Attribute
-            outframe = container.DataFrame(np.asarray(features))
+            outframe = container.DataFrame(np.asarray(features), generate_metadata=True)
             for i in range(outframe.shape[1]):
                 outframe.metadata = outframe.metadata.add_semantic_type(
-                    (metadata_module.ALL_ELEMENTS, i), 
+                    (metadata_module.ALL_ELEMENTS, i),
                     'https://metadata.datadrivendiscovery.org/types/Attribute')
             return base.CallResult(outframe)
 

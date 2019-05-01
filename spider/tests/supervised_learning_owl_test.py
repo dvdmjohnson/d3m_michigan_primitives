@@ -26,7 +26,7 @@ def generate_linear_data(nSamples, nFeatures):
     coef = np.random.randn(nFeatures)
     
     y = X.dot(coef) + noise
-    return coef, container.ndarray(X), container.ndarray(y)
+    return coef, container.ndarray(X, generate_metadata=True), container.ndarray(y, generate_metadata=True)
 
 class TestOWLRegression(unittest.TestCase):
 

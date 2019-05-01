@@ -44,6 +44,11 @@ class PCP_IALMHyperparams(hyperparams.Hyperparams):
 #
 #   uses RPCA via PCP-IALM to perform dimensionality reduction
 class PCP_IALM(transformer.TransformerPrimitiveBase[Inputs, Outputs, PCP_IALMHyperparams]):
+
+    """"
+    Uses RPCA via PCP-IALM to perform dimensionality reduction
+
+    """
     
     metadata = metadata_module.PrimitiveMetadata({
         'id': 'ff4056f0-9644-458a-ba24-66fe3a3bc53a',
@@ -81,7 +86,7 @@ class PCP_IALM(transformer.TransformerPrimitiveBase[Inputs, Outputs, PCP_IALMHyp
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.data_compression.pcp_ialm.umich',
+        'python_path': 'd3m.primitives.data_compression.pcp_ialm.Umich',
         'hyperparams_to_tune': ['rho'],
         'algorithm_types': [
             metadata_module.PrimitiveAlgorithmType.ROBUST_PRINCIPAL_COMPONENT_ANALYSIS],
@@ -134,7 +139,7 @@ class PCP_IALM(transformer.TransformerPrimitiveBase[Inputs, Outputs, PCP_IALMHyp
                 mu = rho * mu
                 k += 1
             W = np.array(A.T)
-            return base.CallResult(container.ndarray(W))
+            return base.CallResult(container.ndarray(W, generate_metadata=True))
 
         if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
             raise TimeoutError("PCP_IALM produce timed out.")

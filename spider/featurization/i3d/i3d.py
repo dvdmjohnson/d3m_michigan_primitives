@@ -37,6 +37,10 @@ class I3DHyperparams(hyperparams.Hyperparams):
         description='Select from last feature layer or from classification layer.')
 
 class I3D(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs, I3DHyperparams]):
+
+    """
+    I3D Video Featurization
+    """
     
     metadata= metadata_module.PrimitiveMetadata({
         'id': 'a7df6ced-79b3-43b5-8360-32f8ff263748',
@@ -74,7 +78,7 @@ class I3D(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs, I
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                 'package': 'ffmpeg',
                 'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.feature_extraction.i3d.umich',
+        'python_path': 'd3m.primitives.feature_extraction.i3d.Umich',
         'hyperparams_to_tune': ['output_layer'],
         'algorithm_types': [metadata_module.PrimitiveAlgorithmType.CONVOLUTIONAL_NEURAL_NETWORK],
         'primitive_family': metadata_module.PrimitiveFamily.FEATURE_EXTRACTION

@@ -61,7 +61,7 @@ class KSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, KSSParams, K
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.clustering.kss.umich',
+        'python_path': 'd3m.primitives.clustering.kss.Umich',
         'hyperparams_to_tune': ['n_clusters', 'dim_subspaces'],
         'algorithm_types': [
             metadata_module.PrimitiveAlgorithmType.SUBSPACE_CLUSTERING],

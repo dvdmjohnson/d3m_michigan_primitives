@@ -44,6 +44,13 @@ class LogMelSpectrogramHyperparams(hyperparams.Hyperparams):
 
 class LogMelSpectrogram(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs, LogMelSpectrogramHyperparams]):
 
+    """
+    Utility for computing audio spectrograms
+    Compute the spectrogram of each ndarray in the input list, yielding an
+    output list of the same length. Each entry in the output list is a 2D
+    array containing the spectrogram of the input audio.
+    """
+
     metadata = metadata_module.PrimitiveMetadata({
         "id": "1e4a39a4-10ee-3d1a-9dc7-24b915f86130",
         'version': '0.0.5',
@@ -74,7 +81,7 @@ class LogMelSpectrogram(featurization.FeaturizationTransformerPrimitiveBase[Inpu
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.feature_extraction.log_mel_spectrogram.umich',
+        'python_path': 'd3m.primitives.feature_extraction.log_mel_spectrogram.Umich',
         'hyperparams_to_tune': ['mel_bands', 'n_fft'],
         'algorithm_types': [metadata_module.PrimitiveAlgorithmType.FREQUENCY_TRANSFORM,
                             metadata_module.PrimitiveAlgorithmType.AUDIO_STREAM_MANIPULATION],

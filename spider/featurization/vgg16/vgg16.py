@@ -63,6 +63,17 @@ class VGG16Hyperparams(hyperparams.Hyperparams):
 
 class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs, VGG16Hyperparams]):
 
+    """
+     Darpa D3M VGG16 Image Featurization Primitive
+
+     Arguments:
+         - device: Device type ('cpu' or 'gpu') and number of devices as a tuple.
+         - num_cores: Integer number of CPU cores to use.
+         - output_feature_layer: String layer name whose features to output.
+
+     Return :
+         - None
+     """
     metadata = metadata_module.PrimitiveMetadata({
         "id": 'fda1e12e-d89e-49f3-86cb-7dfaa82bbb9c',
         'version': '0.0.5',
@@ -98,7 +109,7 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.feature_extraction.vgg16.umich',
+        'python_path': 'd3m.primitives.feature_extraction.vgg16.Umich',
         'hyperparams_to_tune': ['output_layer'],
         'algorithm_types': [metadata_module.PrimitiveAlgorithmType.CONVOLUTIONAL_NEURAL_NETWORK],
         'primitive_family': metadata_module.PrimitiveFamily.FEATURE_EXTRACTION
@@ -108,13 +119,7 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
         """
         Darpa D3M VGG16 Image Featurization Primitive
 
-        Arguments:
-            - device: Device type ('cpu' or 'gpu') and number of devices as a tuple.
-            - num_cores: Integer number of CPU cores to use.
-            - output_feature_layer: String layer name whose features to output.
-
-        Return :
-            - None
+        Implements the VGG16 Convolutional Network for Classification and Detection
         """
         super().__init__(hyperparams=hyperparams, random_seed=random_seed, docker_containers=docker_containers)
 
@@ -312,7 +317,7 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
                 image_features = np.squeeze(image_features)
                 features.append(image_features)
 
-        return base.CallResult(container.ndarray(np.asarray(features)))
+        return base.CallResult(container.ndarray(np.asarray(features), generate_metadata=True))
 
         if timer.state != timer.EXECUTED:
             raise TimeoutError('VGG16 produce timed out.')

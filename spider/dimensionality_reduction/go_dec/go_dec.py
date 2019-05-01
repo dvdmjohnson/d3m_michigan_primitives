@@ -44,6 +44,11 @@ class GO_DECHyperparams(hyperparams.Hyperparams):
 #
 #   uses RPCA via the Go Decomposition (GoDec) to perform dimensionality reduction
 class GO_DEC(transformer.TransformerPrimitiveBase[Inputs, Outputs, GO_DECHyperparams]):
+
+    """"
+    Uses RPCA via the Go Decomposition (GoDec) to perform dimensionality reduction
+
+    """
     
     metadata = metadata_module.PrimitiveMetadata({
         'id': '0b2edee8-df52-49f2-85b6-470abb28f4eb',
@@ -82,7 +87,7 @@ class GO_DEC(transformer.TransformerPrimitiveBase[Inputs, Outputs, GO_DECHyperpa
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.data_compression.go_dec.umich',
+        'python_path': 'd3m.primitives.data_compression.go_dec.Umich',
         'hyperparams_to_tune': ['c', 'r'],
         'algorithm_types': [
             metadata_module.PrimitiveAlgorithmType.ROBUST_PRINCIPAL_COMPONENT_ANALYSIS],
@@ -136,7 +141,7 @@ class GO_DEC(transformer.TransformerPrimitiveBase[Inputs, Outputs, GO_DECHyperpa
                 itr += 1
             W = np.array(L.T)
         
-            return base.CallResult(container.ndarray(W))
+            return base.CallResult(container.ndarray(W, generate_metadata=True))
 
         if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
             raise TimeoutError("GO_DEC produce timed out.")

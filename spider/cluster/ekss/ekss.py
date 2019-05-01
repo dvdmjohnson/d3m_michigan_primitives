@@ -73,7 +73,7 @@ class EKSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(None),
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.clustering.ekss.umich',
+        'python_path': 'd3m.primitives.clustering.ekss.Umich',
         'hyperparams_to_tune': ['n_clusters', 'dim_subspaces'],
         'algorithm_types': [
             metadata_module.PrimitiveAlgorithmType.SUBSPACE_CLUSTERING,

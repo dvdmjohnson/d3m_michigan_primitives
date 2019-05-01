@@ -55,6 +55,9 @@ class GROUSEParams(params.Params):
 #   uses GROUSE to perform online dimensionality reduction of (possibly) sub-sampled data
 class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
                         Inputs, Outputs, GROUSEParams, GROUSEHyperparams]):
+    """
+    Uses GROUSE to perform online dimensionality reduction of (possibly) sub-sampled data
+    """
     metadata = metadata_module.PrimitiveMetadata({
         'id': 'a5afb336-608b-4d04-bbab-e8921f605d04',
         'version': "0.0.5",
@@ -95,7 +98,7 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
              'package': 'ffmpeg',
              'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.data_compression.grouse.umich',
+        'python_path': 'd3m.primitives.data_compression.grouse.Umich',
         'hyperparams_to_tune': ['rank', 'constant_step','max_train_cycles'],
         'algorithm_types': [
             metadata_module.PrimitiveAlgorithmType.PRINCIPAL_COMPONENT_ANALYSIS],
@@ -214,7 +217,7 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
 
         Y = U @ (U.T @ X.T)
         with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            return base.CallResult(container.ndarray(Y))
+            return base.CallResult(container.ndarray(Y, generate_metadata=True))
 
         if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
             raise TimeoutError("GROUSE produce timed out.")
@@ -225,7 +228,7 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
         U = self._U
 
         with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            return base.CallResult(container.ndarray(U))
+            return base.CallResult(container.ndarray(U, generate_metadata=True))
 
         if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
             raise TimeoutError("GROUSE produce timed out.")

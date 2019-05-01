@@ -58,6 +58,10 @@ class GoTurnHyperparams(hyperparams.Hyperparams):
         description='Regularizer for Stochastic Gradient Descent Optimizer')
 
 class GoTurn(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, Outputs, GoTurnParams, GoTurnHyperparams]):
+
+    """
+    GoTurn visual object tracking training
+    """
     
     metadata= metadata_module.PrimitiveMetadata({
         'id': '915dcd56-d2ee-4c4c-9c7f-c6ed056fe905',
@@ -95,7 +99,7 @@ class GoTurn(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, Outputs,
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                 'package': 'ffmpeg',
                 'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.learner.goturn.umich',
+        'python_path': 'd3m.primitives.learner.goturn.Umich',
         'hyperparams_to_tune': ['num_epochs'],
         'algorithm_types': [metadata_module.PrimitiveAlgorithmType.CONVOLUTIONAL_NEURAL_NETWORK],
         'primitive_family': metadata_module.PrimitiveFamily.LEARNER

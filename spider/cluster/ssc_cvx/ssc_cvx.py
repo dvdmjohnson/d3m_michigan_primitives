@@ -81,7 +81,7 @@ class SSC_CVX(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(Non
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.clustering.ssc_cvx.umich',
+        'python_path': 'd3m.primitives.clustering.ssc_cvx.Umich',
         'hyperparams_to_tune': ['n_clusters', 'alpha'],
         'algorithm_types': [
             metadata_module.PrimitiveAlgorithmType.SUBSPACE_CLUSTERING],

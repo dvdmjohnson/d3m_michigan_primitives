@@ -40,6 +40,20 @@ class SSC_OMPHyperparams(hyperparams.Hyperparams):
 
 class SSC_OMP(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(None), SSC_OMPHyperparams, DistanceMatrixOutput],
           clustering.ClusteringTransformerPrimitiveBase[Inputs, Outputs, SSC_OMPHyperparams]):
+    """
+    This code implements the subspace clustering algorithm described in
+    Chong You, Daniel Robinson, Rene Vidal,
+    "Scalable Sparse Subspace Clustering by Orthogonal Matching Pursuit", CVPR 2016.
+
+    It performs the OMP algorithm on every column of X using all other columns as a
+    dictionary
+
+    :param data: A dxN numpy array
+    :param K: The maximum subspace dimension
+    :param thres: termination condition
+    :return: the SSC-OMP representation of the data
+    """
+
     metadata = metadata_module.PrimitiveMetadata({
         'id': '50f89f90-7cef-4bb6-b56f-642f85bd1d58',
         'version': "0.0.5",
@@ -76,7 +90,7 @@ class SSC_OMP(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(Non
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.clustering.ssc_omp.umich',
+        'python_path': 'd3m.primitives.clustering.ssc_omp.Umich',
         'hyperparams_to_tune': ['n_clusters', 'sparsity_level'],
         'algorithm_types': [
             metadata_module.PrimitiveAlgorithmType.SUBSPACE_CLUSTERING],
@@ -106,19 +120,7 @@ class SSC_OMP(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(Non
 
     @staticmethod
     def _OMPMatFunction(data, K, thres):
-        """
-        This code implements the subspace clustering algorithm described in
-        Chong You, Daniel Robinson, Rene Vidal,
-        "Scalable Sparse Subspace Clustering by Orthogonal Matching Pursuit", CVPR 2016.
 
-        It performs the OMP algorithm on every column of X using all other columns as a
-        dicitonary
-
-        :param data: A dxN numpy array
-        :param K: The maximum subspace dimension
-        :param thres: termination condition
-        :return: the SSC-OMP representation of the data
-        """
         memory_total = 0.1 * 10**9
         _, n = data.shape
         data_normalised = SSC_OMP._cNormalize(data)

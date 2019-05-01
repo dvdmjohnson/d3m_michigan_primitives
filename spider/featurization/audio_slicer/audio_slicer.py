@@ -40,7 +40,11 @@ class AudioSlicerHyperparams(hyperparams.Hyperparams):
         description='indicates whether clips shorter than frame_length should be padded with zeros to a duration of exactly frame_length')
 
 class AudioSlicer(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs, AudioSlicerHyperparams]):
-
+    
+    """
+    Audio utility for splitting audio data stored in a numpy array into
+    equal-length clips with optional overlap
+    """
     metadata = metadata_module.PrimitiveMetadata({
         "id": "a0a60c4c-4e69-3ebe-81c9-7432c5b41c38",
         'version': '0.0.5',
@@ -70,7 +74,7 @@ class AudioSlicer(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Ou
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.feature_extraction.audio_slicer.umich',
+        'python_path': 'd3m.primitives.data_preprocessing.audio_slicer.Umich',
         'hyperparams_to_tune': ['frame_length'],
         'algorithm_types': [metadata_module.PrimitiveAlgorithmType.AUDIO_STREAM_MANIPULATION],
         'primitive_family': metadata_module.PrimitiveFamily.DATA_PREPROCESSING
@@ -137,7 +141,7 @@ class AudioSlicer(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Ou
 
                 features.append(container.ndarray(clips))
 
-            return base.CallResult(container.ndarray(features))
+            return base.CallResult(container.ndarray(features, generate_metadata=True))
 
         if timer.state != timer.EXECUTED:
             raise TimeoutError('AudioSlicer produce timed out.')

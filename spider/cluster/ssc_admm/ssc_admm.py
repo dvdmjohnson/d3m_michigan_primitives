@@ -76,7 +76,7 @@ class SSC_ADMM(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(No
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.clustering.ssc_admm.umich',
+        'python_path': 'd3m.primitives.clustering.ssc_admm.Umich',
         'hyperparams_to_tune': ['n_clusters', 'alpha'],
         'algorithm_types': [
             metadata_module.PrimitiveAlgorithmType.SUBSPACE_CLUSTERING],

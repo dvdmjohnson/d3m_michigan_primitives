@@ -19,26 +19,26 @@ os.makedirs("Michigan")
 version = pkg_resources.get_distribution("spider").version
 
 primitives = {
-    'd3m.primitives.regression.owl_regression.umich' : [OWLRegressionPipeline],
-    'd3m.primitives.learner.goturn.umich' : None,
-    'd3m.primitives.feature_extraction.vgg16.umich' : [FeaturizationVGG16Pipeline],
-    'd3m.primitives.feature_extraction.i3d.umich' : [FeaturizationI3DPipeline],
-    'd3m.primitives.feature_extraction.audio_featurization.umich' : [FeaturizationAudioFeaturizationPipeline], 
-    'd3m.primitives.feature_extraction.audio_slicer.umich' : None, 
-    'd3m.primitives.feature_extraction.log_mel_spectrogram.umich' : None, 
-    'd3m.primitives.similarity_modeling.rfd.umich' : None,
-    'd3m.primitives.data_compression.go_dec.umich' : None,
-    'd3m.primitives.data_compression.pcp_ialm.umich' : None,
-    'd3m.primitives.data_compression.rpca_lbd.umich' : None,
-    'd3m.primitives.data_compression.grasta.umich' : [GRASTAPipeline],
-    'd3m.primitives.data_compression.grasta_masked.umich' : None,
-    'd3m.primitives.data_compression.grouse.umich' : None,
-    'd3m.primitives.clustering.kss.umich' : [KSSPipeline],
-    'd3m.primitives.clustering.ekss.umich' : [EKSSPipeline],
-    'd3m.primitives.clustering.ssc_admm.umich' : [SSCADMMPipeline],
-    'd3m.primitives.clustering.ssc_cvx.umich' : [SSCCVXPipeline],
-    'd3m.primitives.clustering.ssc_omp.umich' : [SSCOMPPipeline],
-    'd3m.primitives.data_preprocessing.trecs.umich' : None}
+    'd3m.primitives.regression.owl_regression.Umich' : [OWLRegressionPipeline],
+    'd3m.primitives.learner.goturn.Umich' : None,
+    'd3m.primitives.feature_extraction.vgg16.Umich' : [FeaturizationVGG16Pipeline],
+    'd3m.primitives.feature_extraction.i3d.Umich' : [FeaturizationI3DPipeline],
+    'd3m.primitives.feature_extraction.audio_featurization.Umich' : [FeaturizationAudioFeaturizationPipeline],
+    'd3m.primitives.feature_extraction.log_mel_spectrogram.Umich' : None,
+    'd3m.primitives.data_preprocessing.audio_slicer.Umich' : None,
+    'd3m.primitives.similarity_modeling.rfd.Umich' : None,
+    'd3m.primitives.data_compression.go_dec.Umich' : None,
+    'd3m.primitives.data_compression.pcp_ialm.Umich' : None,
+    'd3m.primitives.data_compression.rpca_lbd.Umich' : None,
+    'd3m.primitives.data_compression.grasta.Umich' : [GRASTAPipeline],
+    'd3m.primitives.data_compression.grasta_masked.Umich' : None,
+    'd3m.primitives.data_compression.grouse.Umich' : None,
+    'd3m.primitives.clustering.kss.Umich' : [KSSPipeline],
+    'd3m.primitives.clustering.ekss.Umich' : [EKSSPipeline],
+    'd3m.primitives.clustering.ssc_admm.Umich' : [SSCADMMPipeline],
+    'd3m.primitives.clustering.ssc_cvx.Umich' : [SSCCVXPipeline],
+    'd3m.primitives.clustering.ssc_omp.Umich' : [SSCOMPPipeline],
+    'd3m.primitives.data_preprocessing.trecs.Umich' : None}
 
 for prim in primitives.keys():
     path = os.path.join("Michigan", prim)

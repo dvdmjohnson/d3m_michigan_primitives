@@ -120,6 +120,9 @@ class GRASTA_MASKEDParams(params.Params):
 #
 #   uses GRASTA to perform online dimensionality reduction of (possibly) sub-sampled data
 class GRASTA_MASKED(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outputs, GRASTA_MASKEDParams, GRASTA_MASKEDHyperparams]):
+    """
+    Uses GRASTA to perform online dimensionality reduction of (possibly) sub-sampled data
+    """
     metadata = metadata_module.PrimitiveMetadata({
         'id': 'acf412e2-1087-4257-a26e-73c39c2c8d7d',
         'version': "0.0.5",
@@ -151,7 +154,7 @@ class GRASTA_MASKED(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Input
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
              'package': 'ffmpeg',
              'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.data_compression.grasta_masked.umich',
+        'python_path': 'd3m.primitives.data_compression.grasta_masked.Umich',
         'hyperparams_to_tune': ['rank','admm_rho', 'max_level','max_mu','min_mu','constant_step','max_train_cycles'],
         'algorithm_types': [
             metadata_module.PrimitiveAlgorithmType.ROBUST_PRINCIPAL_COMPONENT_ANALYSIS],
@@ -297,7 +300,7 @@ class GRASTA_MASKED(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Input
         with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
             Y = U @ (U.T @ X.T)
 
-            return base.CallResult(container.ndarray(Y))
+            return base.CallResult(container.ndarray(Y, generate_metadata=True))
 
         if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
             raise TimeoutError("GRASTA produce timed out.")
@@ -309,7 +312,7 @@ class GRASTA_MASKED(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Input
 
         with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
             
-            return base.CallResult(container.ndarray(U))
+            return base.CallResult(container.ndarray(U, generate_metadata=True))
 
         if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
             raise TimeoutError("GRASTA produce timed out.")
@@ -321,7 +324,7 @@ class GRASTA_MASKED(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Input
         with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
             S = X.T - U @ (U.T @ X.T)
             
-            return base.CallResult(container.ndarray(S))
+            return base.CallResult(container.ndarray(S, generate_metadata=True))
 
         if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
             raise TimeoutError("GRASTA produce timed out.")

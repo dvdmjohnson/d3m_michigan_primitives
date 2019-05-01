@@ -60,6 +60,11 @@ class RFDHyperparams(hyperparams.Hyperparams):
 #the * argument is used here (and on any other methods that takes inputs) to force callers to use keyword inputs
 class RFD(distance.PairwiseDistanceLearnerPrimitiveBase[Inputs, InputLabels, Outputs, RFDParams, RFDHyperparams]):
 
+    """
+    Primitive for learning Random Forest Distance metrics and returning a pairwise
+    distance matrix between two sets of data.
+    """
+
     #your metadata object must contain all required metadata fields, or your primitive won't validate
     #(and thus won't run.)
     metadata = metadata_module.PrimitiveMetadata({
@@ -105,7 +110,7 @@ class RFD(distance.PairwiseDistanceLearnerPrimitiveBase[Inputs, InputLabels, Out
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
         #entry-points path to the primitive (see setup.py)
-        'python_path': 'd3m.primitives.similarity_modeling.rfd.umich',
+        'python_path': 'd3m.primitives.similarity_modeling.rfd.Umich',
         #a list of hyperparameters that are high-priorities for tuning
         'hyperparams_to_tune': ['class_cons', 'num_trees'],
         #search https://gitlab.com/datadrivendiscovery/d3m/blob/devel/d3m/metadata/schemas/v0/definitions.json for list of valid algorithm types
@@ -237,7 +242,7 @@ class RFD(distance.PairwiseDistanceLearnerPrimitiveBase[Inputs, InputLabels, Out
 
             #Return distance.  Note that we "wrap" the numpy array in the appropriate D3M container class,
             #before further wrapping it in the CallResult.
-            return base.CallResult(container.ndarray(dist))
+            return base.CallResult(container.ndarray(dist, generate_metadata=True))
         # if we did not finish in time, raise error.
         if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
             raise TimeoutError("RFD produce timed out.")

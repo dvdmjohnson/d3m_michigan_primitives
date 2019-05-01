@@ -21,34 +21,34 @@ PIPELINES_BY_PRIMITIVE = {
     'd3m.primitives.spider.featurization.VGG16': [
         FeaturizationVGG16Pipeline,
     ],
-    'd3m.primitives.feature_extraction.audio_featurization.umich': [
+    'd3m.primitives.feature_extraction.audio_featurization.Umich': [
         FeaturizationAudioFeaturizationPipeline,
     ],
-    'd3m.primitives.feature_extraction.i3d.umich': [
+    'd3m.primitives.feature_extraction.i3d.Umich': [
         FeaturizationI3DPipeline,
     ],
-    'd3m.primitives.regression.owl_regression.umich': [
+    'd3m.primitives.regression.owl_regression.Umich': [
         OWLRegressionPipeline,
     ],
-    'd3m.primitives.clustering.ssc_cvx.umich': [
+    'd3m.primitives.clustering.ssc_cvx.Umich': [
         SSCCVXPipeline,
     ],
-    'd3m.primitives.clustering.ssc_omp.umich': [
+    'd3m.primitives.clustering.ssc_omp.Umich': [
         SSCOMPPipeline,
     ],
-    'd3m.primitives.clustering.ssc_admm.umich': [
+    'd3m.primitives.clustering.ssc_admm.Umich': [
         SSCADMMPipeline,
     ],
-    'd3m.primitives.clustering.kss.umich': [
+    'd3m.primitives.clustering.kss.Umich': [
         KSSPipeline,
     ],
-    'd3m.primitives.clustering.ekss.umich': [
+    'd3m.primitives.clustering.ekss.Umich': [
         EKSSPipeline,
     ],
-    'd3m.primitives.data_compression.grasta.umich': [
+    'd3m.primitives.data_compression.grasta.Umich': [
         GRASTAPipeline,
     ],
-    'd3m.primitives.data_compression.grasta.umich': [
+    'd3m.primitives.data_compression.grasta.Umich': [
         GROUSEPipeline,
     ],
 }

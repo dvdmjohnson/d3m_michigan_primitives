@@ -63,6 +63,12 @@ class RPCA_LBDHyperparams(hyperparams.Hyperparams):
 #
 #   uses RPCA-LBD to perform dimensionality reduction
 class RPCA_LBD(transformer.TransformerPrimitiveBase[Inputs, Outputs, RPCA_LBDHyperparams]):
+
+    """
+    RPCA based on the Low-Rank and Block-Sparse Decomposition (LBD) model
+    @param inputs data matrix (NumPy array/matrix where rows are samples and columns are features)
+    @return W low-rank component of input matrix (NumPy array with same shape as inputs)
+    """
     
     metadata = metadata_module.PrimitiveMetadata({
         'id': 'a1d3dc5d-fe3a-4e9c-b661-bd9198a934cd',
@@ -95,7 +101,7 @@ class RPCA_LBD(transformer.TransformerPrimitiveBase[Inputs, Outputs, RPCA_LBDHyp
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
-        'python_path': 'd3m.primitives.data_compression.rpca_lbd.umich',
+        'python_path': 'd3m.primitives.data_compression.rpca_lbd.Umich',
         'hyperparams_to_tune': ['kappa', 'lamb'],
         'algorithm_types': [
             metadata_module.PrimitiveAlgorithmType.ROBUST_PRINCIPAL_COMPONENT_ANALYSIS],
@@ -166,7 +172,7 @@ class RPCA_LBD(transformer.TransformerPrimitiveBase[Inputs, Outputs, RPCA_LBDHyp
                 err_outer = norm(D-A-E,'fro')
                 k += 1
             W = np.array(A.T)
-            return base.CallResult(container.ndarray(W))
+            return base.CallResult(container.ndarray(W, generate_metadata=True))
 
         if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
             raise TimeoutError("PCP_IALM produce timed out.")

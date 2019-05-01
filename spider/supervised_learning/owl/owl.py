@@ -139,7 +139,7 @@ class OWLRegression(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, O
                  'package': 'ffmpeg',
                  'version': '7:2.8.11-0ubuntu0.16.04.1'}],
         #entry-points path to the primitive (see setup.py)
-        'python_path': 'd3m.primitives.regression.owl_regression.umich',
+        'python_path': 'd3m.primitives.regression.owl_regression.Umich',
         #a list of hyperparameters that are high-priorities for tuning
         'hyperparams_to_tune': ['weight_type', 'weight_max_val', 'weight_max_off', 'weight_min_val', 'weight_min_off', 'fit_intercept', 'normalize', 'tol', 'learning_rate', 'verbose'],
         #search https://gitlab.com/datadrivendiscovery/d3m/blob/devel/d3m/metadata/schemas/v0/definitions.json for list of valid algorithm types
