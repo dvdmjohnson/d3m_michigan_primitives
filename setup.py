@@ -123,7 +123,7 @@ setuptools.setup(
     license="MIT",
     description="DARPA D3M Spider Project Code",
     install_requires=[
-        "d3m (==2019.2.18)",
+        "d3m (==2019.4.4)",
         "numpy (>=1.14.3)",
         "scipy (>=0.19.0)",
         "scikit-image (>=0.13.1)",
@@ -133,7 +133,7 @@ setuptools.setup(
         "h5py (>=2.7.0)",
         "opencv-python (>=3.0.0)",
         "keras (>=2.0.4)",
-        "tensorflow (>=1.1.0)",
+        "tensorflow-gpu (>=1.1.0)",
         "pandas (>=0.19.2)",
         "typing (>=3.6.2)",
         "stopit (>=1.1.1)",
