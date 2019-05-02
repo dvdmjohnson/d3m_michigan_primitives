@@ -70,8 +70,8 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
             'contact': 'mailto:davjoh@umich.edu',
             'uris': [
                 # link to file and repo
-                'https://gitlab.datadrivendiscovery.org/michigan/spider/raw/master/spider/unsupervised_learning/grouse/grouse.py',
-                'https://gitlab.datadrivendiscovery.org/michigan/spider'],
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives/blob/master/spider/unsupervised_learning/grouse/grouse.py',
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives'],
             #CHANGE THIS BELOW
             'citation': """@inproceedings{balzano2010online,
   title={Online identification and tracking of subspaces from highly incomplete information},
@@ -92,7 +92,7 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
              'version': '0.4.11'
              },
             {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package_uri': 'git+https://gitlab.datadrivendiscovery.org/michigan/spider.git@{git_commit}#egg=spider'.format(
+             'package_uri': 'git+https://github.com/dvdmjohnson/d3m_michigan_primitives.git@{git_commit}#egg=spider'.format(
                  git_commit=utils.current_git_commit(os.path.dirname(__file__)))
              },
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,

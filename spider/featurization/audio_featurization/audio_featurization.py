@@ -76,8 +76,8 @@ class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inp
             'name': 'Michigan',
             'contact': 'mailto:davjoh@umich.edu',
             'uris': [
-                'https://gitlab.datadrivendiscovery.org/michigan/spider/blob/master/spider/featurization/audio_featurization/audio_featurization.py',
-                'https://gitlab.datadrivendiscovery.org/michigan/spider'],
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives/blob/master/spider/featurization/audio_featurization/audio_featurization.py',
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives'],
             'citation': """@article{giannakopoulos2015pyaudioanalysis,
                 title={pyAudioAnalysis: An Open-Source Python Library for Audio Signal Analysis},
                 author={Giannakopoulos, Theodoros},
@@ -97,7 +97,7 @@ class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inp
              'version': '0.4.11'
             },
             {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package_uri': 'git+https://gitlab.datadrivendiscovery.org/michigan/spider.git@{git_commit}#egg=spider'.format(
+             'package_uri': 'git+https://github.com/dvdmjohnson/d3m_michigan_primitives.git@{git_commit}#egg=spider'.format(
              git_commit=utils.current_git_commit(os.path.dirname(__file__)))
             },
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,

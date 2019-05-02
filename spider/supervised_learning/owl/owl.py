@@ -104,8 +104,8 @@ class OWLRegression(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, O
             'contact': 'mailto:alsoltan@umich.edu',
             'uris': [
                 #link to file and repo
-                'https://gitlab.datadrivendiscovery.org/michigan/spider/blob/master/spider/supervised_learning/owl/owl.py',
-                'https://gitlab.datadrivendiscovery.org/michigan/spider'],
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives/blob/master/spider/supervised_learning/owl/owl.py',
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives'],
             'citation': """@ARTICLE{2014arXiv1407.3824B,
                 author = {{Bogdan}, M. and {van den Berg}, E. and {Sabatti}, C. and {Su}, W. and 
                 {Cand{\`e}s}, E.~J.},
@@ -132,7 +132,7 @@ class OWLRegression(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, O
              'version': '0.4.11'
             },
             {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package_uri': 'git+https://gitlab.datadrivendiscovery.org/michigan/spider.git@{git_commit}#egg=spider'.format(
+             'package_uri': 'git+https://github.com/dvdmjohnson/d3m_michigan_primitives.git@{git_commit}#egg=spider'.format(
              git_commit=utils.current_git_commit(os.path.dirname(__file__)))
             },
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,

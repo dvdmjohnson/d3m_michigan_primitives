@@ -52,8 +52,8 @@ class EKSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(None),
             'contact': 'mailto:davjoh@umich.edu',
             'uris': [
                 #link to file and repo
-                'https://gitlab.datadrivendiscovery.org/michigan/spider/raw/master/spider/cluster/ekss/ekss.py',
-                'https://gitlab.datadrivendiscovery.org/michigan/spider'],
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives/blob/master/spider/cluster/ekss/ekss.py',
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives'],
             'citation': """@article{DBLP:journals/corr/abs-1709-04744, author = {John Lipor and David Hong and Dejiao Zhang and Laura Balzano}, title = {Subspace Clustering using Ensembles of {\textdollar}K{\textdollar}-Subspaces}, journal = {CoRR}, volume = {abs/1709.04744}, year = {2017}, url = {http://arxiv.org/abs/1709.04744}, archivePrefix = {arXiv}, eprint = {1709.04744}, timestamp = {Thu, 05 Oct 2017 09:43:01 +0200}, biburl = {https://dblp.org/rec/bib/journals/corr/abs-1709-04744}, bibsource = {dblp computer science bibliography, https://dblp.org}
 }"""
             },
@@ -67,7 +67,7 @@ class EKSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(None),
              'version': '0.4.11'
             },
             {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package_uri': 'git+https://gitlab.datadrivendiscovery.org/michigan/spider.git@{git_commit}#egg=spider'.format(
+             'package_uri': 'git+https://github.com/dvdmjohnson/d3m_michigan_primitives.git@{git_commit}#egg=spider'.format(
              git_commit=utils.current_git_commit(os.path.dirname(__file__)))
             },
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,

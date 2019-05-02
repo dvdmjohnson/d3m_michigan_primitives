@@ -84,8 +84,8 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
             'name': 'Michigan',
             'contact': 'mailto:davjoh@umich.edu',
             'uris': [
-                'https://gitlab.datadrivendiscovery.org/michigan/spider/blob/master/spider/featurization/vgg16/vgg16.py',
-                'https://gitlab.datadrivendiscovery.org/michigan/spider'],
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives/blob/master/spider/featurization/vgg16/vgg16.py',
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives'],
             'citation': """@Article{Simonyan14c,
                  author       = "Simonyan, K. and Zisserman, A.",
                  title        = "Very Deep Convolutional Networks for Large-Scale Image Recognition",
@@ -103,7 +103,7 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
              'version': '0.4.11'
             },
             {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package_uri': 'git+https://gitlab.datadrivendiscovery.org/michigan/spider.git@{git_commit}#egg=spider'.format(
+             'package_uri': 'git+https://github.com/dvdmjohnson/d3m_michigan_primitives.git@{git_commit}#egg=spider'.format(
              git_commit=d3m_utils.current_git_commit(os.path.dirname(__file__)))
             },
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,

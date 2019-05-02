@@ -81,8 +81,8 @@ class RPCA_LBD(transformer.TransformerPrimitiveBase[Inputs, Outputs, RPCA_LBDHyp
             'contact': 'mailto:davjoh@umich.edu',
             'uris': [
                 #link to file and repo
-                'https://gitlab.datadrivendiscovery.org/michigan/spider/raw/master/spider/dimensionality_reduction/rpca_lbd/rpca_lbd.py',
-                'https://gitlab.datadrivendiscovery.org/michigan/spider'],
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives/blob/master/spider/dimensionality_reduction/rpca_lbd/rpca_lbd.py',
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives'],
             'citation': """@inproceedings{tang2011robust, title={Robust principal component analysis based on low-rank and block-sparse matrix decomposition}, author={Tang, Gongguo and Nehorai, Arye}, booktitle={Information Sciences and Systems (CISS), 2011 45th Annual Conference on}, pages={1--5}, year={2011}, organization={IEEE}}"""
             },
         'installation': [
@@ -95,7 +95,7 @@ class RPCA_LBD(transformer.TransformerPrimitiveBase[Inputs, Outputs, RPCA_LBDHyp
              'version': '0.4.11'
             },
             {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package_uri': 'git+https://gitlab.datadrivendiscovery.org/michigan/spider.git@{git_commit}#egg=spider'.format(
+             'package_uri': 'git+https://github.com/dvdmjohnson/d3m_michigan_primitives.git@{git_commit}#egg=spider'.format(
              git_commit=utils.current_git_commit(os.path.dirname(__file__)))
             },
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,

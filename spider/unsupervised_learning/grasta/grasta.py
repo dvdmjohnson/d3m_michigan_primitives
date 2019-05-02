@@ -135,8 +135,8 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
             'contact': 'mailto:davjoh@umich.edu',
             'uris': [
                 # link to file and repo
-                'https://gitlab.datadrivendiscovery.org/michigan/spider/raw/master/spider/unsupervised_learning/GRASTA/GRASTA.py',
-                'https://gitlab.datadrivendiscovery.org/michigan/spider'],
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives/blob/master/spider/unsupervised_learning/GRASTA/GRASTA.py',
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives'],
             'citation': """@inproceedings{he2014grasta, title={Incremental Gradient on the Grassmannian for Online Foreground and Background Separation in Subsampled Video}, author={He, Balzano and Lui}, booktitle={Computer Vision and Pattern Recognition (CVPR), 2012 IEEE Conference On}, pages={1568–1575}, year={2014}, organization={IEEE}}"""
         },
         'installation': [
@@ -149,7 +149,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
              'version': '0.4.11'
              },
             {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package_uri': 'git+https://gitlab.datadrivendiscovery.org/michigan/spider.git@{git_commit}#egg=spider'.format(
+             'package_uri': 'git+https://github.com/dvdmjohnson/d3m_michigan_primitives.git@{git_commit}#egg=spider'.format(
                  git_commit=utils.current_git_commit(os.path.dirname(__file__)))
              },
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,

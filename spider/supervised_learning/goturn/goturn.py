@@ -73,8 +73,8 @@ class GoTurn(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, Outputs,
             'name': 'Michigan',
             'contact': 'mailto:davjoh@umich.edu',
             'uris': [
-                'https://gitlab.datadrivendiscovery.org/michigan/spider/blob/master/spider/supervised_learning/goturn/goturn.py',
-                'https://gitlab.datadrivendiscovery.org/michigan/spider'],
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives/blob/master/spider/supervised_learning/goturn/goturn.py',
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives'],
             'citation': """@inproceedings{held2016learning,
                   title={Learning to track at 100 fps with deep regression networks},
                   author={Held, David and Thrun, Sebastian and Savarese, Silvio},
@@ -93,7 +93,7 @@ class GoTurn(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, Outputs,
              'version': '0.4.11'
             },
             {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package_uri': 'git+https://gitlab.datadrivendiscovery.org/michigan/spider.git@{git_commit}#egg=spider'.format(
+             'package_uri': 'git+https://github.com/dvdmjohnson/d3m_michigan_primitives.git@{git_commit}#egg=spider'.format(
              git_commit=d3m_utils.current_git_commit(os.path.dirname(__file__)))
             },
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
