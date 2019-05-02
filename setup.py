@@ -119,7 +119,7 @@ setuptools.setup(
     version="0.0.5",
     author="Jason Corso, Laura Balzano and The University of Michigan DARPA D3M Spider Team",
     author_email="jjcorso@umich.edu,girasole@umich.edu,davjoh@umich.edu",
-    url="https://gitlab.datadrivendiscovery.org/michigan/spider",
+    url="https://github.com/dvdmjohnson/d3m_michigan_primitives",
     license="MIT",
     description="DARPA D3M Spider Project Code",
     install_requires=[
