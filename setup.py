@@ -186,7 +186,7 @@ setuptools.setup(
         'data_preprocessing.trecs.Umich = spider.preprocessing.trecs.trecs:TRECS',
         'feature_extraction.vgg16.Umich = spider.featurization.vgg16.vgg16:VGG16',
         'feature_extraction.audio_featurization.Umich = spider.featurization.audio_featurization.audio_featurization:AudioFeaturization',
-        'feature_extraction.audio_slicer.Umich = spider.featurization.audio_slicer.audio_slicer:AudioSlicer',
+        'data_preprocessing.audio_slicer.Umich = spider.featurization.audio_slicer.audio_slicer:AudioSlicer',
         'feature_extraction.log_mel_spectrogram.Umich = spider.featurization.logmelspectrogram.logmelspectrogram:LogMelSpectrogram',
         'feature_extraction.i3d.Umich = spider.featurization.i3d.i3d:I3D',
         'similarity_modeling.rfd.Umich = spider.distance.rfd.rfd:RFD',
