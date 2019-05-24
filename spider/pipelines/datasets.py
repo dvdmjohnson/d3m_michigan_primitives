@@ -37,6 +37,42 @@ DATASETS = {
     'uu4_SPECT': 81,
 }
 
+FULL_IDS = {
+    '1491_one_hundred_plants_margin': '1491_one_hundred_plants_dataset',
+    '1491_one_hundred_plants_margin_clust': '1491_one_hundred_plants_margin_dataset',
+    '1567_poker_hand': '1567_poker_dataset',
+    '185_baseball': '185_bl_dataset',
+    '196_autoMpg': '196_ag_dataset',
+    '22_handgeometry': '22_hy_dataset',
+    '26_radon_seed': '26_radon_dataset',
+    '27_wordLevels': '27_ws_dataset',
+    '299_libras_move': '299_libras_dataset',
+    '30_personae': '30_pe_dataset',
+    '313_spectrometer': '313_sr_dataset',
+    '31_urbansound': '31_ud_dataset',
+    '32_wikiqa': '32_wa_dataset',
+    '38_sick': '38_sk_dataset',
+    '4550_MiceProtein': '4550_Mn_dataset',
+    '49_facebook': '49_fk_dataset',
+    '534_cps_85_wages': '534_cps_85_dataset',
+    '56_sunspots': '56_ss_dataset',
+    '57_hypothyroid': '57_hd_dataset',
+    '59_umls': '59_us_dataset',
+    '60_jester': '60_jr_dataset',
+    '66_chlorineConcentration': '66_cn_dataset',
+    '6_70_com_amazon': '6_70_com_dataset',
+    '6_86_com_DBLP': '6_86_com_dataset',
+    'DS01876': 'DS01876_dataset',
+    'LL0_207_autoPrice': 'LL0_207_dataset',
+    'LL1_net_nomination_seed': 'LL1_net_nomination_dataset',
+    'LL1_penn_fudan_pedestrian': 'penn_fudan_pedestrian_dataset',
+    'LL1_3476_HMDB_actio_recognition': 'LL1_3476_HMDB_actio_dataset',
+    'uu1_datasmash': 'uu1_dh_dataset',
+    'uu2_gp_hyperparameter_estimation': 'uu2_gp_hyperparameter_dataset',
+    'uu3_world_development_indicators': 'uu3_world_development_dataset',
+    'uu4_SPECT': 'uu4_ST_dataset',
+}
+
 TRAIN_IDS = {
     '1491_one_hundred_plants_margin': '1491_one_hundred_plants_dataset_TRAIN',
     '1491_one_hundred_plants_margin_clust': '1491_one_hundred_plants_margin_dataset_TRAIN',
@@ -156,6 +192,9 @@ def get_count(dataset):
 
 def get_dataset_names():
     return DATASETS.keys()
+    
+def get_full_id(dataset_id):
+    return FULL_IDS[dataset_id]
 
 def get_train_id(dataset_id):
     return TRAIN_IDS[dataset_id]

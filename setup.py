@@ -75,37 +75,37 @@ class customDevelop(develop):
         develop.run(self)
         #second round dependency installation
         #cl.append(calt + 'librosa')
-        cl.append(calt + 'cvxpy')
+        #cl.append(calt + 'cvxpy')
 
-        for com in cl:
-            self.announce(
-                  'Running command: %s' % str(com),
-                  level=distutils.log.INFO)
-            subprocess.check_call(com, shell=True)
+        # for com in cl:
+            # self.announce(
+                  # 'Running command: %s' % str(com),
+                  # level=distutils.log.INFO)
+            # subprocess.check_call(com, shell=True)
 
-        #check and download VGG16 weights file
-        weights_url = 'https://umich.box.com/shared/static/dzmxth5l7ql3xggc0hst5h1necjfaurt.h5'
-        weightsdir = thisdir + '/spider/featurization/vgg16/weights'
-        weightsfile = 'vgg16_weights.h5'
-        if not os.path.isdir(weightsdir):
-            os.makedirs(weightsdir)
-        spider_download_weights(weightsdir, weightsfile, weights_url)
+        # #check and download VGG16 weights file
+        # weights_url = 'https://umich.box.com/shared/static/dzmxth5l7ql3xggc0hst5h1necjfaurt.h5'
+        # weightsdir = thisdir + '/spider/featurization/vgg16/weights'
+        # weightsfile = 'vgg16_weights.h5'
+        # if not os.path.isdir(weightsdir):
+            # os.makedirs(weightsdir)
+        # spider_download_weights(weightsdir, weightsfile, weights_url)
         
-        #Download I3D weights file
-        weights_url = 'https://umich.box.com/shared/static/xl06t9sb2c0qnnbh00v6dqr0fq98au0m.npy'
-        weightsdir = thisdir + '/spider/featurization/i3d/weights'
-        weightsfile = 'i3d_rgb_kinetics.npy'
-        if not os.path.isdir(weightsdir):
-            os.makedirs(weightsdir)
-        spider_download_weights(weightsdir, weightsfile, weights_url)
+        # #Download I3D weights file
+        # weights_url = 'https://umich.box.com/shared/static/xl06t9sb2c0qnnbh00v6dqr0fq98au0m.npy'
+        # weightsdir = thisdir + '/spider/featurization/i3d/weights'
+        # weightsfile = 'i3d_rgb_kinetics.npy'
+        # if not os.path.isdir(weightsdir):
+            # os.makedirs(weightsdir)
+        # spider_download_weights(weightsdir, weightsfile, weights_url)
 
-        #Download CaffeNet weights file
-        weights_url = 'https://umich.box.com/shared/static/lbx9uo2cvruamhey0clcit0w7tufis8w.pth'
-        weightsdir = thisdir + '/spider/supervised_learning/goturn/weights'
-        weightsfile = 'caffenet.pth'
-        if not os.path.isdir(weightsdir):
-            os.makedirs(weightsdir)
-        spider_download_weights(weightsdir, weightsfile, weights_url)
+        # #Download CaffeNet weights file
+        # weights_url = 'https://umich.box.com/shared/static/lbx9uo2cvruamhey0clcit0w7tufis8w.pth'
+        # weightsdir = thisdir + '/spider/supervised_learning/goturn/weights'
+        # weightsfile = 'caffenet.pth'
+        # if not os.path.isdir(weightsdir):
+            # os.makedirs(weightsdir)
+        # spider_download_weights(weightsdir, weightsfile, weights_url)
 
 # class buildPyCommand(setuptools.command.build_py.build_py):
 #     """Custom build command."""
@@ -119,11 +119,11 @@ setuptools.setup(
     version="0.0.5",
     author="Jason Corso, Laura Balzano and The University of Michigan DARPA D3M Spider Team",
     author_email="jjcorso@umich.edu,girasole@umich.edu,davjoh@umich.edu",
-    url="https://github.com/dvdmjohnson/d3m_michigan_primitives",
+    url="https://gitlab.datadrivendiscovery.org/michigan/spider",
     license="MIT",
     description="DARPA D3M Spider Project Code",
     install_requires=[
-        "d3m (==2019.4.4)",
+        "d3m (==2019.5.8)",
         "numpy (>=1.14.3)",
         "scipy (>=0.19.0)",
         "scikit-image (>=0.13.1)",
@@ -139,6 +139,7 @@ setuptools.setup(
         "stopit (>=1.1.1)",
         "librosa (>=0.5.1)",
         "torch (>=0.3.1)",
+        "cvxpy (>=1.0.23)",
     ],
     packages=["spider",
                 "spider.preprocessing",

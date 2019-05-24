@@ -14,9 +14,3 @@ __all__ = ["audio_featurization",
            "audio_slicer",
            "logmelspectrogram",
            "vgg16"]
-
-## sub-packages
-from .audio_featurization import audio_featurization
-from .audio_slicer import audio_slicer
-from .logmelspectrogram import logmelspectrogram
-from .vgg16 import VGG16 as vgg16

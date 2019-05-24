@@ -1,10 +1,10 @@
 """ FILE TO SUPPORT LAYER DEFINITIONS IN TENSORFLOW. ANY AND ALL LAYER DEFINITIONS USED TO MAKE NETWORKS MUST BE DERIVED FROM THIS DOCUMENT """
 
-from tensorflow.contrib.rnn import static_rnn
-
 import os
 import tensorflow as tf
 import numpy      as np
+
+from tensorflow.keras.layers import RNN
 
 def conv_layer(input_tensor,
                filter_dims,
@@ -420,7 +420,7 @@ def lstm(inputs, seq_length, feat_size, cell_size=1024):
 
     # LSTM cell definition
     lstm_cell            = tf.contrib.rnn.BasicLSTMCell(cell_size)
-    lstm_outputs, states = static_rnn(lstm_cell, inputs, dtype=tf.float32)
+    lstm_outputs, states = RNN(lstm_cell, inputs, dtype=tf.float32, unroll=True)
 
     # Condense output shape from:
     # list of n_time_steps itmes, each item of size (batch_size x cell_size)

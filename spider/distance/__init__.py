@@ -11,8 +11,5 @@
 
 __all__ = ["rfd"]
 
-from .rfd import RFD
-from .utils import get_random_constraints, normalize_labels
-
 
 

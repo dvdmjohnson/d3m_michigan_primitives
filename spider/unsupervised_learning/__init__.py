@@ -12,9 +12,4 @@
 # to allow from spider.preprocessing import *
 __all__ = ["grasta","grasta_masked",]
 
-## sub-packages
-from .grasta import grasta
-from .grasta_masked import grasta_masked
-from .grouse import grouse
-
 

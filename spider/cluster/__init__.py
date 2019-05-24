@@ -15,13 +15,3 @@ __all__ = ["ssc_cvx",
            "ssc_omp",
            "kss",
            "ekss"]
-
-## modules in spider.cluster
-# to allow spider.cluster.XXX
-
-## sub-packages
-from .ssc_cvx import SSC_CVX
-from .ssc_admm import SSC_ADMM
-from .kss import KSS
-from .ekss import EKSS
-from .ssc_omp import SSC_OMP

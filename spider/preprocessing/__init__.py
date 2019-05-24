@@ -12,6 +12,3 @@
 # to allow from spider.preprocessing import *
 __all__ = ["trecs"]
 
-## sub-packages
-from .trecs import trecs
-

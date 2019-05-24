@@ -84,14 +84,6 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
         },
         'installation': [
             {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package': 'librosa',
-             'version': '0.5.1'
-             },
-            {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package': 'cvxpy',
-             'version': '0.4.11'
-             },
-            {'type': metadata_module.PrimitiveInstallationType.PIP,
              'package_uri': 'git+https://github.com/dvdmjohnson/d3m_michigan_primitives.git@{git_commit}#egg=spider'.format(
                  git_commit=utils.current_git_commit(os.path.dirname(__file__)))
              },

@@ -21,14 +21,16 @@ class OWLRegressionPipeline(BasePipeline):
         self.dataset = 'LL0_207_autoPrice'
         self.meta_info = {
                 'problem': spider.pipelines.datasets.get_problem_id(self.dataset),
+                'full_inputs': [ spider.pipelines.datasets.get_full_id(self.dataset) ],
                 'train_inputs': [ spider.pipelines.datasets.get_train_id(self.dataset) ],
                 'test_inputs': [ spider.pipelines.datasets.get_problem_id(self.dataset) ],
+                'score_inputs': [ spider.pipelines.datasets.get_problem_id(self.dataset) ],
             }
 
     #define pipeline object
     def _gen_pipeline(self):
         #pipeline context is just metadata, ignore for now
-        pipeline = meta_pipeline.Pipeline(context=Context.TESTING)
+        pipeline = meta_pipeline.Pipeline()
         #define inputs.  This will be read in automatically as a Dataset object.
         pipeline.add_input(name = 'inputs')
 
@@ -80,7 +82,7 @@ class OWLRegressionPipeline(BasePipeline):
         step_4.add_hyperparameter(
                 name='semantic_types',
                 argument_type=ArgumentType.VALUE,
-                data=['https://metadata.datadrivendiscovery.org/types/SuggestedTarget'])
+                data=['https://metadata.datadrivendiscovery.org/types/TrueTarget'])
         pipeline.add_step(step_4)
         
         #step 5: transform attributes dataframe into an ndarray

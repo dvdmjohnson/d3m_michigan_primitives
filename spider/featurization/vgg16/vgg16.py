@@ -95,33 +95,29 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
         },
         'installation': [
             {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package': 'librosa',
-             'version': '0.5.1'
-            },
-            {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package': 'cvxpy',
-             'version': '0.4.11'
-            },
-            {'type': metadata_module.PrimitiveInstallationType.PIP,
              'package_uri': 'git+https://github.com/dvdmjohnson/d3m_michigan_primitives.git@{git_commit}#egg=spider'.format(
              git_commit=d3m_utils.current_git_commit(os.path.dirname(__file__)))
             },
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                  'package': 'ffmpeg',
-                 'version': '7:2.8.11-0ubuntu0.16.04.1'}],
+                 'version': '7:2.8.11-0ubuntu0.16.04.1'},
+            {'type': metadata_module.PrimitiveInstallationType.FILE,
+            'key': 'vgg16_weights.h5',
+            'file_uri': 'https://umich.box.com/shared/static/dzmxth5l7ql3xggc0hst5h1necjfaurt.h5',
+            'file_digest': '8b81f25be4126c5ec088f19901b2b34e9a40e3d46246c9d208a3d727462b4f5c'}],
         'python_path': 'd3m.primitives.feature_extraction.vgg16.Umich',
         'hyperparams_to_tune': ['output_layer'],
         'algorithm_types': [metadata_module.PrimitiveAlgorithmType.CONVOLUTIONAL_NEURAL_NETWORK],
         'primitive_family': metadata_module.PrimitiveFamily.FEATURE_EXTRACTION
     })
 
-    def __init__(self, *, hyperparams: VGG16Hyperparams, random_seed: int = 0, docker_containers: typing.Dict[str, base.DockerContainer] = None) -> None:
+    def __init__(self, *, hyperparams: VGG16Hyperparams, random_seed: int = 0, docker_containers: typing.Dict[str, base.DockerContainer] = None, volumes: typing.Dict[str,str] = None) -> None:
         """
         Darpa D3M VGG16 Image Featurization Primitive
 
         Implements the VGG16 Convolutional Network for Classification and Detection
         """
-        super().__init__(hyperparams=hyperparams, random_seed=random_seed, docker_containers=docker_containers)
+        super().__init__(hyperparams=hyperparams, random_seed=random_seed, docker_containers=docker_containers, volumes=volumes)
 
         self._output_feature_layer = hyperparams['output_layer']
 
@@ -137,9 +133,7 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
 
         # helper vars
         self._input_shape = (224, 224, 3)
-        self._weights_directory = os.path.join(os.path.abspath(os.path.dirname(utils.__file__)), \
-            'weights')
-        self._weights_filename = 'vgg16_weights.h5'
+        self._weights_path = volumes['vgg16_weights.h5']
         self._interpolation_method = 'bilinear'
         self._base_model = self._model()
 
@@ -203,8 +197,7 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
         # Create model.
         model = Model(inputs, x, name='vgg16')
 
-        filepath = os.path.join(self._weights_directory, self._weights_filename)
-        model.load_weights(filepath)
+        model.load_weights(self._weights_path)
     
         return model
 

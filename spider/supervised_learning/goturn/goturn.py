@@ -85,31 +85,27 @@ class GoTurn(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, Outputs,
         },
         'installation': [
             {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package': 'librosa',
-             'version': '0.5.1'
-            },
-            {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package': 'cvxpy',
-             'version': '0.4.11'
-            },
-            {'type': metadata_module.PrimitiveInstallationType.PIP,
              'package_uri': 'git+https://github.com/dvdmjohnson/d3m_michigan_primitives.git@{git_commit}#egg=spider'.format(
              git_commit=d3m_utils.current_git_commit(os.path.dirname(__file__)))
             },
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                 'package': 'ffmpeg',
-                'version': '7:2.8.11-0ubuntu0.16.04.1'}],
+                'version': '7:2.8.11-0ubuntu0.16.04.1'},
+            {'type': metadata_module.PrimitiveInstallationType.FILE,
+            'key': 'goturn_weights.pth',
+            'file_uri': 'https://umich.box.com/shared/static/lbx9uo2cvruamhey0clcit0w7tufis8w.pth',
+            'file_digest': '57aed821983b6b083221543a289893c7e5464d7031a0c2ef6f4574a516b652f6'}],
         'python_path': 'd3m.primitives.learner.goturn.Umich',
         'hyperparams_to_tune': ['num_epochs'],
         'algorithm_types': [metadata_module.PrimitiveAlgorithmType.CONVOLUTIONAL_NEURAL_NETWORK],
         'primitive_family': metadata_module.PrimitiveFamily.LEARNER
     })
 
-    def __init__(self, *, hyperparams: GoTurnHyperparams, random_seed: int = 0, docker_containers: typing.Dict[str, base.DockerContainer] = None) -> None:
+    def __init__(self, *, hyperparams: GoTurnHyperparams, random_seed: int = 0, docker_containers: typing.Dict[str, base.DockerContainer] = None, volumes: typing.Dict[str,str] = None) -> None:
         """
         GoTurn visual object tracking training
         """
-        super().__init__(hyperparams=hyperparams, random_seed=random_seed, docker_containers=docker_containers)
+        super().__init__(hyperparams=hyperparams, random_seed=random_seed, docker_containers=docker_containers, volumes=volumes)
 
         self._num_gpus = hyperparams['num_gpus']
         self._num_epochs = hyperparams['num_epochs']
@@ -123,14 +119,13 @@ class GoTurn(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, Outputs,
         self._model_name = 'goturn'
 
         self._model = GoTurnModel(train=True, use_gpu=self._use_gpu)
-        self._weights_directory = os.path.join(os.path.abspath(os.path.dirname(__file__)),'weights')
-        self._weights_filename = 'caffenet.pth'
+        self._weights_path = volumes['goturn_weights.pth']
 
         self._criterion = nn.L1Loss()
         self._optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, self._model.parameters()), lr=self._lr, momentum=self._momentum, weight_decay=self._weight_decay)
 
         #Load weights
-        weights_state_dict = torch.load(os.path.join(self._weights_directory, self._weights_filename), map_location=lambda storage, location: storage)
+        weights_state_dict = torch.load(self._weights_path, map_location=lambda storage, location: storage)
         weights_state_dict = convert_state_dict_keys(weights_state_dict)
 
         #Flexible state dict loading

@@ -52,7 +52,7 @@ class I3D(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs, I
             'name': 'Michigan',
             'contact': 'mailto:davjoh@umich.edu',
             'uris': [
-                'https://github.com/dvdmjohnson/d3m_michigan_primitives/blob/master/spider/featurize/i3d/i3d.py',
+                'https://github.com/dvdmjohnson/d3m_michigan_primitives/blob/master/spider/featurization/i3d/i3d.py',
                 'https://github.com/dvdmjohnson/d3m_michigan_primitives'],
             'citation': """@inproceeding{@inproceedings{carreira2017quo,
                 title={Quo vadis, action recognition? a new model and the kinetics dataset},
@@ -64,31 +64,27 @@ class I3D(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs, I
         },
         'installation': [
             {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package': 'librosa',
-             'version': '0.5.1'
-            },
-            {'type': metadata_module.PrimitiveInstallationType.PIP,
-             'package': 'cvxpy',
-             'version': '0.4.11'
-            },
-            {'type': metadata_module.PrimitiveInstallationType.PIP,
              'package_uri': 'git+https://github.com/dvdmjohnson/d3m_michigan_primitives.git@{git_commit}#egg=spider'.format(
              git_commit=d3m_utils.current_git_commit(os.path.dirname(__file__)))
             },
             {'type': metadata_module.PrimitiveInstallationType.UBUNTU,
                 'package': 'ffmpeg',
-                'version': '7:2.8.11-0ubuntu0.16.04.1'}],
+                'version': '7:2.8.11-0ubuntu0.16.04.1'},
+            {'type': metadata_module.PrimitiveInstallationType.FILE,
+            'key': 'i3d_weights.npy',
+            'file_uri': 'https://umich.box.com/shared/static/xl06t9sb2c0qnnbh00v6dqr0fq98au0m.npy',
+            'file_digest': 'c7d4f7082ce499e25a13bf09d0eb47162fbede1c704aa0e6b4b7551ad4cc69c0'}],
         'python_path': 'd3m.primitives.feature_extraction.i3d.Umich',
         'hyperparams_to_tune': ['output_layer'],
         'algorithm_types': [metadata_module.PrimitiveAlgorithmType.CONVOLUTIONAL_NEURAL_NETWORK],
         'primitive_family': metadata_module.PrimitiveFamily.FEATURE_EXTRACTION
     })
 
-    def __init__(self, *, hyperparams: I3DHyperparams, random_seed: int = 0, docker_containers: typing.Dict[str, base.DockerContainer] = None) -> None:
+    def __init__(self, *, hyperparams: I3DHyperparams, random_seed: int = 0, docker_containers: typing.Dict[str, base.DockerContainer] = None, volumes: typing.Dict[str,str] = None) -> None:
         """
         I3D Video Featurization
         """
-        super().__init__(hyperparams=hyperparams, random_seed=random_seed, docker_containers=docker_containers)
+        super().__init__(hyperparams=hyperparams, random_seed=random_seed, docker_containers=docker_containers, volumes=volumes)
 
         #Mapping to layer number in I3D model
         i3d_layer_dictionary = {'mixed_3b':'29','mixed_3c':'49','mixed_4b':'70','mixed_4c':'90','mixed_4d':'110','mixed_4e':'130','mixed_4f':'150','mixed_5b':'171','mixed_5c':'191','avg_pool_mixed_5c':'192','final':'logits'}
@@ -98,8 +94,7 @@ class I3D(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs, I
         self._output_feature_layer = i3d_layer_dictionary[params]
 
         self._model_name = 'i3d'
-        self._weights_directory = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'weights')
-        self._weights_filename = 'i3d_rgb_kinetics.npy'
+        self._weights_path = volumes['i3d_weights.npy']
         self._input_dims = 250 #input video's frame length (to i3d model)
         self._output_frame_shape = (224,224,3)
         self._output_video_shape = (self._input_dims,) + self._output_frame_shape
@@ -463,8 +458,8 @@ class I3D(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs, I
 
             
             #Load model checkpoints
-            filename = os.path.join(self._weights_directory, self._weights_filename)
-            print('Weights filename: {}'.format(filename))
+            filename = self._weights_path
+            #print('Weights filename: {}'.format(filename))
             ckpt = np.load(filename, encoding='latin1')
 
             video_placeholder = tf.placeholder(tf.float32, shape=(1,) + self._output_video_shape)

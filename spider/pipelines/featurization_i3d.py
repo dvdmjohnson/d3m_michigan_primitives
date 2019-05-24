@@ -22,13 +22,15 @@ class FeaturizationI3DPipeline(BasePipeline):
         self.dataset = 'LL1_3476_HMDB_actio_recognition'
         self.meta_info = {
                 'problem': spider.pipelines.datasets.get_problem_id(self.dataset),
+                'full_inputs': [ spider.pipelines.datasets.get_full_id(self.dataset) ],
                 'train_inputs': [ spider.pipelines.datasets.get_train_id(self.dataset) ],
                 'test_inputs': [ spider.pipelines.datasets.get_problem_id(self.dataset) ],
+                'score_inputs': [ spider.pipelines.datasets.get_problem_id(self.dataset) ],
             }
 
     def _gen_pipeline(self):
         #Creating pipeline
-        pipeline = meta_pipeline.Pipeline(context=Context.TESTING)
+        pipeline = meta_pipeline.Pipeline()
         pipeline.add_input(name = 'inputs')
 
         #Step 0: Convert Dataset to DataFrame object
@@ -81,7 +83,7 @@ class FeaturizationI3DPipeline(BasePipeline):
         step_4.add_hyperparameter(
                 name='semantic_types',
                 argument_type=ArgumentType.VALUE,
-                data=['https://metadata.datadrivendiscovery.org/types/SuggestedTarget']
+                data=['https://metadata.datadrivendiscovery.org/types/TrueTarget']
         )
         step_4.add_output('produce')
         pipeline.add_step(step_4)

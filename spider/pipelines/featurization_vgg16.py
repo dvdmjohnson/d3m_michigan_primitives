@@ -20,12 +20,14 @@ class FeaturizationVGG16Pipeline(BasePipeline):
         self.dataset = '22_handgeometry'
         self.meta_info = {
                 'problem': spider.pipelines.datasets.get_problem_id(self.dataset),
+                'full_inputs': [ spider.pipelines.datasets.get_full_id(self.dataset) ],
                 'train_inputs': [ spider.pipelines.datasets.get_train_id(self.dataset) ],
                 'test_inputs': [ spider.pipelines.datasets.get_problem_id(self.dataset) ],
+                'score_inputs': [ spider.pipelines.datasets.get_problem_id(self.dataset) ],
             }
 
     def _gen_pipeline(self):
-        pipeline = meta_pipeline.Pipeline(context=Context.TESTING)
+        pipeline = meta_pipeline.Pipeline()
         pipeline.add_input(name = 'inputs')
 
         step_0 = meta_pipeline.PrimitiveStep(primitive_description = DatasetToDataFramePrimitive.metadata.query())
@@ -56,7 +58,7 @@ class FeaturizationVGG16Pipeline(BasePipeline):
         step_2.add_hyperparameter(
                 name='semantic_types',
                 argument_type=ArgumentType.VALUE,
-                data=['https://metadata.datadrivendiscovery.org/types/ImageObject'])
+                data=['http://schema.org/ImageObject'])
         pipeline.add_step(step_2)
 
         #step 3: Extract target 
@@ -69,7 +71,7 @@ class FeaturizationVGG16Pipeline(BasePipeline):
         step_3.add_hyperparameter(
                 name='semantic_types',
                 argument_type=ArgumentType.VALUE,
-                data=['https://metadata.datadrivendiscovery.org/types/SuggestedTarget'])
+                data=['https://metadata.datadrivendiscovery.org/types/TrueTarget'])
         pipeline.add_step(step_3)
         
         #step 4: Dataframe to ndarray on step 2 output as VGG16 needs ndarray input

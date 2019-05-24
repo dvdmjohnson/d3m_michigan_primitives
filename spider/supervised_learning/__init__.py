@@ -10,6 +10,3 @@
 """
 
 __all__ = ["OWLRegression", "GoTurn"]
-
-from .owl import OWLRegression
-from .goturn import GoTurn
