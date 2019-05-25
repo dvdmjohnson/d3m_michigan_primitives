@@ -21,13 +21,7 @@ class FeaturizationAudioFeaturizationPipeline(BasePipeline):
         
         #specify one seed dataset on which this pipeline can operate
         self.dataset = '31_urbansound'
-        self.meta_info = {
-                'problem': spider.pipelines.datasets.get_problem_id(self.dataset),
-                'full_inputs': [ spider.pipelines.datasets.get_full_id(self.dataset) ],
-                'train_inputs': [ spider.pipelines.datasets.get_train_id(self.dataset) ],
-                'test_inputs': [ spider.pipelines.datasets.get_problem_id(self.dataset) ],
-                'score_inputs': [ spider.pipelines.datasets.get_problem_id(self.dataset) ],
-            }
+        self.meta_info = self.genmeta(self.dataset)
 
     #define pipeline object
     def _gen_pipeline(self):

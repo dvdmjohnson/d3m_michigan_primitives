@@ -24,13 +24,7 @@ class SSCCVXPipeline(BasePipeline):
         
         #choose one or more seed datasets on which this pipeline can operate
         self.dataset = '1491_one_hundred_plants_margin_clust'
-        self.meta_info = {
-                'problem': spider.pipelines.datasets.get_problem_id(self.dataset),
-                'full_inputs': [ spider.pipelines.datasets.get_full_id(self.dataset) ],
-                'train_inputs': [ spider.pipelines.datasets.get_train_id(self.dataset) ],
-                'test_inputs': [ spider.pipelines.datasets.get_problem_id(self.dataset) ],
-                'score_inputs': [ spider.pipelines.datasets.get_problem_id(self.dataset) ],
-            }
+        self.meta_info = self.genmeta(self.dataset)
         
     #define pipeline object
     def _gen_pipeline(self):
