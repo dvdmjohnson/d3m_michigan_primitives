@@ -1,7 +1,6 @@
 from d3m.metadata import pipeline as meta_pipeline
 from d3m.metadata.base import ArgumentType, Context
 
-import spider.pipelines.datasets
 from spider.pipelines.base import BasePipeline
 from spider.unsupervised_learning.grouse import GROUSE
 from d3m.primitives.data_transformation.dataframe_to_ndarray import Common as DataFrameToNDArrayPrimitive

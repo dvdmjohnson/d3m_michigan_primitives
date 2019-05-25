@@ -1,7 +1,6 @@
 from d3m.metadata import pipeline as meta_pipeline
 from d3m.metadata.base import ArgumentType, Context
 
-import spider.pipelines.datasets
 from spider.pipelines.base import BasePipeline
 from spider.featurization.audio_featurization import AudioFeaturization
 from bbn_primitives.time_series import AudioReader
