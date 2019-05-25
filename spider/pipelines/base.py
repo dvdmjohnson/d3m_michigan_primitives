@@ -28,7 +28,7 @@ class BasePipeline(object):
             'full_inputs': [ dataset + "_dataset" ],
             'train_inputs': [ dataset + "_dataset_TRAIN" ],
             'test_inputs': [ dataset + "_dataset_TEST" ],
-            'score_inputs': [ dataset + "_dataset_SCORE" ],
+            'score_inputs': [ dataset + "_dataset_SCORE" ]}
         return meta_info
 
 
