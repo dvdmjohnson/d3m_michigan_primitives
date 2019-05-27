@@ -6,7 +6,7 @@ from spider.featurization.i3d import I3D
 
 from common_primitives.video_reader import VideoReaderPrimitive
 
-from data_transformation.denormalize import Common as DenormalizePrimitive
+from d3m.primitives.data_transformation.denormalize import Common as DenormalizePrimitive
 from d3m.primitives.data_transformation.ndarray_to_dataframe import Common as NDArrayToDataFramePrimitive
 from d3m.primitives.data_transformation.dataset_to_dataframe import Common as DatasetToDataFramePrimitive
 from d3m.primitives.data_transformation.extract_columns_by_semantic_types import DataFrameCommon as ExtractColumnsBySemanticTypesPrimitive
