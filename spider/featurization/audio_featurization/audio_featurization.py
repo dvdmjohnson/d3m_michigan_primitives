@@ -138,7 +138,7 @@ class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inp
 #                    x = x.mean(axis=0)
                 sampling_rate = self._sampling_rate
 
-                frame_length = int(x.shape[0] / sampling_rate)
+                frame_length = self._frame_length
 
                 # Handle time series of insufficient length by padding the sequence with wrapped data
                 #if x.shape[0] < self._frame_length * self._sampling_rate:
