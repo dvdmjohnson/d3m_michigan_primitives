@@ -49,7 +49,7 @@ class OWLRegressionPipeline(BasePipeline):
         step_2.add_argument(
                 name = 'inputs',
                 argument_type = ArgumentType.CONTAINER,
-                data_reference = 'steps.2.produce')
+                data_reference = 'steps.1.produce')
         step_2.add_output('produce')
         step_2.add_hyperparameter(
                 name='semantic_types',
