@@ -52,7 +52,7 @@ class FeaturizationAudioFeaturizationPipeline(BasePipeline):
         step_2.add_argument(
                 name = 'inputs',
                 argument_type = ArgumentType.CONTAINER,
-                data_reference = 'inputs.1' #same as step 1
+                data_reference = 'steps.0.produce' #same as step 1
         )
         step_2.add_output('produce')
         pipeline.add_step(step_2)
@@ -88,7 +88,7 @@ class FeaturizationAudioFeaturizationPipeline(BasePipeline):
         step_5.add_argument(
                 name = 'inputs',
                 argument_type = ArgumentType.CONTAINER,
-                data_reference = 'inputs.1' #inputs here are the original dataset
+                data_reference = 'steps.0.produce' #inputs here are the original dataset
         )
         step_5.add_hyperparameter(
                 name='dataframe_resource',
