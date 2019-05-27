@@ -24,7 +24,7 @@ class BasePipeline(object):
         
     def genmeta(self, dataset):
         meta_info = {
-            'problem': [ dataset + "_problem" ],
+            'problem': dataset + "_problem",
             'full_inputs': [ dataset + "_dataset" ],
             'train_inputs': [ dataset + "_dataset_TRAIN" ],
             'test_inputs': [ dataset + "_dataset_TEST" ],
