@@ -2,10 +2,7 @@ import typing
 from d3m.metadata import hyperparams, base as metadata_module, params
 from d3m.primitive_interfaces import base, transformer
 from d3m import container, utils
-import collections
 import os
-import warnings
-import stopit
 import numpy as np
 import cv2
 
@@ -217,38 +214,33 @@ class TRECS(transformer.TransformerPrimitiveBase[Inputs, Outputs, TRECSHyperpara
 
 
     # Produce a resampled video given either a list of video paths or a videos as numpy arrays
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
 
-        with stopit.ThreadingTimeout(timeout) as timer:
-            output_video_list = []
-            
-            for vid in inputs:
-                input_vid = self._input_handler(vid)
-                assert input_vid.ndim == 4, "Data is not in the right shape"
-                frame_count, height, width, channels = input_vid.shape
-                
-                if self._trecs_method == 'cvr':
-                    alpha = self._default_alpha
-                    output_video = self._resample_video(input_vid, self._output_frames, frame_count, alpha)
-    
-                elif self._trecs_method == 'sr':
-                     alpha = self._random_state.uniform(0.2, 3.0)
-                     output_video = self._resample_video_sinusoidal(input_vid, self._output_frames, frame_count, alpha)
-    
-                elif self._trecs_method == 'rr':
-                    alpha = self._random_state.uniform(0.2, 3.0) * np.pi
-                    output_video = self._resample_video(input_vid, self._output_frames, frame_count, alpha)
-    
-                else:
-                    raise ValueError('The requested method is not yet implemented: ', + self._trecs_method)
-                
-                output_video_list.append(container.ndarray(output_video))
+        output_video_list = []
 
-            return base.CallResult(container.List(output_video_list, generate_metadata=True))
+        for vid in inputs:
+            input_vid = self._input_handler(vid)
+            assert input_vid.ndim == 4, "Data is not in the right shape"
+            frame_count, height, width, channels = input_vid.shape
 
-        if timer.state != timer.EXECUTED:
-            raise TimeoutError('TRECS produce timed out.')
+            if self._trecs_method == 'cvr':
+                alpha = self._default_alpha
+                output_video = self._resample_video(input_vid, self._output_frames, frame_count, alpha)
 
+            elif self._trecs_method == 'sr':
+                 alpha = self._random_state.uniform(0.2, 3.0)
+                 output_video = self._resample_video_sinusoidal(input_vid, self._output_frames, frame_count, alpha)
+
+            elif self._trecs_method == 'rr':
+                alpha = self._random_state.uniform(0.2, 3.0) * np.pi
+                output_video = self._resample_video(input_vid, self._output_frames, frame_count, alpha)
+
+            else:
+                raise ValueError('The requested method is not yet implemented: ', + self._trecs_method)
+
+            output_video_list.append(container.ndarray(output_video))
+
+        return base.CallResult(container.List(output_video_list, generate_metadata=True))
 
     #package the full state of the primitive (including hyperparameters and random state)
     #as a serializable dict

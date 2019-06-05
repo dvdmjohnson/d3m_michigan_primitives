@@ -2,9 +2,7 @@ import typing
 from d3m.metadata import hyperparams, base as metadata_module, params
 from d3m.primitive_interfaces import base, transformer, unsupervised_learning
 from d3m import container, utils
-import collections
 import os
-import stopit
 import numpy as np
 
 __all__ = ('GROUSE',)
@@ -120,7 +118,7 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
         self._training_size = inputs.shape[0]
 
     # GROUSE fit function: learns low-rank subspace from training data
-    def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
+    def fit(self, *, iterations: int = None) -> base.CallResult[None]:
 
         # Internal function to generate low-rank random matrix
         def generateLRMatrix(d, r):
@@ -137,24 +135,18 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
         _Mask = self._Mask.T  # Get the mask
 
         # Begin training
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
+        # Instantiate a random low-rank subspace
+        d = self._dim
+        r = self._rank
+        U = generateLRMatrix(d, r)
 
-            # Instantiate a random low-rank subspace
-            d = self._dim
-            r = self._rank
-            U = generateLRMatrix(d, r)
+        # Set the training control params
+        self._grouseOPTIONS = _OPTIONS(self._dim, self._rank, self._constant_step)
 
-            # Set the training control params
-            self._grouseOPTIONS = _OPTIONS(self._dim, self._rank, self._constant_step)
+        U = self._train_grouse(_X, _Mask, U)
+        self._U = U  # update global variable
 
-            U = self._train_grouse(_X, _Mask, U)
-            self._U = U  # update global variable
-
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-
-            return base.CallResult(None)
-        else:
-            raise TimeoutError("GROUSE fit() has timed out.")
+        return base.CallResult(None)
 
     # GROUSE training internal function
     def _train_grouse(self, X, Mask, U):
@@ -175,7 +167,7 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
 
         return U
 
-    def continue_fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
+    def continue_fit(self, *, iterations: int = None) -> base.CallResult[None]:
 
         # Get the vector input, and the subspace
         _X = self._X.T  # Get the data
@@ -184,46 +176,33 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
         Uhat = self._U
 
 
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
+        for i in range(0, numVectors):
+            _x = _X[:, i]
+            _xidx = np.where(_Mask[:, i])[0]
 
-            for i in range(0, numVectors):
-                _x = _X[:, i]
-                _xidx = np.where(_Mask[:, i])[0]
+            # Call GROUSE iteration
+            U, w = self._grouse_stream(Uhat, _x, _xidx)
 
-                # Call GROUSE iteration
-                U, w = self._grouse_stream(Uhat, _x, _xidx)
+            self._U = U
 
-                self._U = U
+            Uhat = U
 
-                Uhat = U
+        return base.CallResult(None)
 
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-
-            return base.CallResult(None)
-        else:
-            raise TimeoutError("GROUSE continue_fit() has timed out.")
-
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
         X = inputs
         U = self._U
 
         Y = U @ (U.T @ X.T)
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            return base.CallResult(container.ndarray(Y, generate_metadata=True))
+        return base.CallResult(container.ndarray(Y, generate_metadata=True))
 
-        if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
-            raise TimeoutError("GROUSE produce timed out.")
-
-    def produce_Subspace(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[
+    def produce_Subspace(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[
         Outputs]:
         X = inputs
         U = self._U
 
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            return base.CallResult(container.ndarray(U, generate_metadata=True))
+        return base.CallResult(container.ndarray(U, generate_metadata=True))
 
-        if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
-            raise TimeoutError("GROUSE produce timed out.")
 
     def fit_multi_produce(self, *, produce_methods: typing.Sequence[str], mask: Inputs, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.MultiCallResult:
         return self._fit_multi_produce(produce_methods=produce_methods, timeout=timeout, iterations=iterations, inputs=inputs, mask=mask)

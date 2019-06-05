@@ -4,10 +4,6 @@ from d3m.primitive_interfaces import base, distance
 from d3m import container, utils
 import collections
 import os
-import warnings
-import pickle
-import stopit
-import copy
 import numpy as np
 
 from sklearn.ensemble import ExtraTreesRegressor
@@ -145,7 +141,7 @@ class RFD(distance.PairwiseDistanceLearnerPrimitiveBase[Inputs, InputLabels, Out
 
     #timeout MUST be implemented on final primitive submissions
     #see https://gitlab.com/datadrivendiscovery/d3m/blob/devel/d3m/primitive_interfaces/base.py for details on CallResult
-    def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
+    def fit(self, *, iterations: int = None) -> base.CallResult[None]:
         """
         Fit the random forest distance to a set of labeled data by sampling and fitting
         to pairwise constraints.
@@ -161,45 +157,30 @@ class RFD(distance.PairwiseDistanceLearnerPrimitiveBase[Inputs, InputLabels, Out
         if(not (isinstance(self._X, container.ndarray) and isinstance(self._y, container.ndarray))):
             raise TypeError('Training inputs and outputs must be D3M numpy arrays.')
 
-        # store state in case of timeout
-        if hasattr(self, '_d'):
-            dtemp = self._d
-        else:
-           dtemp = None
-        rftemp = copy.deepcopy(self._rf)
+        # do fitting without timeout
+        n = self._X.shape[0]
+        self._d = self._X.shape[1]
+        assert n > 0
+        assert self._d > 0
+        assert n == self._y.shape[0]
 
-        # do fitting with timeout
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            n = self._X.shape[0]
-            self._d = self._X.shape[1]
-            assert n > 0
-            assert self._d > 0
-            assert n == self._y.shape[0]
+        constraints = get_random_constraints(
+            self._y, self._class_cons // 3, 2 * self._class_cons // 3, self._random_state)
 
-            constraints = get_random_constraints(
-                self._y, self._class_cons // 3, 2 * self._class_cons // 3, self._random_state)
+        c1 = self._X[constraints[:, 0], :]
+        c2 = self._X[constraints[:, 1], :]
+        rfdfeat = np.empty(dtype=np.float32, shape=(constraints.shape[0], self._d * 2))
+        rfdfeat[:, :self._d] = np.abs(c1 - c2)
+        rfdfeat[:, self._d:] = (c1 + c2) / 2
 
-            c1 = self._X[constraints[:, 0], :]
-            c2 = self._X[constraints[:, 1], :]
-            rfdfeat = np.empty(dtype=np.float32, shape=(constraints.shape[0], self._d * 2))
-            rfdfeat[:, :self._d] = np.abs(c1 - c2)
-            rfdfeat[:, self._d:] = (c1 + c2) / 2
+        self._rf.fit(rfdfeat, constraints[:, 2])
+        self._fitted = True
 
-            self._rf.fit(rfdfeat, constraints[:, 2])
-            self._fitted = True
-
-        # if we completed on time, return.  Otherwise reset state and raise error.
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-            return base.CallResult(None)
-        else:
-            self._d = dtemp
-            self._rf = rftemp
-            self._fitted = False
-            raise TimeoutError("RFD fitting timed out.")
+        return base.CallResult(None)
 
     #produce generally takes only one input.  Again, PairwiseDistanceLearners are an oddity.
     def produce(self, *, inputs: Inputs, second_inputs: Inputs, 
-               timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+              iterations: int = None) -> base.CallResult[Outputs]:
         """
         Compute the distance matrix between vector arrays inputs and
         second_inputs, yielding an output of shape n by m (where n and m are
@@ -222,22 +203,17 @@ class RFD(distance.PairwiseDistanceLearnerPrimitiveBase[Inputs, InputLabels, Out
         n1 = X.shape[0]
         n2 = Y.shape[0]
 
-        #start timeout counter
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            # compute distance from each instance in X to all instances in Y
-            dist = np.empty(dtype=np.float32, shape=(n1, n2))
-            for i in range(0, n1):
-                data = np.empty(dtype=np.float32, shape=(n2, self._d * 2))
-                data[:, :self._d] = np.abs(X[i, :] - Y)
-                data[:, self._d:] = (X[i, :] + Y) / 2
-                dist[i, :] = self._rf.predict(data)
+        # compute distance from each instance in X to all instances in Y
+        dist = np.empty(dtype=np.float32, shape=(n1, n2))
+        for i in range(0, n1):
+            data = np.empty(dtype=np.float32, shape=(n2, self._d * 2))
+            data[:, :self._d] = np.abs(X[i, :] - Y)
+            data[:, self._d:] = (X[i, :] + Y) / 2
+            dist[i, :] = self._rf.predict(data)
 
-            #Return distance.  Note that we "wrap" the numpy array in the appropriate D3M container class,
-            #before further wrapping it in the CallResult.
-            return base.CallResult(container.ndarray(dist, generate_metadata=True))
-        # if we did not finish in time, raise error.
-        if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
-            raise TimeoutError("RFD produce timed out.")
+        #Return distance.  Note that we "wrap" the numpy array in the appropriate D3M container class,
+        #before further wrapping it in the CallResult.
+        return base.CallResult(container.ndarray(dist, generate_metadata=True))
 
     def multi_produce(self, *, produce_methods: typing.Sequence[str], inputs: Inputs, second_inputs: Inputs, timeout: float = None, iterations: int = None) -> base.MultiCallResult:
         return self._multi_produce(produce_methods=produce_methods, timeout=timeout, iterations=iterations, inputs=inputs, second_inputs=second_inputs)

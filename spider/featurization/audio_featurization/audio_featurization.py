@@ -5,11 +5,7 @@ import d3m.metadata.base as metadata_module
 import d3m.metadata.hyperparams as hyperparams
 
 import numpy as np
-import math
-import stopit
-import sys
 import os
-import warnings
 from .utils import audio_feature_extraction
 
 __all__ = ('AudioFeaturization',)
@@ -113,7 +109,7 @@ class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inp
         self._overlap: float = hyperparams['overlap']
         self._step: int = max(int((self._frame_length - self._overlap) * self._sampling_rate), 1)
 
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
         """
         Compute the bag of features for each ndarray in the input list,
         yielding an output list of the same length. Each entry in the output
@@ -123,10 +119,8 @@ class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inp
 
         X = inputs
 
-        with stopit.ThreadingTimeout(timeout) as timer:
-
-            features = []
-            for i, x in enumerate(X):
+        features = []
+        for i, x in enumerate(X):
 
 #                # Handle multi-channel audio data
 #                if x.ndim > 2 or (x.ndim == 2 and x.shape[0] > 2) or x.shape[0] == 0:
@@ -136,35 +130,32 @@ class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inp
 #                    )
 #                elif x.ndim == 2:
 #                    x = x.mean(axis=0)
-                sampling_rate = self._sampling_rate
+            sampling_rate = self._sampling_rate
 
-                frame_length = self._frame_length
+            frame_length = self._frame_length
 
-                # Handle time series of insufficient length by padding the sequence with wrapped data
-                #if x.shape[0] < self._frame_length * self._sampling_rate:
-                #    diff = int(self._frame_length * self._sampling_rate) - x.shape[0]
-                #    x = np.pad(x, [math.floor(diff/2), math.ceil(diff/2)], 'wrap')
+            # Handle time series of insufficient length by padding the sequence with wrapped data
+            #if x.shape[0] < self._frame_length * self._sampling_rate:
+            #    diff = int(self._frame_length * self._sampling_rate) - x.shape[0]
+            #    x = np.pad(x, [math.floor(diff/2), math.ceil(diff/2)], 'wrap')
 
-                # Perform audio feature extraction
-                features.append(
-                    (audio_feature_extraction(
-                        x,
-                        sampling_rate,
-                        frame_length * sampling_rate,
-                        self._step
-                    ).T).mean(axis=0) #currently we are smashing features from each subsequence together, because TA2 can't really handle them separately
-                )
+            # Perform audio feature extraction
+            features.append(
+                (audio_feature_extraction(
+                    x,
+                    sampling_rate,
+                    frame_length * sampling_rate,
+                    self._step
+                ).T).mean(axis=0) #currently we are smashing features from each subsequence together, because TA2 can't really handle them separately
+            )
 
-            #construct output DataFrame and label designate each feature column as an Attribute
-            outframe = container.DataFrame(np.asarray(features), generate_metadata=True)
-            for i in range(outframe.shape[1]):
-                outframe.metadata = outframe.metadata.add_semantic_type(
-                    (metadata_module.ALL_ELEMENTS, i),
-                    'https://metadata.datadrivendiscovery.org/types/Attribute')
-            return base.CallResult(outframe)
-
-        if timer.state != timer.EXECUTED:
-            raise TimeoutError('AudioFeaturization produce timed out.')
+        #construct output DataFrame and label designate each feature column as an Attribute
+        outframe = container.DataFrame(np.asarray(features), generate_metadata=True)
+        for i in range(outframe.shape[1]):
+            outframe.metadata = outframe.metadata.add_semantic_type(
+                (metadata_module.ALL_ELEMENTS, i),
+                'https://metadata.datadrivendiscovery.org/types/Attribute')
+        return base.CallResult(outframe)
 
     #placeholder for now, just calls base version.
     @classmethod

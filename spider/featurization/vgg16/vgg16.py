@@ -3,16 +3,10 @@ from d3m.metadata import hyperparams, base as metadata_module, params
 from d3m.primitive_interfaces import base, featurization
 from d3m import container, utils as d3m_utils
 
-
-import sys
 import os
 import os.path
-import inspect
-import urllib.request, urllib.parse, urllib.error
 import warnings
-import stopit
 import numpy as np
-from scipy import misc
 
 import tensorflow as tf
 from keras import backend as K
@@ -22,8 +16,6 @@ from keras.layers import Dense
 from keras.layers import Input
 from keras.layers import Conv2D
 from keras.layers import MaxPooling2D
-from keras.layers import GlobalMaxPooling2D
-from keras.layers import GlobalAveragePooling2D
 from keras.preprocessing import image
 from keras.applications.imagenet_utils import preprocess_input
 from keras.applications.imagenet_utils import decode_predictions
@@ -294,26 +286,21 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
 
         return predictions
 
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
 
-        with stopit.ThreadingTimeout(timeout) as timer:
+        model = self._model_handler(self._output_feature_layer)
+        features = []
 
-            model = self._model_handler(self._output_feature_layer)
-            features = []
+        nimage = inputs.shape[0]
 
-            nimage = inputs.shape[0]
-
-            for i in range(nimage):
-                datum = np.rollaxis(inputs[i,:,:,:], 2)
-                x = self._input_handler(datum, self._interpolation_method)
-                image_features = model.predict(x)
-                image_features = np.squeeze(image_features)
-                features.append(image_features)
+        for i in range(nimage):
+            datum = np.rollaxis(inputs[i,:,:,:], 2)
+            x = self._input_handler(datum, self._interpolation_method)
+            image_features = model.predict(x)
+            image_features = np.squeeze(image_features)
+            features.append(image_features)
 
         return base.CallResult(container.ndarray(np.asarray(features), generate_metadata=True))
-
-        if timer.state != timer.EXECUTED:
-            raise TimeoutError('VGG16 produce timed out.')
 
     #placeholder for now, just calls base version.
     @classmethod

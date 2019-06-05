@@ -4,8 +4,6 @@ from d3m.primitive_interfaces import base, featurization
 from d3m import container, utils
 
 import numpy as np
-import stopit
-import sys
 import os
 
 
@@ -93,7 +91,7 @@ class AudioSlicer(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Ou
                 str(self._overlap) + 'seconds of overlap.'
             )
 
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
         """
         Splits each audio file into slices. Each file is represented in the
         input list as an ndarray. The output list contains the same number of
@@ -103,41 +101,36 @@ class AudioSlicer(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Ou
 
         X = inputs
 
-        with stopit.ThreadingTimeout(timeout) as timer:
+        features = container.List()
+        for i, x in enumerate(X):
 
-            features = container.List()
-            for i, x in enumerate(X):
+            # Handle multi-channel audio data
+            if x.ndim > 2 or (x.ndim == 2 and x.shape[0] > 2):
+                raise ValueError(
+                    'Time series ' + str(i) + ' found with ' + \
+                    'incompatible shape ' + str(x.shape)  + '.'
+                )
+            elif x.ndim == 2:
+                x = x.mean(axis=0)
 
-                # Handle multi-channel audio data
-                if x.ndim > 2 or (x.ndim == 2 and x.shape[0] > 2):
-                    raise ValueError(
-                        'Time series ' + str(i) + ' found with ' + \
-                        'incompatible shape ' + str(x.shape)  + '.'
+            # Iterate through audio extracting clips
+            clips = []
+            for i in range(0, len(x), self._step):
+                if i + self._samples_per_clip <= len(x):
+                    clips.append(x[i : i + self._samples_per_clip])
+                elif self._pad:
+                    clips.append(
+                        np.concatenate([
+                            x[i:],
+                            np.zeros(
+                                self._samples_per_clip - len(x[i:]))
+                        ])
                     )
-                elif x.ndim == 2:
-                    x = x.mean(axis=0)
 
-                # Iterate through audio extracting clips
-                clips = []
-                for i in range(0, len(x), self._step):
-                    if i + self._samples_per_clip <= len(x):
-                        clips.append(x[i : i + self._samples_per_clip])
-                    elif self._pad:
-                        clips.append(
-                            np.concatenate([
-                                x[i:],
-                                np.zeros(
-                                    self._samples_per_clip - len(x[i:]))
-                            ])
-                        )
+            features.append(container.ndarray(clips))
 
-                features.append(container.ndarray(clips))
+        return base.CallResult(container.ndarray(features, generate_metadata=True))
 
-            return base.CallResult(container.ndarray(features, generate_metadata=True))
-
-        if timer.state != timer.EXECUTED:
-            raise TimeoutError('AudioSlicer produce timed out.')
-            
     #placeholder for now, just calls base version.
     @classmethod
     def can_accept(cls, *, method_name: str, arguments: typing.Dict[str, typing.Union[metadata_module.Metadata, type]], hyperparams: AudioSlicerHyperparams) -> typing.Optional[metadata_module.DataMetadata]:

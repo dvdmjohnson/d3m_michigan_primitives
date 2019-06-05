@@ -4,7 +4,6 @@ from d3m.primitive_interfaces import base, transformer
 from d3m import container, utils
 import collections
 import os
-import stopit
 import numpy as np
 import numpy.matlib as ml
 from numpy.linalg import norm
@@ -101,7 +100,7 @@ class PCP_IALM(transformer.TransformerPrimitiveBase[Inputs, Outputs, PCP_IALMHyp
         self._rho = hyperparams['rho']
         self._epsilon = hyperparams['epsilon']
     
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
         
         def shrink(T, zeta):
             return np.matrix(np.maximum(np.zeros(T.shape), np.array(np.absolute(T)) - zeta) * np.array(np.sign(T)))
@@ -111,31 +110,26 @@ class PCP_IALM(transformer.TransformerPrimitiveBase[Inputs, Outputs, PCP_IALMHyp
             s_thresh = np.array([max(abs(sig) - tau, 0.0) * np.sign(sig) for sig in s])
             return U * np.matrix(np.diag(s_thresh)) * V
         
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            D = np.transpose(np.matrix(inputs))
-            d,n = inputs.shape
-            k = 0
-            D_norm_fro = norm(D,'fro')
-            D_norm_2 = norm(D,2)
-            D_norm_inf = norm(D,np.inf)
-            mu = self._mu if self._mu != -1 else 1.25 / D_norm_2
-            rho = self._rho
-            lamb = self._lamb if self._lamb != -1 else 1.0 / np.sqrt(d)
-            Y = D / max(D_norm_2, D_norm_inf / lamb)
-            E = ml.zeros(D.shape)
-            A = ml.zeros(D.shape)
-            while (iterations == None or k < iterations) and norm(D-A-E,'fro') > self._epsilon * D_norm_fro:
-                A = SVD_thresh(D - E + Y / mu, 1 / mu)
-                E = shrink(D - A + Y / mu, lamb / mu)
-                Y = Y + mu * (D - A - E)
-                mu = rho * mu
-                k += 1
-            W = np.array(A.T)
-            return base.CallResult(container.ndarray(W, generate_metadata=True))
-
-        if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
-            raise TimeoutError("PCP_IALM produce timed out.")
-
+        D = np.transpose(np.matrix(inputs))
+        d,n = inputs.shape
+        k = 0
+        D_norm_fro = norm(D,'fro')
+        D_norm_2 = norm(D,2)
+        D_norm_inf = norm(D,np.inf)
+        mu = self._mu if self._mu != -1 else 1.25 / D_norm_2
+        rho = self._rho
+        lamb = self._lamb if self._lamb != -1 else 1.0 / np.sqrt(d)
+        Y = D / max(D_norm_2, D_norm_inf / lamb)
+        E = ml.zeros(D.shape)
+        A = ml.zeros(D.shape)
+        while (iterations == None or k < iterations) and norm(D-A-E,'fro') > self._epsilon * D_norm_fro:
+            A = SVD_thresh(D - E + Y / mu, 1 / mu)
+            E = shrink(D - A + Y / mu, lamb / mu)
+            Y = Y + mu * (D - A - E)
+            mu = rho * mu
+            k += 1
+        W = np.array(A.T)
+        return base.CallResult(container.ndarray(W, generate_metadata=True))
 
     #placeholder for now, just calls base version.
     @classmethod

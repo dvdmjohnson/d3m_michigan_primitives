@@ -2,10 +2,8 @@ import typing
 from d3m.metadata import hyperparams, base as metadata_module, params
 from d3m.primitive_interfaces import base, clustering
 from d3m import container, utils
-import collections
 import numpy as np
 from scipy.linalg import orth
-import stopit
 import os
 
 Inputs = container.ndarray
@@ -73,7 +71,7 @@ class KSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, KSSParams, K
         self._X = inputs
         self._U = None
 
-    def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
+    def fit(self, *, iterations: int = None) -> base.CallResult[None]:
         assert self._X is not None, "No training data provided."
         assert self._X.ndim == 2, "Data is not in the right shape."
         assert self._dim_subspaces <= self._X.shape[1], "Dim_subspaces should be less than ambient dimension."
@@ -81,66 +79,58 @@ class KSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, KSSParams, K
         _X = self._X.T
         n_features, n_samples = _X.shape
 
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            # randomly initialize subspaces
-            U_init = np.zeros((self._k, n_features, self._dim_subspaces))
-            for kk in range(self._k):
-                U_init[kk] = orth(self._random_state.randn(n_features, self._dim_subspaces))
+        # randomly initialize subspaces
+        U_init = np.zeros((self._k, n_features, self._dim_subspaces))
+        for kk in range(self._k):
+            U_init[kk] = orth(self._random_state.randn(n_features, self._dim_subspaces))
 
-            # compute residuals
-            full_residuals = np.zeros((n_samples, self._k))
+        # compute residuals
+        full_residuals = np.zeros((n_samples, self._k))
+        for kk in range(self._k):
+            tmp1 = np.dot(U_init[kk].T, _X)
+            tmp2 = np.dot(U_init[kk], tmp1)
+            full_residuals[:,kk] = np.linalg.norm(_X-tmp2, ord=2, axis=0)
+
+        # label by nearest subspace
+        estimated_labels = np.argmin(full_residuals, axis=1)
+
+        # alternate between subspace estimation and assignment
+        prev_labels = -1 * np.ones(estimated_labels.shape)
+        it = 0
+        while np.sum(estimated_labels != prev_labels) and (iterations is None or it < iterations):
+            # first update residuals after labels obtained
+            U = np.empty((self._k, n_features, self._dim_subspaces))
             for kk in range(self._k):
-                tmp1 = np.dot(U_init[kk].T, _X)
-                tmp2 = np.dot(U_init[kk], tmp1)
+                Z = _X[:,estimated_labels == kk]
+                D, V = np.linalg.eig(np.dot(Z, Z.T))
+                D_idx = np.argsort(-D) # descending order
+                U[kk] = V[:,D_idx[list(range(self._dim_subspaces))]]
+                tmp1 = np.dot(U[kk,:].T, _X)
+                tmp2 = np.dot(U[kk,:], tmp1)
                 full_residuals[:,kk] = np.linalg.norm(_X-tmp2, ord=2, axis=0)
-
+            # update prev_labels
+            prev_labels = estimated_labels
             # label by nearest subspace
             estimated_labels = np.argmin(full_residuals, axis=1)
 
-            # alternate between subspace estimation and assignment
-            prev_labels = -1 * np.ones(estimated_labels.shape)
-            it = 0
-            while np.sum(estimated_labels != prev_labels) and (iterations is None or it < iterations):
-                # first update residuals after labels obtained
-                U = np.empty((self._k, n_features, self._dim_subspaces))
-                for kk in range(self._k):
-                    Z = _X[:,estimated_labels == kk]
-                    D, V = np.linalg.eig(np.dot(Z, Z.T))
-                    D_idx = np.argsort(-D) # descending order
-                    U[kk] = V[:,D_idx[list(range(self._dim_subspaces))]]
-                    tmp1 = np.dot(U[kk,:].T, _X)
-                    tmp2 = np.dot(U[kk,:], tmp1)
-                    full_residuals[:,kk] = np.linalg.norm(_X-tmp2, ord=2, axis=0)
-                # update prev_labels
-                prev_labels = estimated_labels
-                # label by nearest subspace
-                estimated_labels = np.argmin(full_residuals, axis=1)
+            it = it + 1
 
-                it = it + 1
+        self._U = U
+        return base.CallResult(None)
 
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-            self._U = U
-            return base.CallResult(None)
-        else:
-            raise TimeoutError("KSS fit() has timed out.")
-
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs) -> base.CallResult[Outputs]:
         if self._U is None:
             raise ValueError("Calling produce before fitting.")
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            full_residuals = np.empty((inputs.shape[0], self._k))
-            for kk in range(self._k):
-                tmp1 = np.dot(self._U[kk,:].T, inputs.T)
-                tmp2 = np.dot(self._U[kk,:], tmp1)
-                full_residuals[:,kk] = np.linalg.norm(inputs.T-tmp2, ord=2, axis=0)
-            labels = np.argmin(full_residuals, axis=1)
+        full_residuals = np.empty((inputs.shape[0], self._k))
+        for kk in range(self._k):
+            tmp1 = np.dot(self._U[kk,:].T, inputs.T)
+            tmp2 = np.dot(self._U[kk,:], tmp1)
+            full_residuals[:,kk] = np.linalg.norm(inputs.T-tmp2, ord=2, axis=0)
+        labels = np.argmin(full_residuals, axis=1)
 
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-            return base.CallResult(Outputs(labels))
-        else:
-            raise TimeoutError("KSS produce() has timed out.")
+        return base.CallResult(Outputs(labels))
 
-    def produce_distance_matrix(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[DistanceMatrixOutput]:
+    def produce_distance_matrix(self, *, inputs: Inputs) -> base.CallResult[DistanceMatrixOutput]:
         """
             Returns a generic result representing the cluster assignment labels in distance matrix form (i.e. distance is 0
             if the two instances are in the same class, and 1 if they are not).
@@ -148,23 +138,19 @@ class KSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, KSSParams, K
         if self._U is None:
             raise ValueError("Calling produce before fitting.")
 
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            full_residuals = np.empty((inputs.shape[0], self._k))
-            for kk in range(self._k):
-                tmp1 = np.dot(self._U[kk,:].T, inputs.T)
-                tmp2 = np.dot(self._U[kk,:], tmp1)
-                full_residuals[:,kk] = np.linalg.norm(inputs.T-tmp2, ord=2, axis=0)
-            labels = np.argmin(full_residuals, axis=1)
+        full_residuals = np.empty((inputs.shape[0], self._k))
+        for kk in range(self._k):
+            tmp1 = np.dot(self._U[kk,:].T, inputs.T)
+            tmp2 = np.dot(self._U[kk,:], tmp1)
+            full_residuals[:,kk] = np.linalg.norm(inputs.T-tmp2, ord=2, axis=0)
+        labels = np.argmin(full_residuals, axis=1)
 
-            n = labels.shape[0]
-            labmat = np.empty((n,n))
-            for i in range(0,n):
-                labmat[i,:] = labels != labels[i]
+        n = labels.shape[0]
+        labmat = np.empty((n,n))
+        for i in range(0,n):
+            labmat[i,:] = labels != labels[i]
 
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-            return base.CallResult(DistanceMatrixOutput(labmat))
-        else:
-            raise TimeoutError("KSS produce_distance_matrix() has timed out.")
+        return base.CallResult(DistanceMatrixOutput(labmat))
 
     def get_params(self) -> KSSParams:
         return KSSParams(U = self._U)

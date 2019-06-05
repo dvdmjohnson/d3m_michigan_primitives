@@ -1,6 +1,5 @@
 import typing
 import os
-import stopit
 import numpy as np
 
 from d3m import container, utils
@@ -236,7 +235,7 @@ class OWLRegression(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, O
     #timeout MUST be implemented on final primitive submissions
     #see https://gitlab.com/datadrivendiscovery/d3m/blob/devel/d3m/primitive_interfaces/base.py for details on CallResult
 
-    def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
+    def fit(self, *, iterations: int = None) -> base.CallResult[None]:
         """
         Fit the linear regression problem with OWL regularization
         """
@@ -255,80 +254,64 @@ class OWLRegression(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, O
         self._X, self._y, X_offset, y_offset, X_scale = self._preprocessing(
                 self._X, self._y, self._fit_intercept, self._normalize)
 
-        # Store state in case of timeout
-        if hasattr(self, '_coef'):
-            coef = self._coef
-            intercept = self._intercept
-        else:
-            coef = None
-
         # Do fitting with timeout
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            self._coef = np.zeros(self._X.shape[1], dtype=float)
-            assert self._X.shape[0] > 0
-            assert self._X.shape[0] == self._y.shape[0], "shapes of input X and y don't match"
+        self._coef = np.zeros(self._X.shape[1], dtype=float)
+        assert self._X.shape[0] > 0
+        assert self._X.shape[0] == self._y.shape[0], "shapes of input X and y don't match"
 
-            # FISTA with proxOWL as proximal operator
-            if iterations is None:
-                iterations = float('inf')
+        # FISTA with proxOWL as proximal operator
+        if iterations is None:
+            iterations = float('inf')
 
-            n_iter = 0
-            loss_history = []
-            loss = lambda beta: costOWL(beta, self._X, self._y, self._weight)
-            coef_old = np.zeros(self._X.shape[1])
-            z = coef_old.copy()
-            t_old = 1
+        n_iter = 0
+        loss_history = []
+        loss = lambda beta: costOWL(beta, self._X, self._y, self._weight)
+        coef_old = np.zeros(self._X.shape[1])
+        z = coef_old.copy()
+        t_old = 1
 
-            if self._verbose >= 1:
-                print("FISTA training begins:")
-            eps = np.nan
-            while True:
-                if n_iter >= iterations:
-                    break
+        if self._verbose >= 1:
+            print("FISTA training begins:")
+        eps = np.nan
+        while True:
+            if n_iter >= iterations:
+                break
 
-                _, grad_fit = loss(z)
-                z = z - self._learning_rate * grad_fit
-                coef = proxOWL(z, self._learning_rate * self._weight)
-                t = (1 + np.sqrt(1+4*t_old**2)) / 2
-                z = coef + ((t_old-1)/t) * (coef - coef_old)
+            _, grad_fit = loss(z)
+            z = z - self._learning_rate * grad_fit
+            coef = proxOWL(z, self._learning_rate * self._weight)
+            t = (1 + np.sqrt(1+4*t_old**2)) / 2
+            z = coef + ((t_old-1)/t) * (coef - coef_old)
 
-                eps = np.linalg.norm(coef - coef_old) / (np.linalg.norm(coef_old) + 1e-10)
-                if eps < self._tol:
-                    break
+            eps = np.linalg.norm(coef - coef_old) / (np.linalg.norm(coef_old) + 1e-10)
+            if eps < self._tol:
+                break
 
-                coef_old = coef
-                t_old = t
+            coef_old = coef
+            t_old = t
 
-                cur_loss, _ = loss(coef)
-                loss_history.append(cur_loss)
-                n_iter += 1
+            cur_loss, _ = loss(coef)
+            loss_history.append(cur_loss)
+            n_iter += 1
 
-                if self._verbose >= 2 and n_iter % max(1, iterations//20) == 0:
-                    print("iter = {:4d}, loss = {:f}".format(n_iter, loss_history[-1]))
-            if self._verbose >= 1:
-                print("FISTA training exits after {} iterations, with loss={:f} and eps={:f}".format(
-                    n_iter, loss_history[-1], eps))
+            if self._verbose >= 2 and n_iter % max(1, iterations//20) == 0:
+                print("iter = {:4d}, loss = {:f}".format(n_iter, loss_history[-1]))
+        if self._verbose >= 1:
+            print("FISTA training exits after {} iterations, with loss={:f} and eps={:f}".format(
+                n_iter, loss_history[-1], eps))
 
-            self._loss_history = loss_history
-            self._n_iter = n_iter
-            self._coef = coef / X_scale
-            if self._fit_intercept:
-                self._intercept = float(y_offset - X_offset.dot(self._coef))
-            else:
-                self._intercept = float(0)
-            self._fitted = True
-
-        # If we completed on time, return.  Otherwise reset state and raise error.
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-            return base.CallResult(None)
+        self._loss_history = loss_history
+        self._n_iter = n_iter
+        self._coef = coef / X_scale
+        if self._fit_intercept:
+            self._intercept = float(y_offset - X_offset.dot(self._coef))
         else:
-            self._coef = coef
-            self._intercept = intercept
-            self._fitted = False
-            raise TimeoutError("OWL fitting timed out.")
+            self._intercept = float(0)
+        self._fitted = True
 
+        return base.CallResult(None)
 
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
         """
         Compute the predictions given inputs with shape n by m,
         yielding an array of size n.
@@ -343,14 +326,10 @@ class OWLRegression(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, O
             raise ValueError('Input dimension is wrong.')
 
         # Start timeout counter.
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            outputs: container.ndarray = container.ndarray(
-                   inputs.dot(self._coef) + self._intercept)
-            outputs.metadata = inputs.metadata.clear(for_value=outputs, source=self)
-            return base.CallResult(outputs)
-        # If we did not finish in time, raise error.
-        if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
-            raise TimeoutError("OWL regression produce timed out.")
+        outputs: container.ndarray = container.ndarray(
+               inputs.dot(self._coef) + self._intercept)
+        outputs.metadata = inputs.metadata.clear(for_value=outputs, source=self)
+        return base.CallResult(outputs)
 
     # Package up our (potentially) fitted params for external inspection and storage
     def get_params(self) -> OWLParams:

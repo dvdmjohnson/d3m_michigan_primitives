@@ -3,10 +3,8 @@ from d3m.metadata import hyperparams, base as metadata_module, params
 from d3m.primitive_interfaces import base, clustering
 from d3m import container, utils
 import collections
-import stopit
 import os
 import numpy as np
-import numpy.matlib
 from sklearn.cluster import KMeans
 from cvxpy import *
 
@@ -167,35 +165,27 @@ class SSC_CVX(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(Non
 
         return C
    
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
 
         if iterations == None or iterations < 5:
             iterations = 1000
 
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            C = self._compute_sparse_coefficient_matrix(inputs)
-            W = self._build_adjacency_matrix(C)
-            labels = self._spectral_clustering(W, n_clusters = self._k, max_iter = iterations)
-            labels = np.array(labels)
+        C = self._compute_sparse_coefficient_matrix(inputs)
+        W = self._build_adjacency_matrix(C)
+        labels = self._spectral_clustering(W, n_clusters = self._k, max_iter = iterations)
+        labels = np.array(labels)
 
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-            return base.CallResult(Outputs(labels))
-        else:
-            raise TimeoutError("SSC CVX produce has timed out.")
+        return base.CallResult(Outputs(labels))
 
-    def produce_distance_matrix(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[DistanceMatrixOutput]:
+    def produce_distance_matrix(self, *, inputs: Inputs) -> base.CallResult[DistanceMatrixOutput]:
         """
             Returns 1 - the affinity matrix generated from the subspace-transformed data
         """
 
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            C = self._compute_sparse_coefficient_matrix(inputs)
-            W = self._build_adjacency_matrix(C)
+        C = self._compute_sparse_coefficient_matrix(inputs)
+        W = self._build_adjacency_matrix(C)
 
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-            return base.CallResult(DistanceMatrixOutput(1 - W))
-        else:
-            raise TimeoutError("SSC CVX produce has timed out.")
+        return base.CallResult(DistanceMatrixOutput(1 - W))
 
     def __getstate__(self) -> dict:
         return {

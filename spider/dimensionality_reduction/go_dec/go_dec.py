@@ -4,7 +4,6 @@ from d3m.primitive_interfaces import base, transformer
 from d3m import container, utils
 import collections
 import os
-import stopit
 import numpy as np
 import numpy.matlib as ml
 from numpy.linalg import norm
@@ -96,7 +95,7 @@ class GO_DEC(transformer.TransformerPrimitiveBase[Inputs, Outputs, GO_DECHyperpa
         self._epsilon = hyperparams['epsilon']
         self._random_state = np.random.RandomState(random_seed)
     
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
         
         def largest_entries(M, kk):
             k = int(kk)
@@ -107,36 +106,32 @@ class GO_DEC(transformer.TransformerPrimitiveBase[Inputs, Outputs, GO_DECHyperpa
             Y[ind] = LL[ind]
             return np.matrix(Y.reshape(M.shape))
 
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            X = np.matrix(np.transpose(inputs))
-            m,n = X.shape
-            rank = self._r if self._r >= 1 else np.floor(self._r * min(m, n))
-            card = self._card if self._card >= 1 else np.floor(self._card * m * n)
-            r = self._r
-            L = np.matrix(X)
-            S = ml.zeros(X.shape)
-            itr = 1
-            while True:
-                Y2 = np.matrix(self._random_state.normal(size = (n,int(rank))))
-                for i in range(self._power + 1):
-                    Y1 = L * Y2
-                    Y2 = L.T * Y1
-                Q,R = qr(Y2,mode='economic')
-                L_new = L * Q * Q.T
-                T = L - L_new + S
-                L = L_new
-                S = largest_entries(T,card)
-                T = T - S
-                if norm(T,'fro') < self._epsilon or (iterations != None and itr > iterations):
-                    break
-                L = L + T
-                itr += 1
-            W = np.array(L.T)
+        X = np.matrix(np.transpose(inputs))
+        m,n = X.shape
+        rank = self._r if self._r >= 1 else np.floor(self._r * min(m, n))
+        card = self._card if self._card >= 1 else np.floor(self._card * m * n)
+        r = self._r
+        L = np.matrix(X)
+        S = ml.zeros(X.shape)
+        itr = 1
+        while True:
+            Y2 = np.matrix(self._random_state.normal(size = (n,int(rank))))
+            for i in range(self._power + 1):
+                Y1 = L * Y2
+                Y2 = L.T * Y1
+            Q,R = qr(Y2,mode='economic')
+            L_new = L * Q * Q.T
+            T = L - L_new + S
+            L = L_new
+            S = largest_entries(T,card)
+            T = T - S
+            if norm(T,'fro') < self._epsilon or (iterations != None and itr > iterations):
+                break
+            L = L + T
+            itr += 1
+        W = np.array(L.T)
         
-            return base.CallResult(container.ndarray(W, generate_metadata=True))
-
-        if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
-            raise TimeoutError("GO_DEC produce timed out.")
+        return base.CallResult(container.ndarray(W, generate_metadata=True))
 
     def __getstate__(self) -> dict:
         return {

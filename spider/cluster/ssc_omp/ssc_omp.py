@@ -2,16 +2,11 @@ import typing
 from d3m.metadata import hyperparams, base as metadata_module, params
 from d3m.primitive_interfaces import base, clustering
 from d3m import container, utils
-import collections
-import stopit
 import os
 import numpy as np
-import scipy as sp
-from scipy.sparse.linalg import svds, eigs
 from scipy.linalg import lstsq
 import scipy.sparse as sps
 from sklearn.cluster import KMeans
-from scipy.optimize import linear_sum_assignment
 
 
 Inputs = container.ndarray
@@ -170,7 +165,7 @@ class SSC_OMP(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(Non
         labels = l.labels_.reshape((N,))
         return labels
 
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
         assert inputs.ndim == 2, "Data is not in the right shape"
         assert self._max_subspace_dim <= inputs.shape[1], "max_subspace dim can't be greater than the" + \
         "input feature space"
@@ -178,19 +173,15 @@ class SSC_OMP(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(Non
         if iterations == None or iterations < 5:
             iterations = 1000
 
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            data = inputs.T
-            R = SSC_OMP._OMPMatFunction(data, self._max_subspace_dim, self._thres)
-            np.fill_diagonal(R, 0)
-            A = np.abs(R) + np.abs(R.T)
-            labels = self._spectral_clustering(A, n_clusters=self._k, max_iter=iterations, n_init=20)
+        data = inputs.T
+        R = SSC_OMP._OMPMatFunction(data, self._max_subspace_dim, self._thres)
+        np.fill_diagonal(R, 0)
+        A = np.abs(R) + np.abs(R.T)
+        labels = self._spectral_clustering(A, n_clusters=self._k, max_iter=iterations, n_init=20)
 
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-            return base.CallResult(Outputs(labels))
-        else:
-            raise TimeoutError("SSC OMP produce has timed out.")
+        return base.CallResult(Outputs(labels))
 
-    def produce_distance_matrix(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[DistanceMatrixOutput]:
+    def produce_distance_matrix(self, *, inputs: Inputs) -> base.CallResult[DistanceMatrixOutput]:
         """
             Returns 1 - the affinity matrix generated from the subspace-transformed data
         """
@@ -198,16 +189,12 @@ class SSC_OMP(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(Non
         assert self._max_subspace_dim <= inputs.shape[1], "max_subspace dim can't be greater than the" + \
         "input feature space"
 
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            data = inputs.T
-            R = SSC_OMP._OMPMatFunction(data, self._max_subspace_dim, self._thres)
-            np.fill_diagonal(R, 0)
-            A = np.abs(R) + np.abs(R.T)
+        data = inputs.T
+        R = SSC_OMP._OMPMatFunction(data, self._max_subspace_dim, self._thres)
+        np.fill_diagonal(R, 0)
+        A = np.abs(R) + np.abs(R.T)
 
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-            return base.CallResult(DistanceMatrixOutput(1 - A))
-        else:
-            raise TimeoutError("SSC OMP produce has timed out.")
+        return base.CallResult(DistanceMatrixOutput(1 - A))
 
 
     def __getstate__(self) -> dict:

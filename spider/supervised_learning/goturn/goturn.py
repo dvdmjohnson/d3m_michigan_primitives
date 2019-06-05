@@ -2,20 +2,12 @@ import typing
 from d3m.metadata import hyperparams, base as metadata_module, params
 from d3m.primitive_interfaces import base, supervised_learning
 from d3m import container, utils as d3m_utils
-import collections
 import os
-import warnings
-import pickle
-import stopit
-import copy
 import numpy as np
 
-import time
-import sys
 
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import torchvision.transforms as transforms
 from torch.autograd import Variable
 
@@ -251,7 +243,7 @@ class GoTurn(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, Outputs,
 
         return x0, x1, y1
 
-    def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
+    def fit(self, *, iterations: int = None) -> base.CallResult[None]:
 
         if self._fitted:
             return base.CallResult(None)
@@ -263,34 +255,29 @@ class GoTurn(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, Outputs,
             raise TypeError('Training inputs and outputs must be D3M numpy arrays')
 
         #Fit with timeout
-        with stopit.ThreadingTimeout(timeout) as timer:
-            self._model.train() #Set model to training mode
+        self._model.train() #Set model to training mode
 
-            for _ in range(self._num_epochs):
-                y0 = self._y_init
-                for x0,x1,y1 in zip(self._X0, self._X1, self._y):
-                    prev_image, curr_image, curr_bbox = self._preprocess(x0,x1,y0,y1)
-                    
-                    #Perform prediction with model
-                    prediction = self._model(Variable(curr_image), Variable(prev_image))
-                    
-                    self._optimizer.zero_grad()
-                    loss = self._loss(prediction, Variable(curr_bbox))
-                    loss.backward()
-                    self._optimizer.step()
-                    
-                    y0 = y1
+        for _ in range(self._num_epochs):
+            y0 = self._y_init
+            for x0,x1,y1 in zip(self._X0, self._X1, self._y):
+                prev_image, curr_image, curr_bbox = self._preprocess(x0,x1,y0,y1)
 
-            self._fitted = True
+                #Perform prediction with model
+                prediction = self._model(Variable(curr_image), Variable(prev_image))
 
-        #If completed on time return, else reset state and raise error
-        if timer.state == timer.EXECUTED:
-            return base.CallResult(None)
-        else:
-            raise TimeoutError('GoTurn fit timed out')
+                self._optimizer.zero_grad()
+                loss = self._loss(prediction, Variable(curr_bbox))
+                loss.backward()
+                self._optimizer.step()
+
+                y0 = y1
+
+        self._fitted = True
+
+        return base.CallResult(None)
 
     @base.singleton 
-    def produce(self, *, inputs: Inputs, targets: Outputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, targets: Outputs, iterations: int = None) -> base.CallResult[Outputs]:
 
         if self._fitted is False:
             raise ValueError('Calling produce before fitting')
@@ -318,25 +305,21 @@ class GoTurn(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, Outputs,
         y_init = targets[0] #initialize tracker from first frame
         y = targets[1:] #next frame coordinates
 
-        with stopit.ThreadingTimeout(timeout) as timer:
-            coordinate_predictions = container.List()
-            self._model.eval() #Set model to eval mode
+        coordinate_predictions = container.List()
+        self._model.eval() #Set model to eval mode
 
-            y0 = y_init
-            for x0,x1,y1 in zip(X0, X1, y):
-                prev_image, curr_image, curr_bbox = self._preprocess(x0,x1,y0,y1)
-                
-                #Perform prediction with model
-                prediction = self._model(Variable(curr_image), Variable(prev_image))
-                coordinate_predictions.append(prediction[0].data.cpu().numpy())
-                
-                y0 = y1
+        y0 = y_init
+        for x0,x1,y1 in zip(X0, X1, y):
+            prev_image, curr_image, curr_bbox = self._preprocess(x0,x1,y0,y1)
+
+            #Perform prediction with model
+            prediction = self._model(Variable(curr_image), Variable(prev_image))
+            coordinate_predictions.append(prediction[0].data.cpu().numpy())
+
+            y0 = y1
 
         return base.CallResult(np.array(coordinate_predictions))
 
-        if timer.state != timer.EXECUTED:
-            raise TimeoutError('GoTurn produce timed out')
-	
     def multi_produce(self, *, produce_methods: typing.Sequence[str], inputs: Inputs, targets: Outputs, timeout: float = None, iterations: int = None) -> base.MultiCallResult:  # type: ignore
         return self._multi_produce(produce_methods=produce_methods, timeout=timeout, iterations=iterations, inputs=inputs, reference=reference)
 

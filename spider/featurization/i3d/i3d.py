@@ -2,17 +2,8 @@ import typing
 from d3m.metadata import hyperparams, base as metadata_module, params
 from d3m.primitive_interfaces import base, featurization
 from d3m import container, utils as d3m_utils
-from common_primitives import dataset_to_dataframe
-import collections
-import os
-import warnings
-import pickle
-import stopit
-import copy
 import numpy as np
 
-import time
-import sys
 import cv2
 import tensorflow as tf
 
@@ -434,58 +425,53 @@ class I3D(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs, I
         return x
 
     @base.singleton
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
 
-        with stopit.ThreadingTimeout(timeout) as timer:
+        features = container.List()
+        #import pdb; pdb.set_trace();
 
-            features = container.List()
-            #import pdb; pdb.set_trace();
+        num_columns = inputs.metadata.query((metadata_module.ALL_ELEMENTS,))['dimension']['length']
+        column_to_use = None
 
-            num_columns = inputs.metadata.query((metadata_module.ALL_ELEMENTS,))['dimension']['length']
-            column_to_use = None
+        #Find which column contains the semantic type http://schema.org/VideoObject
+        for idx in range(num_columns):
+            column_metadata = inputs.metadata.query((metadata_module.ALL_ELEMENTS,idx))
+            semantic_types = column_metadata['semantic_types']
+            structural_type = column_metadata['structural_type']
 
-            #Find which column contains the semantic type http://schema.org/VideoObject
-            for idx in range(num_columns):
-                column_metadata = inputs.metadata.query((metadata_module.ALL_ELEMENTS,idx))
-                semantic_types = column_metadata['semantic_types']
-                structural_type = column_metadata['structural_type']
+            #The column to use will contain the VideoObject semantic type but not the FileName semantic type
+            if 'http://schema.org/VideoObject' in semantic_types and structural_type == container.ndarray:
+                column_to_use = idx
 
-                #The column to use will contain the VideoObject semantic type but not the FileName semantic type
-                if 'http://schema.org/VideoObject' in semantic_types and structural_type == container.ndarray:
-                    column_to_use = idx 
+        assert(column_to_use is not None)
 
-            assert(column_to_use is not None)
 
-            
-            #Load model checkpoints
-            filename = self._weights_path
-            #print('Weights filename: {}'.format(filename))
-            ckpt = np.load(filename, encoding='latin1')
+        #Load model checkpoints
+        filename = self._weights_path
+        #print('Weights filename: {}'.format(filename))
+        ckpt = np.load(filename, encoding='latin1')
 
-            video_placeholder = tf.placeholder(tf.float32, shape=(1,) + self._output_video_shape)
-            XX = self._inference(video_placeholder, is_training=False, input_dims=self._input_dims, output_dims=51, seq_length=1, return_layer=[self._output_feature_layer], scope='RGB/inception_i3d')
+        video_placeholder = tf.placeholder(tf.float32, shape=(1,) + self._output_video_shape)
+        XX = self._inference(video_placeholder, is_training=False, input_dims=self._input_dims, output_dims=51, seq_length=1, return_layer=[self._output_feature_layer], scope='RGB/inception_i3d')
 
-            init = tf.global_variables_initializer()
-            self._sess.run(init)
+        init = tf.global_variables_initializer()
+        self._sess.run(init)
 
-            if ckpt == None:
-                raise IOError('Model weights not found from  %s' % filename)
-            else:
-                #Initialize model variables
-                initialize_from_dict(self._sess, ckpt, self._model_name)
+        if ckpt == None:
+            raise IOError('Model weights not found from  %s' % filename)
+        else:
+            #Initialize model variables
+            initialize_from_dict(self._sess, ckpt, self._model_name)
 
-            for data in inputs.iloc[:,column_to_use]:
-                x = self._input_handler(data)
+        for data in inputs.iloc[:,column_to_use]:
+            x = self._input_handler(data)
 
-                video_features = self._sess.run(XX, feed_dict={video_placeholder: x})[0] #returning only 1 layer
-                video_features = np.squeeze(video_features)
+            video_features = self._sess.run(XX, feed_dict={video_placeholder: x})[0] #returning only 1 layer
+            video_features = np.squeeze(video_features)
 
-                features.append(video_features)
+            features.append(video_features)
 
         return base.CallResult(np.array(features))
-
-        if timer.state != timer.EXECUTED:
-            raise TimeoutError('I3D produce time out')
 
     #placeholder for now, just calls base version.
     @classmethod

@@ -2,9 +2,7 @@ import typing
 from d3m.metadata import hyperparams, base as metadata_module, params
 from d3m.primitive_interfaces import base, transformer, unsupervised_learning
 from d3m import container, utils
-import collections
 import os
-import stopit
 import numpy as np
 
 
@@ -190,7 +188,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
                               last_gamma=np.zeros(self._dim), train=1)
 
     #GRASTA fit function: learns low-rank subspace from training data
-    def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
+    def fit(self, *, iterations: int = None) -> base.CallResult[None]:
 
         #Internal function to generate low-rank random matrix
         def generateLRMatrix(d, r):
@@ -208,26 +206,21 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         _X = self._X.T  #Get the training data
 
         #Begin training
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
 
-            # Instantiate a random low-rank subspace
-            d = self._dim
-            r = self._rank
-            U = generateLRMatrix(d, r)
+        # Instantiate a random low-rank subspace
+        d = self._dim
+        r = self._rank
+        U = generateLRMatrix(d, r)
 
-            # Set the training control params
-            self._grastaOPTIONS = _OPTIONS(self._dim, self._rank, self._train_sampling, self._admm_max_iter,
-                                          self._admm_min_iter,
-                                          self._max_level, self._max_mu, self._min_mu, self._constant_step)
+        # Set the training control params
+        self._grastaOPTIONS = _OPTIONS(self._dim, self._rank, self._train_sampling, self._admm_max_iter,
+                                      self._admm_min_iter,
+                                      self._max_level, self._max_mu, self._min_mu, self._constant_step)
 
-            U = self._train_grasta(_X,U)
-            self._U = U #update global variable
+        U = self._train_grasta(_X,U)
+        self._U = U #update global variable
 
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-
-            return base.CallResult(None)
-        else:
-            raise TimeoutError("GRASTA fit() has timed out.")
+        return base.CallResult(None)
 
     # GRASTA training internal function
     def _train_grasta(self, X, U):
@@ -248,7 +241,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
 
         return U
 
-    def continue_fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
+    def continue_fit(self, *, iterations: int = None) -> base.CallResult[None]:
 
         #Get the vector input, and the subspace
         _X = self._X.T  # Get the data
@@ -258,62 +251,41 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         #Set the proper subsampling for streaming
         self._grastaOPTIONS.subsampling = self._sampling
 
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
+        for i in range(0,numVectors):
+            _x = _X[:,i]
+            #Call GRASTA iteration
+            U, w, s, STATUS_new, admm_OPTS_new  = self._grasta_stream(Uhat,_x)
 
-            for i in range(0,numVectors):
-                _x = _X[:,i]
-                #Call GRASTA iteration
-                U, w, s, STATUS_new, admm_OPTS_new  = self._grasta_stream(Uhat,_x)
+            #Update subspace and control variables
+            self._grastaSTATUS = STATUS_new
+            self._admm_OPTS = admm_OPTS_new
+            self._U = U
 
-                #Update subspace and control variables
-                self._grastaSTATUS = STATUS_new
-                self._admm_OPTS = admm_OPTS_new
-                self._U = U
+            Uhat = U
 
-                Uhat = U
+        return base.CallResult(None)
 
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-
-            return base.CallResult(None)
-        else:
-            raise TimeoutError("GRASTA continue_fit() has timed out.")
-
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
         X = inputs
         U = self._U
 
         Y = U @ (U.T @ X.T)
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
+        return base.CallResult(container.ndarray(Y, generate_metadata=True))
 
-            return base.CallResult(container.ndarray(Y, generate_metadata=True))
-
-        if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
-            raise TimeoutError("GRASTA produce timed out.")
-
-    def produce_subspace(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce_subspace(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
         X = inputs
         U = self._U
         
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            
-            return base.CallResult(container.ndarray(U, generate_metadata=True))
+        return base.CallResult(container.ndarray(U, generate_metadata=True))
         
-        if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
-            raise TimeoutError("GRASTA produce timed out.")
 
-    def produce_sparse(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce_sparse(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
         X = inputs
         U = self._U
         
         S = X.T - U @ (U.T @ X.T)
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            
-            return base.CallResult(container.ndarray(S, generate_metadata=True))
 
-        if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
-            raise TimeoutError("GRASTA produce timed out.")
-
-
+        return base.CallResult(container.ndarray(S, generate_metadata=True))
 
     ### MAIN GRASTA UPDATE FUNCTION
     def _grasta_stream(self,Uhat, x):

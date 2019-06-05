@@ -4,9 +4,7 @@ from d3m.primitive_interfaces import base, clustering
 from d3m import container, utils
 import collections
 import numpy as np
-from scipy.linalg import orth
 from sklearn.cluster import SpectralClustering
-import stopit
 import os
 
 from ..kss import KSS, KSSHyperparams
@@ -85,7 +83,7 @@ class EKSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(None),
     def set_training_data(self, *, inputs: Inputs) -> None:
         pass
 
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
         assert inputs is not None, "No training data provided."
         assert inputs.ndim == 2, "Data is not in the right shape"
         assert self._dim_subspaces <= inputs.shape[1], "Dim_subspaces should be less than ambient dimension"
@@ -96,50 +94,45 @@ class EKSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(None),
 
         affinity_matrix = np.zeros((n_samples, n_samples))
 
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            # for each base clustering
-            for b in range(self._n_base):
-                # run K-Subspaces
-                ksshp = KSSHyperparams(n_clusters = self._k, dim_subspaces = self._dim_subspaces)
-                kss = KSS(hyperparams=ksshp, random_seed=self._random_state.randint(0, 2**32-1))
-                kss.set_training_data(inputs=_X.T)
-                kss.fit(iterations=iterations)
-                est_labels = kss.produce(inputs=_X.T).value
-                # update affinity matrix
-                for i in range(n_samples):
-                    affinity_matrix[i][i] += 1
-                    for j in range(i+1, n_samples):
-                        if est_labels[i] == est_labels[j]:
-                            affinity_matrix[i][j] += 1
-                            affinity_matrix[j][i] += 1
+        # for each base clustering
+        for b in range(self._n_base):
+            # run K-Subspaces
+            ksshp = KSSHyperparams(n_clusters = self._k, dim_subspaces = self._dim_subspaces)
+            kss = KSS(hyperparams=ksshp, random_seed=self._random_state.randint(0, 2**32-1))
+            kss.set_training_data(inputs=_X.T)
+            kss.fit(iterations=iterations)
+            est_labels = kss.produce(inputs=_X.T).value
+            # update affinity matrix
+            for i in range(n_samples):
+                affinity_matrix[i][i] += 1
+                for j in range(i+1, n_samples):
+                    if est_labels[i] == est_labels[j]:
+                        affinity_matrix[i][j] += 1
+                        affinity_matrix[j][i] += 1
 
-            affinity_matrix = 1.0 * affinity_matrix / self._n_base
+        affinity_matrix = 1.0 * affinity_matrix / self._n_base
 
-            # if thresh is positive, threshold affinity_matrix
-            if self._thresh > 0:
-                A_row = np.copy(affinity_matrix)
-                A_col = np.copy(affinity_matrix.T)
-                for i in range(n_samples):
-                    # threshold rows
-                    idx = np.argsort(A_row[i])[list(range(self._thresh))]
-                    A_row[i][idx] = 0
-                    # threshold columns
-                    idx = np.argsort(A_col[i])[list(range(self._thresh))]
-                    A_col[i][idx] = 0
-                # average
-                affinity_matrix = (A_row + A_col.T) / 2.0
+        # if thresh is positive, threshold affinity_matrix
+        if self._thresh > 0:
+            A_row = np.copy(affinity_matrix)
+            A_col = np.copy(affinity_matrix.T)
+            for i in range(n_samples):
+                # threshold rows
+                idx = np.argsort(A_row[i])[list(range(self._thresh))]
+                A_row[i][idx] = 0
+                # threshold columns
+                idx = np.argsort(A_col[i])[list(range(self._thresh))]
+                A_col[i][idx] = 0
+            # average
+            affinity_matrix = (A_row + A_col.T) / 2.0
 
-            # apply Spectral Clustering with affinity_matrix
-            sc = SpectralClustering(n_clusters= self._k, affinity='precomputed', random_state=self._random_state)
-            estimated_labels = sc.fit_predict(affinity_matrix)
+        # apply Spectral Clustering with affinity_matrix
+        sc = SpectralClustering(n_clusters= self._k, affinity='precomputed', random_state=self._random_state)
+        estimated_labels = sc.fit_predict(affinity_matrix)
 
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-            return base.CallResult(Outputs(estimated_labels))
-        else:
-            affinity_matrix = np.zeros((n_samples, n_samples))
-            raise TimeoutError("EKSS fitting has timed out.")
+        return base.CallResult(Outputs(estimated_labels))
 
-    def produce_distance_matrix(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[DistanceMatrixOutput]:
+    def produce_distance_matrix(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[DistanceMatrixOutput]:
         """
             Returns the affinity matrix generated from the ensemble of KSS clustering results.
         """
@@ -153,44 +146,39 @@ class EKSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(None),
 
         affinity_matrix = np.zeros((n_samples, n_samples))
 
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            # for each base clustering
-            for b in range(self._n_base):
-                # run K-Subspaces
-                ksshp = KSSHyperparams(n_clusters = self._k, dim_subspaces = self._dim_subspaces)
-                kss = KSS(hyperparams=ksshp, random_seed=self._random_state.randint(0, 2**32-1))
-                kss.set_training_data(inputs=_X.T)
-                kss.fit(iterations=iterations)
-                est_labels = kss.produce(inputs=_X.T).value
-                # update affinity matrix
-                for i in range(n_samples):
-                    affinity_matrix[i][i] += 1
-                    for j in range(i+1, n_samples):
-                        if est_labels[i] == est_labels[j]:
-                            affinity_matrix[i][j] += 1
-                            affinity_matrix[j][i] += 1
+        # for each base clustering
+        for b in range(self._n_base):
+            # run K-Subspaces
+            ksshp = KSSHyperparams(n_clusters = self._k, dim_subspaces = self._dim_subspaces)
+            kss = KSS(hyperparams=ksshp, random_seed=self._random_state.randint(0, 2**32-1))
+            kss.set_training_data(inputs=_X.T)
+            kss.fit(iterations=iterations)
+            est_labels = kss.produce(inputs=_X.T).value
+            # update affinity matrix
+            for i in range(n_samples):
+                affinity_matrix[i][i] += 1
+                for j in range(i+1, n_samples):
+                    if est_labels[i] == est_labels[j]:
+                        affinity_matrix[i][j] += 1
+                        affinity_matrix[j][i] += 1
 
-            affinity_matrix = 1.0 * affinity_matrix / self._n_base
+        affinity_matrix = 1.0 * affinity_matrix / self._n_base
 
-            # if thresh is positive, threshold affinity_matrix
-            if self._thresh > 0:
-                A_row = np.copy(affinity_matrix)
-                A_col = np.copy(affinity_matrix.T)
-                for i in range(n_samples):
-                    # threshold rows
-                    idx = np.argsort(A_row[i])[list(range(self._thresh))]
-                    A_row[i][idx] = 0
-                    # threshold columns
-                    idx = np.argsort(A_col[i])[list(range(self._thresh))]
-                    A_col[i][idx] = 0
-                # average
-                affinity_matrix = (A_row + A_col.T) / 2.0
+        # if thresh is positive, threshold affinity_matrix
+        if self._thresh > 0:
+            A_row = np.copy(affinity_matrix)
+            A_col = np.copy(affinity_matrix.T)
+            for i in range(n_samples):
+                # threshold rows
+                idx = np.argsort(A_row[i])[list(range(self._thresh))]
+                A_row[i][idx] = 0
+                # threshold columns
+                idx = np.argsort(A_col[i])[list(range(self._thresh))]
+                A_col[i][idx] = 0
+            # average
+            affinity_matrix = (A_row + A_col.T) / 2.0
 
-        if to_ctx_mgr.state == to_ctx_mgr.EXECUTED:
-            return base.CallResult(DistanceMatrixOutput(affinity_matrix))
-        else:
-            affinity_matrix = np.zeros((n_samples, n_samples))
-            raise TimeoutError("EKSS fitting has timed out.")
+        return base.CallResult(DistanceMatrixOutput(affinity_matrix))
 
     def __getstate__(self) -> dict:
         return {

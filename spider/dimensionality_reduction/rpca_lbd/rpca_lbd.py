@@ -2,9 +2,7 @@ import typing
 from d3m.metadata import hyperparams, base as metadata_module, params
 from d3m.primitive_interfaces import base, transformer
 from d3m import container, utils
-import collections
 import os
-import stopit
 import numpy as np
 import numpy.matlib as ml
 from numpy.linalg import norm
@@ -113,7 +111,7 @@ class RPCA_LBD(transformer.TransformerPrimitiveBase[Inputs, Outputs, RPCA_LBDHyp
     ##  RPCA based on the Low-Rank and Block-Sparse Decomposition (LBD) model
     #   @param inputs data matrix (NumPy array/matrix where rows are samples and columns are features)
     #   @return W low-rank component of input matrix (NumPy array with same shape as inputs)
-    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
         def SVD_thresh(X, tau):
             U,s,V = svd(X, full_matrices = False)
             s_thresh = np.array([max(abs(sig) - tau, 0.0) * np.sign(sig) for sig in s])
@@ -126,49 +124,45 @@ class RPCA_LBD(transformer.TransformerPrimitiveBase[Inputs, Outputs, RPCA_LBDHyp
                 if Xi_norm > tau:
                     C[:,i] = X[:,i] * (1.0 - (tau / Xi_norm))
             return C
-        
-        with stopit.ThreadingTimeout(timeout) as to_ctx_mgr:
-            D = np.transpose(np.matrix(inputs))
-            D_norm = norm(D,'fro')
-            A = np.matrix(D)
-            E = ml.zeros(D.shape)
-            Y = ml.zeros(D.shape)
-            mu = 30.0 / norm(np.sign(D),2)
-            kappa = self._kappa
-            lamb = self._lamb
-            rho = self._rho
-            beta = self._beta
-            alpha = self._alpha
-            err_outer = 10.0 * self._epsilon[0] * D_norm
-            k = 0
-            num_iter = 0
-            while k < iterations and err_outer > self._epsilon[0] * D_norm:
-                GA = D - E + Y / mu
-                A = GA
-                A_save = ml.zeros(D.shape)
-                err_inner = 10.0 * self._epsilon[1]
-                j = 0
-                while j < self._inner_max_iter and err_inner > self._epsilon[1]:
-                    A_save = SVD_thresh(A,beta)
-                    A_old = A
-                    Mat = (2.0 * A_save - A + beta * mu * GA) / (1.0 + beta * mu)
-                    A = A + alpha * (col_thresh(Mat, beta*kappa*(1.0-lamb)/(1.0+beta*mu)) - A_save)
-                    err_inner = norm(A-A_old,'fro')
-                    j += 1
-                num_iter += j
-                A = A_save
-                GE = D - A + Y / mu
-                E = col_thresh(GE, kappa*lamb/mu)
-                Y = Y + mu * (D-A-E)
-                mu *= rho
-                err_outer = norm(D-A-E,'fro')
-                k += 1
-            W = np.array(A.T)
-            return base.CallResult(container.ndarray(W, generate_metadata=True))
 
-        if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
-            raise TimeoutError("PCP_IALM produce timed out.")
-            
+        D = np.transpose(np.matrix(inputs))
+        D_norm = norm(D,'fro')
+        A = np.matrix(D)
+        E = ml.zeros(D.shape)
+        Y = ml.zeros(D.shape)
+        mu = 30.0 / norm(np.sign(D),2)
+        kappa = self._kappa
+        lamb = self._lamb
+        rho = self._rho
+        beta = self._beta
+        alpha = self._alpha
+        err_outer = 10.0 * self._epsilon[0] * D_norm
+        k = 0
+        num_iter = 0
+        while k < iterations and err_outer > self._epsilon[0] * D_norm:
+            GA = D - E + Y / mu
+            A = GA
+            A_save = ml.zeros(D.shape)
+            err_inner = 10.0 * self._epsilon[1]
+            j = 0
+            while j < self._inner_max_iter and err_inner > self._epsilon[1]:
+                A_save = SVD_thresh(A,beta)
+                A_old = A
+                Mat = (2.0 * A_save - A + beta * mu * GA) / (1.0 + beta * mu)
+                A = A + alpha * (col_thresh(Mat, beta*kappa*(1.0-lamb)/(1.0+beta*mu)) - A_save)
+                err_inner = norm(A-A_old,'fro')
+                j += 1
+            num_iter += j
+            A = A_save
+            GE = D - A + Y / mu
+            E = col_thresh(GE, kappa*lamb/mu)
+            Y = Y + mu * (D-A-E)
+            mu *= rho
+            err_outer = norm(D-A-E,'fro')
+            k += 1
+        W = np.array(A.T)
+        return base.CallResult(container.ndarray(W, generate_metadata=True))
+
     #placeholder for now, just calls base version.
     @classmethod
     def can_accept(cls, *, method_name: str, arguments: typing.Dict[str, typing.Union[metadata_module.Metadata, type]], hyperparams: RPCA_LBDHyperparams) -> typing.Optional[metadata_module.DataMetadata]:
