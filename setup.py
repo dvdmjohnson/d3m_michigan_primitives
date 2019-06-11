@@ -123,7 +123,7 @@ setuptools.setup(
     license="MIT",
     description="DARPA D3M Spider Project Code",
     install_requires=[
-        "d3m (==2019.5.8)",
+        "d3m (==2019.6.7)",
         "numpy (>=1.14.3)",
         "scipy (>=0.19.0)",
         "scikit-image (>=0.13.1)",
