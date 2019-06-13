@@ -83,7 +83,7 @@ class EKSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(None),
     def set_training_data(self, *, inputs: Inputs) -> None:
         pass
 
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         assert inputs is not None, "No training data provided."
         assert inputs.ndim == 2, "Data is not in the right shape"
         assert self._dim_subspaces <= inputs.shape[1], "Dim_subspaces should be less than ambient dimension"
@@ -132,7 +132,7 @@ class EKSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(None),
 
         return base.CallResult(Outputs(estimated_labels))
 
-    def produce_distance_matrix(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[DistanceMatrixOutput]:
+    def produce_distance_matrix(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[DistanceMatrixOutput]:
         """
             Returns the affinity matrix generated from the ensemble of KSS clustering results.
         """
