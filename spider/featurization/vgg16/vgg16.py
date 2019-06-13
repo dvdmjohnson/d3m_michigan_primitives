@@ -286,7 +286,7 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
 
         return predictions
 
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
 
         model = self._model_handler(self._output_feature_layer)
         features = []

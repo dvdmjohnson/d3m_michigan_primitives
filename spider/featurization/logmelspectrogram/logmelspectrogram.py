@@ -6,9 +6,7 @@ from d3m import container, utils
 import librosa
 import numpy as np
 import stopit
-import sys
 import os
-import time
 import warnings
 
 __all__ = ('LogMelSpectrogram',)
@@ -100,50 +98,45 @@ class LogMelSpectrogram(featurization.FeaturizationTransformerPrimitiveBase[Inpu
 
         X = inputs
 
-        with stopit.ThreadingTimeout(timeout) as timer:
+        features = container.List()
+        for i, x in enumerate(X):
 
-            features = container.List()
-            for i, x in enumerate(X):
-
-                # Handle multi-channel audio data
-                if x.ndim > 2 or (x.ndim == 2 and x.shape[0] > 2):
-                    raise ValueError(
-                        'Time series ' + str(i) + ' found with ' + \
-                        'incompatible shape ' + str(x.shape)  + '.'
-                    )
-                elif x.ndim == 2:
-                    x = x.mean(axis=0)
-
-                # Handle time series of insufficient length
-                if x.shape[0] < self._n_fft:
-                    warnings.warn(
-                        'Cannot construct a fft window of length ' +          \
-                        str(self._n_fft) + ' seconds from input ' +      \
-                        str(i) + ' of length ' + str(x.shape[0]) + '. ' + \
-                        'Returning empty np.array in output index ' +         \
-                        str(i+1) + '.',
-                        RuntimeWarning
-                    )
-                    features.append(np.array([]))
-                    continue
-
-                # Compute the mel-scaled spectrogram
-                melspec = librosa.feature.melspectrogram(
-                    x,
-                    sr=self._sampling_rate,
-                    n_mels = self._mel_bands,
-                    n_fft=self._n_fft,
-                    hop_length=self._hop_length
+            # Handle multi-channel audio data
+            if x.ndim > 2 or (x.ndim == 2 and x.shape[0] > 2):
+                raise ValueError(
+                    'Time series ' + str(i) + ' found with ' + \
+                    'incompatible shape ' + str(x.shape)  + '.'
                 )
+            elif x.ndim == 2:
+                x = x.mean(axis=0)
 
-                # Convert spectrogram amplitude to log-scale
-                features.append(container.ndarray(librosa.power_to_db(melspec).T))
+            # Handle time series of insufficient length
+            if x.shape[0] < self._n_fft:
+                warnings.warn(
+                    'Cannot construct a fft window of length ' +          \
+                    str(self._n_fft) + ' seconds from input ' +      \
+                    str(i) + ' of length ' + str(x.shape[0]) + '. ' + \
+                    'Returning empty np.array in output index ' +         \
+                    str(i+1) + '.',
+                    RuntimeWarning
+                )
+                features.append(np.array([]))
+                continue
 
-            return base.CallResult(features)
+            # Compute the mel-scaled spectrogram
+            melspec = librosa.feature.melspectrogram(
+                x,
+                sr=self._sampling_rate,
+                n_mels = self._mel_bands,
+                n_fft=self._n_fft,
+                hop_length=self._hop_length
+            )
 
-        if timer.state != timer.EXECUTED:
-            raise TimeoutError('LogMelSpectrogram produce timed out.')
-            
+            # Convert spectrogram amplitude to log-scale
+            features.append(container.ndarray(librosa.power_to_db(melspec).T))
+
+        return base.CallResult(features)
+
     #placeholder for now, just calls base version.
     @classmethod
     def can_accept(cls, *, method_name: str, arguments: typing.Dict[str, typing.Union[metadata_module.Metadata, type]], hyperparams: LogMelSpectrogramHyperparams) -> typing.Optional[metadata_module.DataMetadata]:

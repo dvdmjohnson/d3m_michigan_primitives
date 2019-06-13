@@ -243,7 +243,7 @@ class GoTurn(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, Outputs,
 
         return x0, x1, y1
 
-    def fit(self, *, iterations: int = None) -> base.CallResult[None]:
+    def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
 
         if self._fitted:
             return base.CallResult(None)
@@ -277,7 +277,7 @@ class GoTurn(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, Outputs,
         return base.CallResult(None)
 
     @base.singleton 
-    def produce(self, *, inputs: Inputs, targets: Outputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, targets: Outputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
 
         if self._fitted is False:
             raise ValueError('Calling produce before fitting')

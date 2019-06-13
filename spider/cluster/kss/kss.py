@@ -71,7 +71,7 @@ class KSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, KSSParams, K
         self._X = inputs
         self._U = None
 
-    def fit(self, *, iterations: int = None) -> base.CallResult[None]:
+    def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
         assert self._X is not None, "No training data provided."
         assert self._X.ndim == 2, "Data is not in the right shape."
         assert self._dim_subspaces <= self._X.shape[1], "Dim_subspaces should be less than ambient dimension."
@@ -118,7 +118,7 @@ class KSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, KSSParams, K
         self._U = U
         return base.CallResult(None)
 
-    def produce(self, *, inputs: Inputs) -> base.CallResult[Outputs]:
+    def produce(self, *, timeout: float = None, inputs: Inputs) -> base.CallResult[Outputs]:
         if self._U is None:
             raise ValueError("Calling produce before fitting.")
         full_residuals = np.empty((inputs.shape[0], self._k))
@@ -130,7 +130,7 @@ class KSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, KSSParams, K
 
         return base.CallResult(Outputs(labels))
 
-    def produce_distance_matrix(self, *, inputs: Inputs) -> base.CallResult[DistanceMatrixOutput]:
+    def produce_distance_matrix(self, *, timeout: float = None, iterations: int = None, inputs: Inputs) -> base.CallResult[DistanceMatrixOutput]:
         """
             Returns a generic result representing the cluster assignment labels in distance matrix form (i.e. distance is 0
             if the two instances are in the same class, and 1 if they are not).

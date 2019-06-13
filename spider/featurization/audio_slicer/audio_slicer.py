@@ -91,7 +91,7 @@ class AudioSlicer(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Ou
                 str(self._overlap) + 'seconds of overlap.'
             )
 
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         """
         Splits each audio file into slices. Each file is represented in the
         input list as an ndarray. The output list contains the same number of

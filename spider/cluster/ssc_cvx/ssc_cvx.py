@@ -165,7 +165,7 @@ class SSC_CVX(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(Non
 
         return C
    
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
 
         if iterations == None or iterations < 5:
             iterations = 1000
@@ -177,7 +177,7 @@ class SSC_CVX(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(Non
 
         return base.CallResult(Outputs(labels))
 
-    def produce_distance_matrix(self, *, inputs: Inputs) -> base.CallResult[DistanceMatrixOutput]:
+    def produce_distance_matrix(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[DistanceMatrixOutput]:
         """
             Returns 1 - the affinity matrix generated from the subspace-transformed data
         """

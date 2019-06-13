@@ -165,7 +165,7 @@ class SSC_OMP(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(Non
         labels = l.labels_.reshape((N,))
         return labels
 
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         assert inputs.ndim == 2, "Data is not in the right shape"
         assert self._max_subspace_dim <= inputs.shape[1], "max_subspace dim can't be greater than the" + \
         "input feature space"
@@ -181,7 +181,7 @@ class SSC_OMP(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(Non
 
         return base.CallResult(Outputs(labels))
 
-    def produce_distance_matrix(self, *, inputs: Inputs) -> base.CallResult[DistanceMatrixOutput]:
+    def produce_distance_matrix(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[DistanceMatrixOutput]:
         """
             Returns 1 - the affinity matrix generated from the subspace-transformed data
         """

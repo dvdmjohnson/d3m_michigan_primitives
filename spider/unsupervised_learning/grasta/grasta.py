@@ -188,7 +188,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
                               last_gamma=np.zeros(self._dim), train=1)
 
     #GRASTA fit function: learns low-rank subspace from training data
-    def fit(self, *, iterations: int = None) -> base.CallResult[None]:
+    def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
 
         #Internal function to generate low-rank random matrix
         def generateLRMatrix(d, r):
@@ -241,7 +241,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
 
         return U
 
-    def continue_fit(self, *, iterations: int = None) -> base.CallResult[None]:
+    def continue_fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
 
         #Get the vector input, and the subspace
         _X = self._X.T  # Get the data
@@ -265,21 +265,21 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
 
         return base.CallResult(None)
 
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         X = inputs
         U = self._U
 
         Y = U @ (U.T @ X.T)
         return base.CallResult(container.ndarray(Y, generate_metadata=True))
 
-    def produce_subspace(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce_subspace(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         X = inputs
         U = self._U
         
         return base.CallResult(container.ndarray(U, generate_metadata=True))
         
 
-    def produce_sparse(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce_sparse(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         X = inputs
         U = self._U
         

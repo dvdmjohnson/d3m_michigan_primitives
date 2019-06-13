@@ -214,7 +214,7 @@ class TRECS(transformer.TransformerPrimitiveBase[Inputs, Outputs, TRECSHyperpara
 
 
     # Produce a resampled video given either a list of video paths or a videos as numpy arrays
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
 
         output_video_list = []
 

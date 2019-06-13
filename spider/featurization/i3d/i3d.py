@@ -425,7 +425,7 @@ class I3D(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs, I
         return x
 
     @base.singleton
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
 
         features = container.List()
         #import pdb; pdb.set_trace();

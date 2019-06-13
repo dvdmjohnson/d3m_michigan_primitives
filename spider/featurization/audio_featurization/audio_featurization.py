@@ -109,7 +109,7 @@ class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inp
         self._overlap: float = hyperparams['overlap']
         self._step: int = max(int((self._frame_length - self._overlap) * self._sampling_rate), 1)
 
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         """
         Compute the bag of features for each ndarray in the input list,
         yielding an output list of the same length. Each entry in the output

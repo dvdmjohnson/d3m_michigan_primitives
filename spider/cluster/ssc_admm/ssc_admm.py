@@ -286,7 +286,7 @@ class SSC_ADMM(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(No
         C = self._outlier_admm(XX, self._use_affine, a, self._epsilon, max_iter) if self._use_outliers else self._lasso_admm(XX, self._use_affine, a, self._epsilon, max_iter)
         return C
 
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         assert inputs.ndim == 2, "Inputs are not in the right shape"
 
         if iterations == None or iterations < 5:
@@ -299,7 +299,7 @@ class SSC_ADMM(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(No
 
         return base.CallResult(Outputs(labels))
 
-    def produce_distance_matrix(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[DistanceMatrixOutput]:
+    def produce_distance_matrix(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[DistanceMatrixOutput]:
         """
             Returns 1 - the affinity matrix generated from the subspace-transformed data
         """

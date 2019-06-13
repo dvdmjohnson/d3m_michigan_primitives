@@ -100,7 +100,7 @@ class PCP_IALM(transformer.TransformerPrimitiveBase[Inputs, Outputs, PCP_IALMHyp
         self._rho = hyperparams['rho']
         self._epsilon = hyperparams['epsilon']
     
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         
         def shrink(T, zeta):
             return np.matrix(np.maximum(np.zeros(T.shape), np.array(np.absolute(T)) - zeta) * np.array(np.sign(T)))

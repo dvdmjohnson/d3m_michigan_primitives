@@ -95,7 +95,7 @@ class GO_DEC(transformer.TransformerPrimitiveBase[Inputs, Outputs, GO_DECHyperpa
         self._epsilon = hyperparams['epsilon']
         self._random_state = np.random.RandomState(random_seed)
     
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         
         def largest_entries(M, kk):
             k = int(kk)

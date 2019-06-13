@@ -118,7 +118,7 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
         self._training_size = inputs.shape[0]
 
     # GROUSE fit function: learns low-rank subspace from training data
-    def fit(self, *, iterations: int = None) -> base.CallResult[None]:
+    def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
 
         # Internal function to generate low-rank random matrix
         def generateLRMatrix(d, r):
@@ -167,7 +167,7 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
 
         return U
 
-    def continue_fit(self, *, iterations: int = None) -> base.CallResult[None]:
+    def continue_fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
 
         # Get the vector input, and the subspace
         _X = self._X.T  # Get the data
@@ -189,7 +189,7 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
 
         return base.CallResult(None)
 
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         X = inputs
         U = self._U
 

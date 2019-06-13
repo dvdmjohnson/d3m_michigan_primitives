@@ -141,7 +141,7 @@ class RFD(distance.PairwiseDistanceLearnerPrimitiveBase[Inputs, InputLabels, Out
 
     #timeout MUST be implemented on final primitive submissions
     #see https://gitlab.com/datadrivendiscovery/d3m/blob/devel/d3m/primitive_interfaces/base.py for details on CallResult
-    def fit(self, *, iterations: int = None) -> base.CallResult[None]:
+    def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
         """
         Fit the random forest distance to a set of labeled data by sampling and fitting
         to pairwise constraints.
@@ -180,7 +180,7 @@ class RFD(distance.PairwiseDistanceLearnerPrimitiveBase[Inputs, InputLabels, Out
 
     #produce generally takes only one input.  Again, PairwiseDistanceLearners are an oddity.
     def produce(self, *, inputs: Inputs, second_inputs: Inputs, 
-              iterations: int = None) -> base.CallResult[Outputs]:
+              timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         """
         Compute the distance matrix between vector arrays inputs and
         second_inputs, yielding an output of shape n by m (where n and m are

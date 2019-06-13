@@ -235,7 +235,7 @@ class OWLRegression(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, O
     #timeout MUST be implemented on final primitive submissions
     #see https://gitlab.com/datadrivendiscovery/d3m/blob/devel/d3m/primitive_interfaces/base.py for details on CallResult
 
-    def fit(self, *, iterations: int = None) -> base.CallResult[None]:
+    def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
         """
         Fit the linear regression problem with OWL regularization
         """
@@ -311,7 +311,7 @@ class OWLRegression(supervised_learning.SupervisedLearnerPrimitiveBase[Inputs, O
 
         return base.CallResult(None)
 
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         """
         Compute the predictions given inputs with shape n by m,
         yielding an array of size n.

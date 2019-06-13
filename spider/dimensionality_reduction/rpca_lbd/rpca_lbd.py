@@ -111,7 +111,7 @@ class RPCA_LBD(transformer.TransformerPrimitiveBase[Inputs, Outputs, RPCA_LBDHyp
     ##  RPCA based on the Low-Rank and Block-Sparse Decomposition (LBD) model
     #   @param inputs data matrix (NumPy array/matrix where rows are samples and columns are features)
     #   @return W low-rank component of input matrix (NumPy array with same shape as inputs)
-    def produce(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         def SVD_thresh(X, tau):
             U,s,V = svd(X, full_matrices = False)
             s_thresh = np.array([max(abs(sig) - tau, 0.0) * np.sign(sig) for sig in s])
