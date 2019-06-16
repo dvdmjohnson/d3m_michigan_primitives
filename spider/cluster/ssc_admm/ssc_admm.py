@@ -5,6 +5,7 @@ from d3m import container, utils
 import collections
 import os
 import numpy as np
+import numpy.matlib	
 from sklearn.cluster import KMeans
 
 Inputs = container.ndarray
