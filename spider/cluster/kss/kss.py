@@ -104,7 +104,7 @@ class KSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, KSSParams, K
                 Z = _X[:,estimated_labels == kk]
                 D, V = np.linalg.eig(np.dot(Z, Z.T))
                 D_idx = np.argsort(-D) # descending order
-                U[kk] = V[:,D_idx[list(range(self._dim_subspaces))]]
+                U[kk] = V.real[:,D_idx[list(range(self._dim_subspaces))]]
                 tmp1 = np.dot(U[kk,:].T, _X)
                 tmp2 = np.dot(U[kk,:], tmp1)
                 full_residuals[:,kk] = np.linalg.norm(_X-tmp2, ord=2, axis=0)
@@ -118,7 +118,7 @@ class KSS(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, KSSParams, K
         self._U = U
         return base.CallResult(None)
 
-    def produce(self, *, timeout: float = None, inputs: Inputs) -> base.CallResult[Outputs]:
+    def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         if self._U is None:
             raise ValueError("Calling produce before fitting.")
         full_residuals = np.empty((inputs.shape[0], self._k))
