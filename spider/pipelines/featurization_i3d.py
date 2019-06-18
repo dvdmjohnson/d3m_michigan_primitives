@@ -55,8 +55,8 @@ class FeaturizationI3DPipeline(BasePipeline):
         step_2.add_output('produce')
         pipeline.add_step(step_2)
 
-        #Step 3: Extract features from videos using I4D
-        step_3 = meta_pipeline.PrimitiveStep(primitive_description = I4D.metadata.query())
+        #Step 3: Extract features from videos using I3D
+        step_3 = meta_pipeline.PrimitiveStep(primitive_description = I3D.metadata.query())
         step_3.add_argument(
                 name = 'inputs',
                 argument_type = ArgumentType.CONTAINER,

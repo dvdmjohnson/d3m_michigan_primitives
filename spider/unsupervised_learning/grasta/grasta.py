@@ -20,7 +20,7 @@ class GRASTAHyperparams(hyperparams.Hyperparams):
     #                                    description="Ambient dimension of data")
     rank = hyperparams.Bounded[int](lower=1,
                                       upper=None,
-                                      default=5,
+                                      default=2,
                                         semantic_types=['https://metadata.datadrivendiscovery.org/types/TuningParameter'],
                                       description="Rank of learned low-rank matrix")
     sampling = hyperparams.Bounded[float](lower=0.01,
@@ -270,7 +270,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         U = self._U
 
         Y = U @ (U.T @ X.T)
-        return base.CallResult(container.ndarray(Y, generate_metadata=True))
+        return base.CallResult(container.ndarray(Y.T, generate_metadata=True))
 
     def produce_subspace(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
         X = inputs
@@ -446,6 +446,8 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
                                  (w_hat / w_norm))
         step = np.squeeze(step)
         Unew = Uhat + step
+
+        test = Unew.T @ Unew
 
         return Unew, w_hat, s_hat, STATUS_new, admm_OPTS_new
 
