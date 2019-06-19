@@ -294,7 +294,7 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
         nimage = inputs.shape[0]
 
         for i in range(nimage):
-            datum = np.rollaxis(inputs[i,:,:,:], 2)
+            datum = np.rollaxis(inputs[i,1], 2) #[i,0] is the image name, [i,1] is the actual data
             x = self._input_handler(datum, self._interpolation_method)
             image_features = model.predict(x)
             image_features = np.squeeze(image_features)
