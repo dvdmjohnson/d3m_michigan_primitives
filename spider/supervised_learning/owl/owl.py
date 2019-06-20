@@ -79,7 +79,7 @@ class OWLHyperparams(hyperparams.Hyperparams):
         description="learning rate of proximal gradient descent (FISTA)")
     verbose = hyperparams.Bounded[int](lower=0,
         upper=2,
-        default = 1,
+        default = 0,
         semantic_types=['https://metadata.datadrivendiscovery.org/types/ControlParameter'],
         description= "0: no training output. 1: exit status. 2: every iteration")
 

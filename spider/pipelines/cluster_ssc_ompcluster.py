@@ -84,7 +84,12 @@ class SSCOMPPipeline(BasePipeline):
         step_4.add_hyperparameter(
                 name='n_clusters',
                 argument_type=ArgumentType.VALUE,
-                data=100
+                data=1500
+        )
+        step_4.add_hyperparameter(
+                name='sparsity_level',
+                argument_type=ArgumentType.VALUE,
+                data=5
         )
         step_4.add_output('produce')
         pipeline.add_step(step_4)

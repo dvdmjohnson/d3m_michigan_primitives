@@ -95,15 +95,31 @@ class OWLRegressionPipeline(BasePipeline):
         step_6.add_hyperparameter(
                 name='normalize',
                 argument_type=ArgumentType.VALUE,
-                data=True)
+                data=False)
         step_6.add_hyperparameter(
                 name='learning_rate',
                 argument_type=ArgumentType.VALUE,
-                data=1e-1)
+                data=2e-1)
         step_6.add_hyperparameter(
                 name='tol',
                 argument_type=ArgumentType.VALUE,
-                data=1e-4)
+                data=1e-3)
+        step_6.add_hyperparameter(
+                name='weight_max_val',
+                argument_type=ArgumentType.VALUE,
+                data=175)
+        step_6.add_hyperparameter(
+                name='weight_max_off',
+                argument_type=ArgumentType.VALUE,
+                data=1e-3)
+        step_6.add_hyperparameter(
+                name='weight_min_val',
+                argument_type=ArgumentType.VALUE,
+                data=0)
+        step_6.add_hyperparameter(
+                name='weight_min_off',
+                argument_type=ArgumentType.VALUE,
+                data=13)
         step_6.add_argument(
                 name='inputs',
                 argument_type=ArgumentType.CONTAINER,

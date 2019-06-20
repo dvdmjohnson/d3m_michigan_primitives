@@ -49,7 +49,7 @@ class VGG16Hyperparams(hyperparams.Hyperparams):
                'block3_pool', 'block4_conv1', 'block4_conv2', 'block4_conv3', 'block4_pool',
                'block5_conv1', 'block5_conv2', 'block5_conv3', 'block5_pool', 'flatten', 'fc1',
                'fc2', 'predictions'],
-        default='fc1',
+        default='fc2',
         semantic_types=['https://metadata.datadrivendiscovery.org/types/ControlParameter'],
         description='Name of the network layer to output as features.')
 

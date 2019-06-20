@@ -9,6 +9,7 @@ from .cluster_ksscluster import KSSPipeline
 from .cluster_eksscluster import EKSSPipeline
 from .unsupervised_learning_grasta import GRASTAPipeline
 from .unsupervised_learning_grouse import GROUSEPipeline
+from .dimensionality_reduction_go_dec import GO_DECPipeline
 
 
 __all__ = ["FeaturizationAudioFeaturizationPipeline",
@@ -21,4 +22,5 @@ __all__ = ["FeaturizationAudioFeaturizationPipeline",
            "KSSPipeline",
            "EKSSPipeline",
            "GRASTAPipeline",
-           "GROUSEPipeline",]
+           "GROUSEPipeline",
+           "GO_DECPipeline"]

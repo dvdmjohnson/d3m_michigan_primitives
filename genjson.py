@@ -27,7 +27,7 @@ primitives = {
     'd3m.primitives.feature_extraction.log_mel_spectrogram.Umich' : None,
     'd3m.primitives.data_preprocessing.audio_slicer.Umich' : None,
     'd3m.primitives.similarity_modeling.rfd.Umich' : None,
-    'd3m.primitives.data_compression.go_dec.Umich' : None,
+    'd3m.primitives.data_compression.go_dec.Umich' : [GO_DECPipeline],
     'd3m.primitives.data_compression.pcp_ialm.Umich' : None,
     'd3m.primitives.data_compression.rpca_lbd.Umich' : None,
     'd3m.primitives.data_compression.grasta.Umich' : [GRASTAPipeline],
