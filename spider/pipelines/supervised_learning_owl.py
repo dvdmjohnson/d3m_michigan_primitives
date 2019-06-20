@@ -111,7 +111,7 @@ class OWLRegressionPipeline(BasePipeline):
         step_6.add_hyperparameter(
                 name='weight_max_off',
                 argument_type=ArgumentType.VALUE,
-                data=1e-3)
+                data=0)
         step_6.add_hyperparameter(
                 name='weight_min_val',
                 argument_type=ArgumentType.VALUE,
