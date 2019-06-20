@@ -10,6 +10,8 @@ from .cluster_eksscluster import EKSSPipeline
 from .unsupervised_learning_grasta import GRASTAPipeline
 from .unsupervised_learning_grouse import GROUSEPipeline
 from .dimensionality_reduction_go_dec import GO_DECPipeline
+from .dimensionality_reduction_pcp_ialm import PCP_IALMPipeline
+from .dimensionality_reduction_rpca_lbd import RPCA_LBDPipeline
 
 
 __all__ = ["FeaturizationAudioFeaturizationPipeline",
@@ -23,4 +25,6 @@ __all__ = ["FeaturizationAudioFeaturizationPipeline",
            "EKSSPipeline",
            "GRASTAPipeline",
            "GROUSEPipeline",
-           "GO_DECPipeline"]
+           "GO_DECPipeline",
+           "PCP_IALMPipeline",
+           "RPCA_LBDPipeline"]
