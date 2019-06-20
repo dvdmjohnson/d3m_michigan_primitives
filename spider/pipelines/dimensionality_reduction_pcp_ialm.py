@@ -152,7 +152,7 @@ class PCP_IALMPipeline(BasePipeline):
         # Adding output step to the pipeline
         pipeline.add_output(
             name='output',
-            data_reference='steps.9.produce')
+            data_reference='steps.10.produce')
 
         return pipeline
 
