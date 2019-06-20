@@ -95,7 +95,7 @@ class OWLRegressionPipeline(BasePipeline):
         step_6.add_hyperparameter(
                 name='normalize',
                 argument_type=ArgumentType.VALUE,
-                data=False)
+                data=True)
         step_6.add_hyperparameter(
                 name='learning_rate',
                 argument_type=ArgumentType.VALUE,
