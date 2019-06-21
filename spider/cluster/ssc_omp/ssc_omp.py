@@ -170,8 +170,8 @@ class SSC_OMP(clustering.ClusteringDistanceMatrixMixin[Inputs, Outputs, type(Non
         assert self._max_subspace_dim <= inputs.shape[1], "max_subspace dim can't be greater than the" + \
         "input feature space"
 
-        if iterations == None or iterations < 5:
-            iterations = 1000
+        if iterations is None or iterations < 5:
+            iterations = 200
 
         data = inputs.T
         R = SSC_OMP._OMPMatFunction(data, self._max_subspace_dim, self._thres)

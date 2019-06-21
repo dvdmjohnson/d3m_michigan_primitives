@@ -20,6 +20,9 @@ version = pkg_resources.get_distribution("spider").version
 
 primitives = {
     'd3m.primitives.regression.owl_regression.Umich' : [OWLRegressionPipeline],
+    'd3m.primitives.regression.owl_regression.Umich' : [OWLRegressionPipelineChallenge1],
+    'd3m.primitives.regression.owl_regression.Umich' : [OWLRegressionPipelineChallenge2],
+    'd3m.primitives.regression.owl_regression.Umich' : [OWLRegressionPipelineChallenge3],
     'd3m.primitives.learner.goturn.Umich' : None,
     'd3m.primitives.feature_extraction.vgg16.Umich' : [FeaturizationVGG16Pipeline],
     'd3m.primitives.feature_extraction.i3d.Umich' : None,
@@ -31,6 +34,8 @@ primitives = {
     'd3m.primitives.data_compression.pcp_ialm.Umich' : [PCP_IALMPipeline],
     'd3m.primitives.data_compression.rpca_lbd.Umich' : [RPCA_LBDPipeline],
     'd3m.primitives.data_compression.grasta.Umich' : [GRASTAPipeline],
+    'd3m.primitives.data_compression.grasta.Umich' : [GRASTAPipelineChallenge1],
+    'd3m.primitives.data_compression.grasta.Umich' : [GRASTAPipelineChallenge2],
     'd3m.primitives.data_compression.grasta_masked.Umich' : None,
     'd3m.primitives.data_compression.grouse.Umich' : None,
     'd3m.primitives.clustering.kss.Umich' : [KSSPipeline],

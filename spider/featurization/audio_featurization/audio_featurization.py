@@ -5,13 +5,15 @@ import d3m.metadata.base as metadata_module
 import d3m.metadata.hyperparams as hyperparams
 
 import numpy as np
+import math
 import os
+import sys
 from .utils import audio_feature_extraction
 
 __all__ = ('AudioFeaturization',)
 
 Inputs = container.List
-Outputs = container.DataFrame
+Outputs = container.ndarray
 
 class AudioFeaturizationHyperparams(hyperparams.Hyperparams):
     sampling_rate = hyperparams.Bounded[int](
@@ -120,42 +122,54 @@ class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inp
         X = inputs
 
         features = []
+        missing = []
+        meanfeats = None
+        featcount = 0
         for i, x in enumerate(X):
 
-#                # Handle multi-channel audio data
-#                if x.ndim > 2 or (x.ndim == 2 and x.shape[0] > 2) or x.shape[0] == 0:
-#                    raise ValueError(
-#                        'Time series ' + str(i) + ' found with ' + \
-#                        'incompatible shape ' + str(x.shape)  + '.'
-#                    )
-#                elif x.ndim == 2:
-#                    x = x.mean(axis=0)
+            # Handle multi-channel audio data
+            if x.ndim > 1 and x.shape[1] > 1:
+                x = x.mean(axis=np.argmin(x.shape))
             sampling_rate = self._sampling_rate
 
             frame_length = self._frame_length
 
+            print("input number is " + str(i) + " out of " + str(len(X)), file=sys.__stdout__)
             # Handle time series of insufficient length by padding the sequence with wrapped data
-            #if x.shape[0] < self._frame_length * self._sampling_rate:
-            #    diff = int(self._frame_length * self._sampling_rate) - x.shape[0]
-            #    x = np.pad(x, [math.floor(diff/2), math.ceil(diff/2)], 'wrap')
+            if x.shape[0] < frame_length * sampling_rate:
+                diff = int(frame_length * sampling_rate) - x.shape[0]
+                print("pad difference is " + str(diff), file=sys.__stdout__)
+                print("signal length is " + str(x.shape[0]), file=sys.__stdout__)
+                print("pad floor is " + str(math.floor(diff/2)), file=sys.__stdout__)
+                print("pad ceil is " + str(math.ceil(diff/2)), file=sys.__stdout__)
+                if x.shape[0] == 0:     #handle missing data
+                    missing.append(i)
+                    features.append(None)
+                    continue
+                x = np.pad(x, [math.floor(diff/2), math.ceil(diff/2)], 'wrap')
 
             # Perform audio feature extraction
-            features.append(
-                (audio_feature_extraction(
-                    x,
-                    sampling_rate,
-                    frame_length * sampling_rate,
-                    self._step
-                ).T).mean(axis=0) #currently we are smashing features from each subsequence together, because TA2 can't really handle them separately
-            )
+            feats = audio_feature_extraction(x, sampling_rate, frame_length * sampling_rate, self._step).T.mean(axis=0)
+            #currently we are smashing features from each subsequence together, because TA2 can't really handle them separately
+            features.append(feats)
+            if meanfeats is None:
+                meanfeats = feats
+            else:
+                meanfeats = meanfeats + feats
+            featcount = featcount + 1
 
-        #construct output DataFrame and label designate each feature column as an Attribute
-        outframe = container.DataFrame(np.asarray(features), generate_metadata=True)
-        for i in range(outframe.shape[1]):
-            outframe.metadata = outframe.metadata.add_semantic_type(
-                (metadata_module.ALL_ELEMENTS, i),
-                'https://metadata.datadrivendiscovery.org/types/Attribute')
-        return base.CallResult(outframe)
+        #fill in missing data
+        meanfeats = meanfeats / featcount
+        for i in missing:
+            features[i] = meanfeats
+
+        print("missing data: " + str(missing), file=sys.__stdout__)
+
+        outarray = np.asarray(features)
+
+        print("output shape: " + str(outarray.shape), file=sys.__stdout__)
+
+        return base.CallResult(container.ndarray(outarray, generate_metadata=True))
 
     #placeholder for now, just calls base version.
     @classmethod
