@@ -140,7 +140,7 @@ class RPCA_LBD(transformer.TransformerPrimitiveBase[Inputs, Outputs, RPCA_LBDHyp
         k = 0
         num_iter = 0
         
-        if iterations == None or iterations < 5:
+        if iterations is None or iterations < 5:
             iterations = 100
             
         while k < iterations and err_outer > self._epsilon[0] * D_norm:
