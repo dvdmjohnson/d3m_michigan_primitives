@@ -332,13 +332,5 @@ def audio_feature_extraction(signal, Fs, Win, Step):
 
         Xprev = X.copy()
 
-    import sys
-    print("signal shape is " + str(signal.shape), file=sys.__stdout__)
-    print("window size is " + str(Win), file=sys.__stdout__)
-    print("step size is " + str(Step), file=sys.__stdout__)
-    print("number of windows is " + str(len(stFeatures)), file=sys.__stdout__)
-    print("curpos is " + str(curPos), file=sys.__stdout__)
-
-
     stFeatures = np.concatenate(stFeatures, 1)
     return stFeatures

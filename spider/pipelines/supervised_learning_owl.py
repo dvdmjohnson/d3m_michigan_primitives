@@ -9,6 +9,8 @@ from d3m.primitives.data_transformation.dataset_to_dataframe import Common as Da
 from d3m.primitives.data_transformation.column_parser import DataFrameCommon as ColumnParserPrimitive
 from d3m.primitives.data_transformation.construct_predictions import DataFrameCommon as ConstructPredictionsPrimitive
 from d3m.primitives.data_transformation.extract_columns_by_semantic_types import DataFrameCommon as ExtractColumnsBySemanticTypesPrimitive
+from sklearn_wrap.SKImputer import SKImputer
+
 
 
 class OWLRegressionPipeline(BasePipeline):
@@ -67,98 +69,106 @@ class OWLRegressionPipeline(BasePipeline):
                 data=['https://metadata.datadrivendiscovery.org/types/TrueTarget'])
         pipeline.add_step(step_3)
         
-        #step 4: transform attributes dataframe into an ndarray
-        step_4 = meta_pipeline.PrimitiveStep(primitive_description = DataFrameToNDArrayPrimitive.metadata.query())
-        step_4.add_argument(
-                name = 'inputs',
-                argument_type = ArgumentType.CONTAINER,
-                data_reference = 'steps.2.produce'
-        )
+        # Step 4 impute missing data and nans
+        step_4 = meta_pipeline.PrimitiveStep(primitive_description = SKImputer.metadata.query())
+        step_4.add_argument(name='inputs', argument_type=ArgumentType.CONTAINER, data_reference='steps.2.produce')
         step_4.add_output('produce')
+        step_4.add_hyperparameter(name='use_semantic_types', argument_type=ArgumentType.VALUE, data=True)
+        step_4.add_hyperparameter(name='return_result', argument_type=ArgumentType.VALUE, data='replace')
         pipeline.add_step(step_4)
 
-        #step 5: transform targets dataframe into an ndarray
+        #step 4: transform attributes dataframe into an ndarray
         step_5 = meta_pipeline.PrimitiveStep(primitive_description = DataFrameToNDArrayPrimitive.metadata.query())
         step_5.add_argument(
                 name = 'inputs',
                 argument_type = ArgumentType.CONTAINER,
-                data_reference = 'steps.3.produce'
+                data_reference = 'steps.4.produce'
         )
         step_5.add_output('produce')
         pipeline.add_step(step_5)
-        
-        attributes = 'steps.4.produce'
-        targets    = 'steps.5.produce'
 
-        #step 6: OWLRegression
-        step_6 = meta_pipeline.PrimitiveStep(primitive_description=OWLRegression.metadata.query())
-        step_6.add_hyperparameter(
+        #step 6: transform targets dataframe into an ndarray
+        step_6 = meta_pipeline.PrimitiveStep(primitive_description = DataFrameToNDArrayPrimitive.metadata.query())
+        step_6.add_argument(
+                name = 'inputs',
+                argument_type = ArgumentType.CONTAINER,
+                data_reference = 'steps.3.produce'
+        )
+        step_6.add_output('produce')
+        pipeline.add_step(step_6)
+        
+        attributes = 'steps.5.produce'
+        targets    = 'steps.6.produce'
+
+        #step 7: OWLRegression
+        step_7 = meta_pipeline.PrimitiveStep(primitive_description=OWLRegression.metadata.query())
+        step_7.add_hyperparameter(
                 name='normalize',
                 argument_type=ArgumentType.VALUE,
                 data=True)
-        step_6.add_hyperparameter(
+        step_7.add_hyperparameter(
                 name='learning_rate',
                 argument_type=ArgumentType.VALUE,
                 data=2e-1)
-        step_6.add_hyperparameter(
+        step_7.add_hyperparameter(
                 name='tol',
                 argument_type=ArgumentType.VALUE,
                 data=1e-3)
-        step_6.add_hyperparameter(
+        step_7.add_hyperparameter(
                 name='weight_max_val',
                 argument_type=ArgumentType.VALUE,
                 data=175)
-        step_6.add_hyperparameter(
+        step_7.add_hyperparameter(
                 name='weight_max_off',
                 argument_type=ArgumentType.VALUE,
                 data=0)
-        step_6.add_hyperparameter(
+        step_7.add_hyperparameter(
                 name='weight_min_val',
                 argument_type=ArgumentType.VALUE,
                 data=0)
-        step_6.add_hyperparameter(
+        step_7.add_hyperparameter(
                 name='weight_min_off',
                 argument_type=ArgumentType.VALUE,
                 data=13)
-        step_6.add_argument(
+        step_7.add_argument(
                 name='inputs',
                 argument_type=ArgumentType.CONTAINER,
                 data_reference=attributes)
-        step_6.add_argument(
+        step_7.add_argument(
                 name='outputs',
                 argument_type=ArgumentType.CONTAINER,
                 data_reference=targets)
-        step_6.add_output('produce')
-        pipeline.add_step(step_6)
-
-        #step 7: convert numpy-formatted prediction outputs to a dataframe
-        step_7 = meta_pipeline.PrimitiveStep(primitive_description = NDArrayToDataFramePrimitive.metadata.query())
-        step_7.add_argument(
-                name = 'inputs',
-                argument_type = ArgumentType.CONTAINER,
-                data_reference = 'steps.6.produce'
-        )
         step_7.add_output('produce')
         pipeline.add_step(step_7)
 
-        #step 8: generate a properly-formatted output dataframe from the dataframed prediction outputs using the input dataframe as a reference
-        step_8 = meta_pipeline.PrimitiveStep(primitive_description = ConstructPredictionsPrimitive.metadata.query())
+        #step 8: convert numpy-formatted prediction outputs to a dataframe
+        step_8 = meta_pipeline.PrimitiveStep(primitive_description = NDArrayToDataFramePrimitive.metadata.query())
         step_8.add_argument(
                 name = 'inputs',
                 argument_type = ArgumentType.CONTAINER,
-                data_reference = 'steps.7.produce' #inputs here are the prediction column
-        )
-        step_8.add_argument(
-                name = 'reference',
-                argument_type = ArgumentType.CONTAINER,
-                data_reference = 'steps.0.produce' #inputs here are the dataframed input dataset
+                data_reference = 'steps.7.produce'
         )
         step_8.add_output('produce')
         pipeline.add_step(step_8)
 
+        #step 9: generate a properly-formatted output dataframe from the dataframed prediction outputs using the input dataframe as a reference
+        step_9 = meta_pipeline.PrimitiveStep(primitive_description = ConstructPredictionsPrimitive.metadata.query())
+        step_9.add_argument(
+                name = 'inputs',
+                argument_type = ArgumentType.CONTAINER,
+                data_reference = 'steps.8.produce' #inputs here are the prediction column
+        )
+        step_9.add_argument(
+                name = 'reference',
+                argument_type = ArgumentType.CONTAINER,
+                data_reference = 'steps.0.produce' #inputs here are the dataframed input dataset
+        )
+        step_9.add_output('produce')
+        pipeline.add_step(step_9)
+
         # Final Output
         pipeline.add_output(
                 name='output',
-                data_reference='steps.8.produce')
+                data_reference='steps.9.produce')
 
         return pipeline

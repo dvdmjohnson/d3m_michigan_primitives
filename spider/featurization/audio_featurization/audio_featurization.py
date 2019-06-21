@@ -134,14 +134,9 @@ class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inp
 
             frame_length = self._frame_length
 
-            print("input number is " + str(i) + " out of " + str(len(X)), file=sys.__stdout__)
             # Handle time series of insufficient length by padding the sequence with wrapped data
             if x.shape[0] < frame_length * sampling_rate:
                 diff = int(frame_length * sampling_rate) - x.shape[0]
-                print("pad difference is " + str(diff), file=sys.__stdout__)
-                print("signal length is " + str(x.shape[0]), file=sys.__stdout__)
-                print("pad floor is " + str(math.floor(diff/2)), file=sys.__stdout__)
-                print("pad ceil is " + str(math.ceil(diff/2)), file=sys.__stdout__)
                 if x.shape[0] == 0:     #handle missing data
                     missing.append(i)
                     features.append(None)
@@ -163,11 +158,7 @@ class AudioFeaturization(featurization.FeaturizationTransformerPrimitiveBase[Inp
         for i in missing:
             features[i] = meanfeats
 
-        print("missing data: " + str(missing), file=sys.__stdout__)
-
         outarray = np.asarray(features)
-
-        print("output shape: " + str(outarray.shape), file=sys.__stdout__)
 
         return base.CallResult(container.ndarray(outarray, generate_metadata=True))
 
