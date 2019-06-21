@@ -119,7 +119,7 @@ class OWLRegressionPipelineChallenge1(BasePipeline):
         step_6.add_hyperparameter(
                 name='weight_min_off',
                 argument_type=ArgumentType.VALUE,
-                data=13)
+                data=26)
         step_6.add_argument(
                 name='inputs',
                 argument_type=ArgumentType.CONTAINER,
