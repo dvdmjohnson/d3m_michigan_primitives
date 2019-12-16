@@ -6,10 +6,10 @@ from spider.featurization.vgg16 import VGG16
 from d3m.primitives.data_transformation.denormalize import Common as DenormalizePrimitive
 from d3m.primitives.data_transformation.dataframe_to_ndarray import Common as DataFrameToNDArrayPrimitive
 from d3m.primitives.data_transformation.ndarray_to_dataframe import Common as NDArrayToDataFramePrimitive
-from d3m.primitives.data_preprocessing.image_reader import DataFrameCommon as DataFrameImageReaderPrimitive
+from d3m.primitives.data_preprocessing.image_reader import Common as DataFrameImageReaderPrimitive
 from d3m.primitives.data_transformation.dataset_to_dataframe import Common as DatasetToDataFramePrimitive
-from d3m.primitives.data_transformation.construct_predictions import DataFrameCommon as ConstructPredictionsPrimitive
-from d3m.primitives.data_transformation.extract_columns_by_semantic_types import DataFrameCommon as ExtractColumnsBySemanticTypesPrimitive
+from d3m.primitives.data_transformation.construct_predictions import Common as ConstructPredictionsPrimitive
+from d3m.primitives.data_transformation.extract_columns_by_semantic_types import Common as ExtractColumnsBySemanticTypesPrimitive
 from sklearn_wrap.SKLinearSVR import SKLinearSVR
 
 

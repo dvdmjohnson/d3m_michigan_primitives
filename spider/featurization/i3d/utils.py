@@ -15,7 +15,7 @@ def conv_layer(input_tensor,
                groups=1,
                trainable=True,
                non_linear_fn=tf.nn.relu,
-               kernel_init=tf.truncated_normal_initializer(stddev=0.01),
+               kernel_init=tf.compat.v1.truncated_normal_initializer(stddev=0.01),
                bias_init=tf.constant_initializer(0.1)):
 
     """
@@ -86,7 +86,7 @@ def conv3d_layer(input_tensor,
                use_bias=True,
                trainable=True,
                non_linear_fn=tf.nn.relu,
-               kernel_init=tf.truncated_normal_initializer(stddev=0.01),
+               kernel_init=tf.compat.v1.truncated_normal_initializer(stddev=0.01),
                bias_init=tf.constant_initializer(0.1)):
 
     """
@@ -293,7 +293,7 @@ def fully_connected_layer(input_tensor,
                           weight_decay=0.0,
                           trainable=True,
                           non_linear_fn=tf.nn.relu,
-                          weight_init=tf.truncated_normal_initializer(stddev=0.01),
+                          weight_init=tf.compat.v1.truncated_normal_initializer(stddev=0.01),
                           bias_init=tf.constant_initializer(0.1)):
 
     """

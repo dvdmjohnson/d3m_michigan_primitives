@@ -80,33 +80,47 @@ MIT license.
 
 Setup
 -----
-To begin working with this project, clone the repository to your machine.
 
-    git clone https://github.com/dvdmjohnson/d3m_michigan_primitives.git
+This section describes how to set up this project.
 
-To let pip build and install this and the remaining dependencies run:
+1. Clone the repository to your machine and `cd` into its directory.
 
-    pip3 install --process-dependency-links --upgrade --upgrade-strategy only-if-needed --no-cache-dir -e .
+    ```
+    git clone git@gitlab.datadrivendiscovery.org:michigan/spider.git
+    cd spider
+    ```
 
-(Note that installing in development mode is currently required.)
+2. To let pip build and install this and the remaining dependencies run:
 
-Then, to run unit tests:
+    ```
+    pip3 install --upgrade --upgrade-strategy only-if-needed --no-cache-dir -e .
+    ```
 
-    python setup.py test
+3. To install bbn primitives (needed for pipelines and tests) run:
 
-To install bbn primitives (only needed for pipelines) run:
-
-    pip3 install --process-dependency-links -e git+https://gitlab.datadrivendiscovery.org/BBN/d3m-bbn-primitives.git@697dabc03c46c1900483bea89d576e82b5a5e4c5#egg=bbn_primitives
+    ```
+    pip3 install -e git+https://gitlab.datadrivendiscovery.org/BBN/d3m-bbn-primitives.git@697dabc03c46c1900483bea89d576e82b5a5e4c5#egg=bbn_primitives
+    ```
     
-...and enter d3m login info.
+    ...and enter d3m login info.
 
-To install common primitives (needed for pipelines and tests) run:
+4. To install common primitives (needed for pipelines and tests) run:
 
-    pip3 install --process-dependency-links --upgrade-strategy only-if-needed -e git+https://gitlab.com/datadrivendiscovery/common-primitives.git@master#egg=common_primitives
-    
-To install sklearn wrappers (possibly needed for pipelines) run:
+    ```
+    pip3 install --upgrade-strategy only-if-needed -e git+https://gitlab.com/datadrivendiscovery/common-primitives.git@352233f9d8e1bf813e7f0150ac9f6480df16538f#egg=common_primitives
+    ```
 
-    pip3 install --process-dependency-links -e git+https://gitlab.com/datadrivendiscovery/sklearn-wrap.git@dist#egg=sklearn-wrap
+5. To install sklearn wrappers (possibly needed for pipelines) run:
+
+    ```
+    pip3 install -e git+https://gitlab.com/datadrivendiscovery/sklearn-wrap.git@889f93af9439fbeb29db961b03e46eaa9e2a7888#egg=sklearn-wrap
+    ```
+
+6. Then, to run unit tests:
+
+    ```
+    python3 setup.py test
+    ```
 
 
 Uninstall
