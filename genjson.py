@@ -66,10 +66,10 @@ for prim in primitives.keys():
                 file.write(json_info)
                 file.close()
             
-            meta = instance.meta_info
-            with open(instancepath + ".meta", 'w') as file:
-                json.dump(meta, file, indent = 4)
-                file.close()
+            # meta = instance.meta_info
+            # with open(instancepath + ".meta", 'w') as file:
+            #     json.dump(meta, file, indent = 4)
+            #     file.close()
     
     
 

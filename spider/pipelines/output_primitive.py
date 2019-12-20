@@ -54,8 +54,8 @@ def main():
                 'train_inputs': [ spider.pipelines.datasets.get_train_id(dataset) ],
                 'test_inputs': [ spider.pipelines.datasets.get_problem_id(dataset) ],
             }
-            # with open(meta_path, 'w') as file:
-            #     json.dump(meta_info, file, indent = 4)
+            with open(meta_path, 'w') as file:
+                json.dump(meta_info, file, indent = 4)
 
             if (only_one):
                 break
