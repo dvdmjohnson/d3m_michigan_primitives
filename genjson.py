@@ -23,7 +23,7 @@ primitives = {
     'd3m.primitives.learner.goturn.Umich' : None,
     'd3m.primitives.feature_extraction.vgg16.Umich' : [FeaturizationVGG16Pipeline],
     'd3m.primitives.feature_extraction.i3d.Umich' : None,
-    'd3m.primitives.feature_extraction.audio_featurization.Umich' : [FeaturizationAudioFeaturizationPipeline],
+    'd3m.primitives.feature_extraction.audio_featurization.Umich' : None,
     'd3m.primitives.feature_extraction.log_mel_spectrogram.Umich' : None,
     'd3m.primitives.data_preprocessing.audio_slicer.Umich' : None,
     'd3m.primitives.similarity_modeling.rfd.Umich' : None,
