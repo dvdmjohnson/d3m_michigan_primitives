@@ -141,6 +141,7 @@ setuptools.setup(
         "torch (>=0.3.1)",
         "cvxpy (>=1.0.23)",
         "resampy (==0.2.1)",
+        "Cython (==0.29.7)",
     ],
     packages=["spider",
                 "spider.preprocessing",
