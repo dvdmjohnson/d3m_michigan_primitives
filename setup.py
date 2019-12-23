@@ -140,8 +140,6 @@ setuptools.setup(
         "librosa (==0.5.1)",
         "torch (>=0.3.1)",
         "cvxpy (>=1.0.23)",
-        "resampy (==0.2.1)",
-        "Cython (==0.29.14)",
     ],
     packages=["spider",
                 "spider.preprocessing",
