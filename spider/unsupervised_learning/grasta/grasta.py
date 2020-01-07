@@ -5,7 +5,6 @@ from d3m import container, utils
 import os
 import numpy as np
 
-
 __all__ = ('GRASTA',)
 
 Inputs = container.ndarray
@@ -19,68 +18,74 @@ class GRASTAHyperparams(hyperparams.Hyperparams):
     #                                     semantic_types=['https://metadata.datadrivendiscovery.org/types/TuningParameter'],
     #                                    description="Ambient dimension of data")
     rank = hyperparams.Bounded[int](lower=1,
-                                      upper=None,
-                                      default=2,
-                                        semantic_types=['https://metadata.datadrivendiscovery.org/types/TuningParameter'],
-                                      description="Rank of learned low-rank matrix")
+                                    upper=None,
+                                    default=2,
+                                    semantic_types=['https://metadata.datadrivendiscovery.org/types/TuningParameter'],
+                                    description="Rank of learned low-rank matrix")
     sampling = hyperparams.Bounded[float](lower=0.01,
-                                     upper=1,
-                                     default=1,
-                                      semantic_types=[
-                                          'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
-                                     description="Matrix sub-sampling parameter")
-
-    train_sampling = hyperparams.Bounded[float](lower=0.01, upper=1, default = 1,semantic_types=['https://metadata.datadrivendiscovery.org/types/TuningParameter'], description="Matrix sub-sampling parameter during training")
-
-    admm_max_iter = hyperparams.Bounded[int](lower=1,
-                                      upper=None,
-                                      default=20,
-                                     semantic_types=[
-                                         'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
-                                      description="Maximum ADMM iterations")
-    admm_min_iter = hyperparams.Bounded[int](lower=1,
-                                       upper=None,
-                                       default=1,
-                                         semantic_types=[
-                                             'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
-                                       description="Minimum ADMM iterations")
-
-    admm_rho = hyperparams.Bounded[float](lower = 1, upper = None,default = 1.8, semantic_types=['https://metadata.datadrivendiscovery.org/types/TuningParameter'], description="ADMM rho parameter")
-
-    max_level = hyperparams.Bounded[int](lower=1,
-                                           upper=None,
-                                           default=20,
-                                            semantic_types=[
-                                                 'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
-                                           description="Maximum level in multi-level adaptive step size")
-    max_mu = hyperparams.Bounded[int](lower=1,
-                                           upper=None,
-                                           default=15,
+                                          upper=1,
+                                          default=1,
                                           semantic_types=[
                                               'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
-                                           description="Maximum mu in multi-level adaptive step size")
+                                          description="Matrix sub-sampling parameter")
+
+    train_sampling = hyperparams.Bounded[float](lower=0.01, upper=1, default=1, semantic_types=[
+        'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
+                                                description="Matrix sub-sampling parameter during training")
+
+    admm_max_iter = hyperparams.Bounded[int](lower=1,
+                                             upper=None,
+                                             default=20,
+                                             semantic_types=[
+                                                 'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
+                                             description="Maximum ADMM iterations")
+    admm_min_iter = hyperparams.Bounded[int](lower=1,
+                                             upper=None,
+                                             default=1,
+                                             semantic_types=[
+                                                 'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
+                                             description="Minimum ADMM iterations")
+
+    admm_rho = hyperparams.Bounded[float](lower=1, upper=None, default=1.8, semantic_types=[
+        'https://metadata.datadrivendiscovery.org/types/TuningParameter'], description="ADMM rho parameter")
+
+    max_level = hyperparams.Bounded[int](lower=1,
+                                         upper=None,
+                                         default=20,
+                                         semantic_types=[
+                                             'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
+                                         description="Maximum level in multi-level adaptive step size")
+    max_mu = hyperparams.Bounded[int](lower=1,
+                                      upper=None,
+                                      default=15,
+                                      semantic_types=[
+                                          'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
+                                      description="Maximum mu in multi-level adaptive step size")
     min_mu = hyperparams.Bounded[int](lower=1,
-                                              upper=None,
-                                              default=1,
-                                              semantic_types=[
-                                                  'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
-                                              description="Minimum mu in multi-level adaptive step size")
+                                      upper=None,
+                                      default=1,
+                                      semantic_types=[
+                                          'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
+                                      description="Minimum mu in multi-level adaptive step size")
 
-    constant_step = hyperparams.Bounded[float](lower=0, upper=None, default = 0,semantic_types=[
-                                          'https://metadata.datadrivendiscovery.org/types/TuningParameter'], description = "Make nonzero for contant step size instead of multi-level adaptive step")
+    constant_step = hyperparams.Bounded[float](lower=0, upper=None, default=0, semantic_types=[
+        'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
+                                               description="Make nonzero for contant step size instead of multi-level adaptive step")
 
-    max_train_cycles = hyperparams.Bounded[int](lower = 1, upper = None, default = 10,semantic_types=[
-                                          'https://metadata.datadrivendiscovery.org/types/TuningParameter'],description="Number of times to cycle over training data")
-
+    max_train_cycles = hyperparams.Bounded[int](lower=1, upper=None, default=10, semantic_types=[
+        'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
+                                                description="Number of times to cycle over training data")
 
     ###Don't know how to set the upper bound here
-    training_size = hyperparams.Bounded[int](lower = 1, upper = None, default = 10, semantic_types=[
-                                          'https://metadata.datadrivendiscovery.org/types/TuningParameter'], description= "Number of random training samples")
+    training_size = hyperparams.Bounded[int](lower=1, upper=None, default=10, semantic_types=[
+        'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
+                                             description="Number of random training samples")
 
 
 ### GRASTA OPTIONS CLASS
 class _OPTIONS(object):
-    def __init__(self, dim_m, rank, subsampling=1, admm_max_itr = 20, admm_min_itr = 20, max_level = 20, max_mu = 15, min_mu = 1, constant_step = 0):
+    def __init__(self, dim_m, rank, subsampling=1, admm_max_itr=20, admm_min_itr=20, max_level=20, max_mu=15, min_mu=1,
+                 constant_step=0):
         self.admm_max_itr = admm_max_itr
         self.admm_min_itr = admm_min_itr
         self.dim_m = dim_m
@@ -92,8 +97,9 @@ class _OPTIONS(object):
         self.min_mu = min_mu
         self.constant_step = constant_step
 
+
 class _STATUS(object):
-    def __init__(self, last_mu, last_w, last_gamma, level = 0, step_scale = 0, train = 0):
+    def __init__(self, last_mu, last_w, last_gamma, level=0, step_scale=0, train=0):
         self.last_mu = last_mu
         self.level = level
         self.step_scale = step_scale
@@ -101,11 +107,13 @@ class _STATUS(object):
         self.last_gamma = last_gamma
         self.train = train
 
+
 class _OPTS(object):
-    def __init__(self,max_iter=20,rho=1.8,tol=1e-8):
+    def __init__(self, max_iter=20, rho=1.8, tol=1e-8):
         self.max_iter = max_iter
         self.rho = rho
         self.tol = tol
+
 
 class GRASTAParams(params.Params):
     OPTIONS: _OPTIONS
@@ -118,7 +126,6 @@ class GRASTAParams(params.Params):
 #
 #   uses GRASTA to perform online dimensionality reduction of (possibly) sub-sampled data
 class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outputs, GRASTAParams, GRASTAHyperparams]):
-
     """
     Uses GRASTA to perform online dimensionality reduction of (possibly) sub-sampled data
     """
@@ -127,7 +134,9 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         'version': "0.0.5",
         'name': 'GRASTA',
         'description': """Performs online, unsupervised dimensionality reduction by computing robust PCA on the Grassmannian manifold.""",
-        'keywords': ['unsupervised learning','dimensionality reduction', 'robust PCA', 'low-rank', 'online','streaming','Grassmannian manifold','subspace tracking','matrix completion','video surveillance'],
+        'keywords': ['unsupervised learning', 'dimensionality reduction', 'robust PCA', 'low-rank', 'online',
+                     'streaming', 'Grassmannian manifold', 'subspace tracking', 'matrix completion',
+                     'video surveillance'],
         'source': {
             'name': 'Michigan',
             'contact': 'mailto:davjoh@umich.edu',
@@ -146,13 +155,14 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
              'package': 'ffmpeg',
              'version': '7:2.8.11-0ubuntu0.16.04.1'}],
         'python_path': 'd3m.primitives.data_compression.grasta.Umich',
-        'hyperparams_to_tune': ['rank','admm_rho', 'max_level','max_mu','min_mu','constant_step','max_train_cycles'],
+        'hyperparams_to_tune': ['rank', 'admm_rho', 'max_level', 'max_mu', 'min_mu', 'constant_step',
+                                'max_train_cycles'],
         'algorithm_types': [
             metadata_module.PrimitiveAlgorithmType.ROBUST_PRINCIPAL_COMPONENT_ANALYSIS],
         'primitive_family': metadata_module.PrimitiveFamily.DATA_COMPRESSION
     })
 
-    #GRASTA class constructor and instantiation
+    # GRASTA class constructor and instantiation
     def __init__(self, *, hyperparams: GRASTAHyperparams, random_seed: int = 0,
                  docker_containers: typing.Dict[str, base.DockerContainer] = None) -> None:
         super().__init__(hyperparams=hyperparams, random_seed=random_seed, docker_containers=docker_containers)
@@ -174,23 +184,22 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         self._U = None
         self._random_state = np.random.RandomState(random_seed)
 
-        #Instantiate GRASTA status and admm control params
+        # Instantiate GRASTA status and admm control params
         # self._grastaSTATUS = _STATUS(last_mu=self._min_mu, last_w=np.zeros(self._rank),
         #                       last_gamma=np.zeros(self._dim), train=1)
         self._admm_OPTS = _OPTS()
 
-
     def set_training_data(self, *, inputs: Inputs) -> None:
         self._X = inputs
-        self._dim = inputs.shape[1]     #row vector data
+        self._dim = inputs.shape[1]  # row vector data
         self._training_size = inputs.shape[0]
         self._grastaSTATUS = _STATUS(last_mu=self._min_mu, last_w=np.zeros(self._rank),
-                              last_gamma=np.zeros(self._dim), train=1)
+                                     last_gamma=np.zeros(self._dim), train=1)
 
-    #GRASTA fit function: learns low-rank subspace from training data
+    # GRASTA fit function: learns low-rank subspace from training data
     def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
 
-        #Internal function to generate low-rank random matrix
+        # Internal function to generate low-rank random matrix
         def generateLRMatrix(d, r):
             rando_mat = self._random_state.randn(d, d)
             Q, R = np.linalg.qr(rando_mat)
@@ -203,9 +212,9 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         assert self._min_mu < self._max_mu, "Min mu cannot be greater than max mu"
         assert self._admm_min_iter <= self._admm_max_iter, "Min admm iterations cannot exceed max admm iterations"
 
-        _X = self._X.T  #Get the training data
+        _X = self._X.T  # Get the training data
 
-        #Begin training
+        # Begin training
 
         # Instantiate a random low-rank subspace
         d = self._dim
@@ -214,11 +223,11 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
 
         # Set the training control params
         self._grastaOPTIONS = _OPTIONS(self._dim, self._rank, self._train_sampling, self._admm_max_iter,
-                                      self._admm_min_iter,
-                                      self._max_level, self._max_mu, self._min_mu, self._constant_step)
+                                       self._admm_min_iter,
+                                       self._max_level, self._max_mu, self._min_mu, self._constant_step)
 
-        U = self._train_grasta(_X,U)
-        self._U = U #update global variable
+        U = self._train_grasta(_X, U)
+        self._U = U  # update global variable
 
         return base.CallResult(None)
 
@@ -230,9 +239,9 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
 
         for i in range(0, max_cycles):
             perm = self._random_state.choice(train_size, train_size, replace=False)  # randomly permute training data
-            
+
             for j in range(0, train_size):
-                x = X[:, perm[j]]/np.max(X[:, perm[j]])   # get a column of data
+                x = X[:, perm[j]] / np.max(X[:, perm[j]])  # get a column of data
                 U, w, s, STATUS_new, admm_OPTS_new = self._grasta_stream(U, x)
 
                 # Update subspace and control variables
@@ -243,20 +252,20 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
 
     def continue_fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
 
-        #Get the vector input, and the subspace
+        # Get the vector input, and the subspace
         _X = self._X.T  # Get the data
-        d,numVectors = _X.shape
+        d, numVectors = _X.shape
         Uhat = self._U
 
-        #Set the proper subsampling for streaming
+        # Set the proper subsampling for streaming
         self._grastaOPTIONS.subsampling = self._sampling
 
-        for i in range(0,numVectors):
-            _x = _X[:,i]
-            #Call GRASTA iteration
-            U, w, s, STATUS_new, admm_OPTS_new  = self._grasta_stream(Uhat,_x)
+        for i in range(0, numVectors):
+            _x = _X[:, i]
+            # Call GRASTA iteration
+            U, w, s, STATUS_new, admm_OPTS_new = self._grasta_stream(Uhat, _x)
 
-            #Update subspace and control variables
+            # Update subspace and control variables
             self._grastaSTATUS = STATUS_new
             self._admm_OPTS = admm_OPTS_new
             self._U = U
@@ -266,29 +275,36 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         return base.CallResult(None)
 
     def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
+        _X = inputs.T
+        d, numVectors = _X.shape
+        Uhat = self._U
+
+        self._grastaOPTIONS.subsampling = self._sampling
+        Lhat = np.zeros(_X.shape)
+        for i in range(0, numVectors):
+            _x = _X[:, i]
+            U, w, s, STATUS_new, admm_OPTS = self._grasta_stream(Uhat, _x)
+            Lhat[:, i] = U @ w
+
+        return base.CallResult(container.ndarray(Lhat.T, generate_metadata=True))
+
+    def produce_subspace(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[
+        Outputs]:
         X = inputs
         U = self._U
 
-        Y = U @ (U.T @ X.T)
-        return base.CallResult(container.ndarray(Y.T, generate_metadata=True))
-
-    def produce_subspace(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
-        X = inputs
-        U = self._U
-        
         return base.CallResult(container.ndarray(U, generate_metadata=True))
-        
 
-    def produce_sparse(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
-        X = inputs
-        U = self._U
-        
-        S = X.T - U @ (U.T @ X.T)
+    def produce_sparse(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[
+        Outputs]:
 
-        return base.CallResult(container.ndarray(S, generate_metadata=True))
+        Lhat = self.produce(inputs=inputs).value
+        Shat = inputs - Lhat
+
+        return base.CallResult(container.ndarray(Shat, generate_metadata=True))
 
     ### MAIN GRASTA UPDATE FUNCTION
-    def _grasta_stream(self,Uhat, x):
+    def _grasta_stream(self, Uhat, x):
 
         ### ELEMENTWISE SOFT THRESHOLDING FUNCTION
         def shrinkage(a, kappa):
@@ -415,7 +431,6 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
 
             return step, STATUS_new, ADMM_OPTS_new
 
-
         ### Main GRASTA update
 
         DIM = self._grastaOPTIONS.dim_m
@@ -440,7 +455,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         sG = gamma_norm * w_norm
 
         t, STATUS_new, admm_OPTS_new = calculate_mla_step(self._grastaSTATUS, self._grastaOPTIONS, self._admm_OPTS,
-                                                           gamma, w_hat, sG)
+                                                          gamma, w_hat, sG)
 
         step = np.multiply.outer([((np.cos(t) - 1) * (Uhat @ w_hat) / w_norm) + (np.sin(t) * gamma / gamma_norm)],
                                  (w_hat / w_norm))
@@ -452,7 +467,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         return Unew, w_hat, s_hat, STATUS_new, admm_OPTS_new
 
     def get_params(self) -> GRASTAParams:
-        return GRASTAParams(OPTIONS = self._grastaOPTIONS, STATUS = self._grastaSTATUS, OPTS = self._admm_OPTS, U = self._U)
+        return GRASTAParams(OPTIONS=self._grastaOPTIONS, STATUS=self._grastaSTATUS, OPTS=self._admm_OPTS, U=self._U)
 
     def set_params(self, *, params: GRASTAParams) -> None:
         self._grastaOPTIONS = params['OPTIONS']
@@ -476,9 +491,8 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         self.set_params(params=state['params'])
         self._random_state = state['random_state']
 
-    #placeholder for now, just calls base version.
+    # placeholder for now, just calls base version.
     @classmethod
-    def can_accept(cls, *, method_name: str, arguments: typing.Dict[str, typing.Union[metadata_module.Metadata, type]], hyperparams: GRASTAHyperparams) -> typing.Optional[metadata_module.DataMetadata]:
+    def can_accept(cls, *, method_name: str, arguments: typing.Dict[str, typing.Union[metadata_module.Metadata, type]],
+                   hyperparams: GRASTAHyperparams) -> typing.Optional[metadata_module.DataMetadata]:
         return super().can_accept(method_name=method_name, arguments=arguments, hyperparams=hyperparams)
-
-

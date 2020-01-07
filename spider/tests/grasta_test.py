@@ -69,7 +69,7 @@ class Test_GRASTA(unittest.TestCase):
         #print("Subspace frobenius norm error: ",err)
         #print("Determinant discrepancy: ", determ_discrep)
 
-        self.assertLess(err, 1e-4)
+        self.assertLess(err, 1e-5)
         self.assertLess(determ_discrep, 1e-6)
 
 
@@ -103,13 +103,13 @@ class Test_GRASTA(unittest.TestCase):
         U_err = np.linalg.norm(Ustream @ Ustream.T - Utrue @ Utrue.T,'fro')
         determ_discrep = abs(1 - np.linalg.det((Utrue.T @ Ustream)@(Ustream.T @ Utrue)))
 
-        self.assertLess(U_err , 1e-4)
+        self.assertLess(U_err , 1e-5)
         self.assertLess(determ_discrep , 1e-6)
         #print("Streaming subspace error: ",U_err)
         #print("Streaming determinant discrepancy: ",determ_discrep)
 
         #TEST PRODUCE FUNCTION
-        n = 500;
+        n = 50;
         W = np.random.randn(rank,n)
         L = Utrue @ W
         
@@ -124,16 +124,17 @@ class Test_GRASTA(unittest.TestCase):
             S[:,i] = strue;
         
         Y = L + S
-        
+
         Lhat = grasta.produce(inputs = Y.T).value
-        Lerr = np.linalg.norm(Lhat - L,'fro') / np.linalg.norm(L,'fro')
-        #print('Lerr error is: ',Lerr)
-        Lerr_tolerance = 0.2
+        Lerr = np.linalg.norm(Lhat.T - L,'fro') / np.linalg.norm(L,'fro')
+        print('L error is: ',Lerr)
+        Lerr_tolerance = 1e-5
         self.assertLess(Lerr, Lerr_tolerance)
         
         Shat = grasta.produce_sparse(inputs = Y.T).value
-        Serr = np.linalg.norm(Shat - S,'fro')/np.linalg.norm(S,'fro')
-        Serr_tolerance = 0.2
+        Serr = np.linalg.norm(Shat.T - S,'fro')/np.linalg.norm(S,'fro')
+        Serr_tolerance = 1e-5
+        print('S error is: ',Serr)
         self.assertLess(Serr,Serr_tolerance)
         
         U = grasta.produce_subspace(inputs = Y.T).value

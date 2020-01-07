@@ -86,7 +86,7 @@ This section describes how to set up this project.
 1. Clone the repository to your machine and `cd` into its directory.
 
     ```
-    git clone git@gitlab.datadrivendiscovery.org:michigan/spider.git
+    git clone git@github.com:dvdmjohnson/d3m_michigan_primitives.git
     cd spider
     ```
 
