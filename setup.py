@@ -137,7 +137,7 @@ setuptools.setup(
         "pandas (>=0.19.2)",
         "typing (>=3.6.2)",
         "stopit (>=1.1.1)",
-        "librosa (==0.5.1)",
+        "librosa (==0.6.2)",
         "torch (>=0.3.1)",
         "cvxpy (>=1.0.23)",
     ],
