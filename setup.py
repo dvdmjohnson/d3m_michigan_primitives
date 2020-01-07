@@ -129,7 +129,7 @@ setuptools.setup(
         "scikit-image (>=0.13.1)",
         "scikit-learn (>=0.18.1)",
         "matplotlib (>=1.5.1)",
-        "Pillow (>=4.1.1)",
+        "Pillow (==6.2.1)",
         "h5py (>=2.7.0)",
         "opencv-python (>=3.0.0)",
         "keras (>=2.0.4)",
