@@ -10,7 +10,7 @@ docker run -d \
   -it \
   --name spider_test \
   --mount type=bind,source="$(pwd)",target=/spider \
-  --mount type=bind,source=/z/mid/D3M/datasets,target=/datasets \
+  --mount type=bind,source=/z/mid/D3M/datasets_public,target=/datasets \
   --mount type=bind,source=/z/mid/D3M/volumes,target=/volumes \
   spider
 
