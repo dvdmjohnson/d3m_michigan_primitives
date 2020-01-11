@@ -63,6 +63,7 @@ docs/_build/
 html/
 features.csv
 Michigan/
+/*.txt
 
 #eclipse
 .metadata/*

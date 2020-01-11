@@ -22,7 +22,7 @@ class SSCCVXPipeline(BasePipeline):
         super().__init__()
         
         #choose one or more seed datasets on which this pipeline can operate
-        self.dataset = '1491_one_hundred_plants_margin_clust'
+        self.dataset = '1491_one_hundred_plants_margin'
         self.meta_info = self.genmeta(self.dataset)
         
     #define pipeline object
