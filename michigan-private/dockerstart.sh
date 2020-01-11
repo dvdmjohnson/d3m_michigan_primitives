@@ -10,10 +10,8 @@ docker run -d \
   -it \
   --name spider_test \
   --mount type=bind,source="$(pwd)",target=/spider \
-  -e "GIT_COMMITTER_NAME=$(git config user.name)" \
-  -e "GIT_COMMITTER_EMAIL=$(git config user.email)" \
-  -e "GIT_AUTHOR_NAME=$(git config user.name)" \
-  -e "GIT_AUTHOR_EMAIL=$(git config user.email)" \
+  --mount type=bind,source=/z/mid/D3M/datasets,target=/datasets \
+  --mount type=bind,source=/z/mid/D3M/volumes,target=/volumes \
   spider
 
 docker exec -it spider_test bash
