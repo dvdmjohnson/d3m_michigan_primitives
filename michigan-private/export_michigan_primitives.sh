@@ -54,5 +54,5 @@ git push -u origin "$NEW_BRANCH_NAME"
 git checkout master
 git branch -d "$NEW_BRANCH_NAME"
 
-printf "\nCreated new branch $NEW_BRANCH_NAME at rszeto/primitives. Please create a merge request to merge this branch into datadrivendiscovery/primitives after the continuous integration tests pass. In addition, remove the `Michigan` folder from d3m_michigan_primitives if you are done with it.\n"
+printf "\nCreated new branch $NEW_BRANCH_NAME at rszeto/primitives. Please create a merge request to merge this branch into datadrivendiscovery/primitives after the continuous integration tests pass. In addition, remove the 'Michigan' folder from d3m_michigan_primitives if you are done with it.\n"
 
