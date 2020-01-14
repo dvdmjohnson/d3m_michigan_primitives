@@ -31,22 +31,22 @@ primitive_module_names = ['d3m.primitives.{}'.format(x) for x in pkg_resources.g
 
 # Stores information required to generate the command to run each pipeline
 pipeline_cmd_template_info = {
-    # OWLRegressionPipeline: {
-    #     'primitive': 'd3m.primitives.regression.owl_regression.Umich',
-    #     'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
-    # },
+    OWLRegressionPipeline: {
+        'primitive': 'd3m.primitives.regression.owl_regression.Umich',
+        'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
+    },
     # OWLRegressionPipelineChallenge1: {
     #     'primitive': 'd3m.primitives.regression.owl_regression.Umich',
     #     'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
     # },
-    # OWLRegressionPipelineChallenge2: {
-    #     'primitive': 'd3m.primitives.regression.owl_regression.Umich',
-    #     'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
-    # },
-    # OWLRegressionPipelineChallenge3: {
-    #     'primitive': 'd3m.primitives.regression.owl_regression.Umich',
-    #     'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
-    # },
+    OWLRegressionPipelineChallenge2: {
+        'primitive': 'd3m.primitives.regression.owl_regression.Umich',
+        'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
+    },
+    OWLRegressionPipelineChallenge3: {
+        'primitive': 'd3m.primitives.regression.owl_regression.Umich',
+        'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
+    },
     # FeaturizationVGG16Pipeline: {
     #     'primitive': 'd3m.primitives.feature_extraction.vgg16.Umich',
     #     'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
@@ -63,14 +63,14 @@ pipeline_cmd_template_info = {
     #     'primitive': 'd3m.primitives.data_compression.rpca_lbd.Umich',
     #     'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
     # },
-    # GRASTAPipeline: {
-    #     'primitive': 'd3m.primitives.data_compression.grasta.Umich',
-    #     'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
-    # },
-    # GRASTAPipelineChallenge1: {
-    #     'primitive': 'd3m.primitives.data_compression.grasta.Umich',
-    #     'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
-    # },
+    GRASTAPipeline: {
+        'primitive': 'd3m.primitives.data_compression.grasta.Umich',
+        'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
+    },
+    GRASTAPipelineChallenge1: {
+        'primitive': 'd3m.primitives.data_compression.grasta.Umich',
+        'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
+    },
     # GRASTAPipelineChallenge2: {
     #     'primitive': 'd3m.primitives.data_compression.grasta.Umich',
     #     'command': "python3 -m d3m runtime fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
