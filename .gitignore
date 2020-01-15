@@ -64,6 +64,7 @@ html/
 features.csv
 Michigan/
 /*.txt
+/pipeline_results/
 
 #eclipse
 .metadata/*
