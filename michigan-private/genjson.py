@@ -50,7 +50,7 @@ pipeline_cmd_template_info = {
     # FeaturizationVGG16Pipeline: {
     #     'primitive': 'd3m.primitives.feature_extraction.vgg16.Umich',
     #     'command': "python3 -m d3m runtime -v /volumes fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
-    },
+    # },
     # GO_DECPipeline: {
     #     'primitive': 'd3m.primitives.data_compression.go_dec.Umich',
     #     'command': "python3 -m d3m runtime -v /volumes fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
@@ -83,18 +83,18 @@ pipeline_cmd_template_info = {
         'primitive': 'd3m.primitives.clustering.ekss.Umich',
         'command': "python3 -m d3m runtime -v /volumes fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
     },
-    # SSCADMMPipeline: {
-    #     'primitive': 'd3m.primitives.clustering.ssc_admm.Umich',
-    #     'command': "python3 -m d3m runtime -v /volumes fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
-    # },
+    SSCADMMPipeline: {
+        'primitive': 'd3m.primitives.clustering.ssc_admm.Umich',
+        'command': "python3 -m d3m runtime -v /volumes fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
+    },
     SSCCVXPipeline: {
         'primitive': 'd3m.primitives.clustering.ssc_cvx.Umich',
         'command': "python3 -m d3m runtime -v /volumes fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
     },
-    # SSCOMPPipeline: {
-    #     'primitive': 'd3m.primitives.clustering.ssc_omp.Umich',
-    #     'command': "python3 -m d3m runtime -v /volumes fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
-    # },
+    SSCOMPPipeline: {
+        'primitive': 'd3m.primitives.clustering.ssc_omp.Umich',
+        'command': "python3 -m d3m runtime -v /volumes fit-produce -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml"
+    },
 }
 
 pipeline_cmds = []
