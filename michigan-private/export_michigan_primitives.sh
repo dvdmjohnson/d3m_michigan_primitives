@@ -44,6 +44,7 @@ fi
 cp -r "$PROJ_DIR/Michigan" .
 
 # Commit and push changes
+cd $PRIMITIVES_REPO_PATH
 NEW_BRANCH_NAME="merge-michigan-$SHORT_HASH"
 git checkout -b "$NEW_BRANCH_NAME"
 # Adds files larger than 100K with lfs
