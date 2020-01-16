@@ -1,7 +1,15 @@
 import sys
 import warnings
+
+from PIL import Image
 import numpy as np
-from scipy import misc
+
+method_pil_map = {
+    'bilinear': Image.BILINEAR,
+    'nearest': Image.NEAREST,
+    'lanczos': Image.LANCZOS,
+    'bicubic': Image.BICUBIC
+}
 
 def interpolate(x, shape, method):
     """ Resizes the input via various interpolations methods.
@@ -22,8 +30,9 @@ def interpolate(x, shape, method):
         None
     """
 
-    y = misc.imresize(x, shape, method)
-    y = y.astype(np.float32)
+    x_pil = Image.fromarray(np.array(255 * x, dtype=np.uint8))
+    y_pil = x_pil.resize(shape[:2], resample=method_pil_map[method])
+    y = np.array(y_pil, dtype=np.float32) / 255
 
     return y
 

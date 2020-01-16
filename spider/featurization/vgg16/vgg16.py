@@ -9,23 +9,21 @@ import warnings
 import numpy as np
 
 import tensorflow as tf
-from keras import backend as K
-from keras.models import Model
-from keras.layers import Flatten
-from keras.layers import Dense
-from keras.layers import Input
-from keras.layers import Conv2D
-from keras.layers import MaxPooling2D
-from keras.preprocessing import image
-from keras.applications.imagenet_utils import preprocess_input
-from keras.applications.imagenet_utils import decode_predictions
+from tensorflow.compat.v1.keras import backend as K
+from tensorflow.compat.v1.keras.models import Model
+from tensorflow.compat.v1.keras.layers import Flatten
+from tensorflow.compat.v1.keras.layers import Dense
+from tensorflow.compat.v1.keras.layers import Input
+from tensorflow.compat.v1.keras.layers import Conv2D
+from tensorflow.compat.v1.keras.layers import MaxPooling2D
+from tensorflow.compat.v1.keras.preprocessing import image
+from tensorflow.compat.v1.keras.applications.imagenet_utils import preprocess_input
+from tensorflow.compat.v1.keras.applications.imagenet_utils import decode_predictions
 
 from . import utils
 
 # Params could include option of weights to load into model, but currently
 # model is fixed and no constraints change instance of primitive
-
-__all__ = ('AudioFeaturization',)
 
 Inputs = container.ndarray
 Outputs = container.ndarray
@@ -117,10 +115,10 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
         self._num_cores = hyperparams['num_cores']
         self._num_gpus = hyperparams['num_gpus']
 
-        config = tf.ConfigProto(intra_op_parallelism_threads=self._num_cores,\
+        config = tf.compat.v1.ConfigProto(intra_op_parallelism_threads=self._num_cores,\
             inter_op_parallelism_threads=self._num_cores, allow_soft_placement=True,\
             device_count = {'CPU' : self._num_cores, 'GPU' : self._num_gpus})
-        session = tf.Session(config=config)
+        session = tf.compat.v1.Session(config=config)
         K.set_session(session)
 
         # helper vars
@@ -210,7 +208,7 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
         """
 
         # interpolation methods handling
-        method_list = {'bilinear', 'nearest', 'lanczos', 'bicubic', 'cubic'}
+        method_list = {'bilinear', 'nearest', 'lanczos', 'bicubic'}
         if method not in method_list:
             raise ValueError('Method for interpolation must be one of the following %s' \
                 % str(method_list))
@@ -294,7 +292,7 @@ class VGG16(featurization.FeaturizationTransformerPrimitiveBase[Inputs, Outputs,
         nimage = inputs.shape[0]
 
         for i in range(nimage):
-            datum = np.rollaxis(inputs[i,1], 2) #[i,0] is the image name, [i,1] is the actual data
+            datum = inputs[i, 1]  # [i, 0] is the image name, [i, 1] is the actual data
             x = self._input_handler(datum, self._interpolation_method)
             image_features = model.predict(x)
             image_features = np.squeeze(image_features)
