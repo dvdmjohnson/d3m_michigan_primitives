@@ -34,13 +34,13 @@ fit_score_command = 'python3 -m d3m runtime -v /volumes fit-score -p Michigan/{p
 # Stores information required to generate the command to run each pipeline
 pipeline_cmd_template_info = {
     OWLRegressionPipeline: 'd3m.primitives.regression.owl_regression.Umich',
-    # OWLRegressionPipelineChallenge1: 'd3m.primitives.regression.owl_regression.Umich',
+    OWLRegressionPipelineChallenge1: 'd3m.primitives.regression.owl_regression.Umich',
     OWLRegressionPipelineChallenge2: 'd3m.primitives.regression.owl_regression.Umich',
     OWLRegressionPipelineChallenge3: 'd3m.primitives.regression.owl_regression.Umich',
-    # FeaturizationVGG16Pipeline: 'd3m.primitives.feature_extraction.vgg16.Umich',
-    # GO_DECPipeline: 'd3m.primitives.data_compression.go_dec.Umich',
-    # PCP_IALMPipeline: 'd3m.primitives.data_compression.pcp_ialm.Umich',
-    # RPCA_LBDPipeline: 'd3m.primitives.data_compression.rpca_lbd.Umich',
+    FeaturizationVGG16Pipeline: 'd3m.primitives.feature_extraction.vgg16.Umich',
+    GO_DECPipeline: 'd3m.primitives.data_compression.go_dec.Umich',
+    PCP_IALMPipeline: 'd3m.primitives.data_compression.pcp_ialm.Umich',
+    RPCA_LBDPipeline: 'd3m.primitives.data_compression.rpca_lbd.Umich',
     # GROUSEPipeline: 'd3m.primitives.data_compression.grouse.Umich',
     GRASTAPipeline: 'd3m.primitives.data_compression.grasta.Umich',
     GRASTAPipelineChallenge1: 'd3m.primitives.data_compression.grasta.Umich',
