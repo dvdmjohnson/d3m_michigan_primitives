@@ -34,7 +34,7 @@ fit_score_command = 'python3 -m d3m runtime -v /volumes fit-score -p Michigan/{p
 # Stores information required to generate the command to run each pipeline
 pipeline_cmd_template_info = {
     OWLRegressionPipeline: 'd3m.primitives.regression.owl_regression.Umich',
-    OWLRegressionPipelineChallenge1: 'd3m.primitives.regression.owl_regression.Umich',
+    # OWLRegressionPipelineChallenge1: 'd3m.primitives.regression.owl_regression.Umich',
     OWLRegressionPipelineChallenge2: 'd3m.primitives.regression.owl_regression.Umich',
     OWLRegressionPipelineChallenge3: 'd3m.primitives.regression.owl_regression.Umich',
     FeaturizationVGG16Pipeline: 'd3m.primitives.feature_extraction.vgg16.Umich',
