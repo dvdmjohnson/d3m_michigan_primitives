@@ -41,6 +41,7 @@ pipeline_cmd_template_info = {
     # GO_DECPipeline: 'd3m.primitives.data_compression.go_dec.Umich',
     # PCP_IALMPipeline: 'd3m.primitives.data_compression.pcp_ialm.Umich',
     # RPCA_LBDPipeline: 'd3m.primitives.data_compression.rpca_lbd.Umich',
+    # GROUSEPipeline: 'd3m.primitives.data_compression.grouse.Umich',
     GRASTAPipeline: 'd3m.primitives.data_compression.grasta.Umich',
     GRASTAPipelineChallenge1: 'd3m.primitives.data_compression.grasta.Umich',
     # GRASTAPipelineChallenge2: 'd3m.primitives.data_compression.grasta.Umich',
