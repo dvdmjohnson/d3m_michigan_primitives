@@ -29,7 +29,9 @@ version = pkg_resources.get_distribution('spider').version
 # E.g. d3m.primitives.learner.goturn.Umich
 primitive_module_names = ['d3m.primitives.{}'.format(x) for x in pkg_resources.get_entry_map('spider')['d3m.primitives'].keys()]
 
-fit_score_command = 'python3 -m d3m runtime -v /volumes fit-score -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -a /datasets/seed_datasets_current/{dataset}/SCORE/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml > pipeline_results/{pipeline}.txt'
+fit_score_command_template = 'python3 -m d3m runtime -v /volumes fit-score -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -a /datasets/seed_datasets_current/{dataset}/SCORE/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml > pipeline_results/{pipeline}.txt'
+alt_fit_score_command_template = 'python3 -m d3m runtime -v /volumes fit-score -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -a /datasets/seed_datasets_current/{dataset}/SCORE/dataset_SCORE/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml > pipeline_results/{pipeline}.txt'
+
 
 # Stores information required to generate the command to run each pipeline
 pipeline_cmd_template_info = {
@@ -37,6 +39,7 @@ pipeline_cmd_template_info = {
     # OWLRegressionPipelineChallenge1: 'd3m.primitives.regression.owl_regression.Umich',
     OWLRegressionPipelineChallenge2: 'd3m.primitives.regression.owl_regression.Umich',
     OWLRegressionPipelineChallenge3: 'd3m.primitives.regression.owl_regression.Umich',
+    FeaturizationAudioFeaturizationPipeline: 'd3m.primitives.feature_extraction.audio_featurization.Umich',
     FeaturizationVGG16Pipeline: 'd3m.primitives.feature_extraction.vgg16.Umich',
     # GO_DECPipeline: 'd3m.primitives.data_compression.go_dec.Umich',
     PCP_IALMPipeline: 'd3m.primitives.data_compression.pcp_ialm.Umich',
@@ -79,7 +82,8 @@ for pl in pipeline_cmd_template_info.keys():
     print(prim, pl_name, '->', instanceid)
 
     # Fill out the template for this pipeline's run command
-    pipeline_cmd = fit_score_command.format(
+    template = alt_fit_score_command_template if pl == FeaturizationAudioFeaturizationPipeline else fit_score_command_template
+    pipeline_cmd = template.format(
         version=version,
         primitive=prim,
         pipeline=pl_name,
