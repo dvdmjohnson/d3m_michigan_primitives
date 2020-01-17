@@ -39,7 +39,7 @@ pipeline_cmd_template_info = {
     # OWLRegressionPipelineChallenge1: 'd3m.primitives.regression.owl_regression.Umich',
     OWLRegressionPipelineChallenge2: 'd3m.primitives.regression.owl_regression.Umich',
     OWLRegressionPipelineChallenge3: 'd3m.primitives.regression.owl_regression.Umich',
-    FeaturizationAudioFeaturizationPipeline: 'd3m.primitives.feature_extraction.audio_featurization.Umich',
+    # FeaturizationAudioFeaturizationPipeline: 'd3m.primitives.feature_extraction.audio_featurization.Umich',
     FeaturizationVGG16Pipeline: 'd3m.primitives.feature_extraction.vgg16.Umich',
     # GO_DECPipeline: 'd3m.primitives.data_compression.go_dec.Umich',
     PCP_IALMPipeline: 'd3m.primitives.data_compression.pcp_ialm.Umich',
