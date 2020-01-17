@@ -49,7 +49,8 @@ NEW_BRANCH_NAME="merge-michigan-$SHORT_HASH"
 git checkout -b "$NEW_BRANCH_NAME"
 # Adds files larger than 100K with lfs
 ./git-add.sh  
-git add Michigan
+git add .gitattributes
+git add v20*/Michigan
 git commit -m "Update primitives from dvdmjohnson/d3m_michigan_primitives@$HASH"
 git push -u origin "$NEW_BRANCH_NAME"
 git checkout master
