@@ -22,6 +22,9 @@ class GODECHandgeometryPipeline(BasePipeline):
         self.dataset = '22_handgeometry'
         self.meta_info = self.genmeta(self.dataset)
 
+    def get_primitive_entry_point(self):
+        return 'd3m.primitives.data_compression.go_dec.Umich'
+
     def _gen_pipeline(self):
         pipeline = meta_pipeline.Pipeline()
         pipeline.add_input(name='inputs')

@@ -30,85 +30,28 @@ primitive_module_names = ['d3m.primitives.{}'.format(x) for x in pkg_resources.g
 
 default_fit_score_command_template = 'python3 -m d3m runtime -v /volumes fit-score -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -a /datasets/seed_datasets_current/{dataset}/SCORE/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml > pipeline_results/{pipeline}.txt'
 
-# Stores information required to generate the command to run each pipeline
-pipeline_cmd_template_info = {
-    OWLRegressionAutoPricePipeline: {
-        'primitive': 'd3m.primitives.regression.owl_regression.Umich',
-        'command': default_fit_score_command_template
-    },
-    # OWLRegressionRadonSeedPipeline: {
-    #     'primitive': 'd3m.primitives.regression.owl_regression.Umich',
-    #     'command': default_fit_score_command_template
-    # },
-    OWLRegressionCPS85WagesPipeline: {
-        'primitive': 'd3m.primitives.regression.owl_regression.Umich',
-        'command': default_fit_score_command_template
-    },
-    OWLRegressionAutoMPGPipeline: {
-        'primitive': 'd3m.primitives.regression.owl_regression.Umich',
-        'command': default_fit_score_command_template
-    },
-    # AudioFeaturizationUrbansoundPipeline: {
-    #     'primitive': 'd3m.primitives.feature_extraction.audio_featurization.Umich',
-    #     'command': 'python3 -m d3m runtime -v /volumes fit-score -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -a /datasets/seed_datasets_current/{dataset}/SCORE/dataset_SCORE/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml > pipeline_results/{pipeline}.txt'
-    # },
-    VGG16HandgeometryPipeline: {
-        'primitive': 'd3m.primitives.feature_extraction.vgg16.Umich',
-        'command': default_fit_score_command_template
-    },
-    # I3DHMDBActioRecognitionPipeline: {
-    #     'primitive': 'd3m.primitives.feature_extraction.i3d.Umich',
-    #     'command': default_fit_score_command_template
-    # },
-    # GODECHandgeometryPipeline: {
-    #     'primitive': 'd3m.primitives.data_compression.go_dec.Umich',
-    #     'command': default_fit_score_command_template
-    # },
-    PCPIALMHandgeometryPipeline: {
-        'primitive': 'd3m.primitives.data_compression.pcp_ialm.Umich',
-        'command': default_fit_score_command_template
-    },
-    RPCALBDHandgeometryPipeline: {
-        'primitive': 'd3m.primitives.data_compression.rpca_lbd.Umich',
-        'command': default_fit_score_command_template
-    },
-    # GROUSEAutoMPGPipeline: {
-    #     'primitive': 'd3m.primitives.data_compression.grouse.Umich',
-    #     'command': default_fit_score_command_template
-    # },
-    GRASTAAutoMPGPipeline: {
-        'primitive': 'd3m.primitives.data_compression.grasta.Umich',
-        'command': default_fit_score_command_template
-    },
-    GRASTAAutoPricePipeline: {
-        'primitive': 'd3m.primitives.data_compression.grasta.Umich',
-        'command': default_fit_score_command_template
-    },
-    # GRASTACPS85WagesPipeline: {
-    #     'primitive': 'd3m.primitives.data_compression.grasta.Umich',
-    #     'command': default_fit_score_command_template
-    # },
-    KSSOneHundredPlantsMarginPipeline: {
-        'primitive': 'd3m.primitives.clustering.kss.Umich',
-        'command': default_fit_score_command_template
-    },
-    EKSSOneHundredPlantsMarginPipeline: {
-        'primitive': 'd3m.primitives.clustering.ekss.Umich',
-        'command': default_fit_score_command_template
-    },
-    SSCADMMOneHundredPlantsMarginPipeline: {
-        'primitive': 'd3m.primitives.clustering.ssc_admm.Umich',
-        'command': default_fit_score_command_template
-    },
-    SSCCVXOneHundredPlantsMarginPipeline: {
-        'primitive': 'd3m.primitives.clustering.ssc_cvx.Umich',
-        'command': default_fit_score_command_template
-    },
-    SSCOMPOneHundredPlantsMarginPipeline: {
-        'primitive': 'd3m.primitives.clustering.ssc_omp.Umich',
-        'command': default_fit_score_command_template
-    },
-}
+# List of pipelines to run and export
+pipelines_to_run = [
+    # AudioFeaturizationUrbansoundPipeline,
+    EKSSOneHundredPlantsMarginPipeline,
+    # GODECHandgeometryPipeline,
+    GRASTAAutoMPGPipeline,
+    GRASTAAutoPricePipeline,
+    # GRASTACPS85WagesPipeline,
+    # GROUSEAutoMPGPipeline,
+    # I3DHMDBActioRecognitionPipeline,
+    KSSOneHundredPlantsMarginPipeline,
+    OWLRegressionAutoMPGPipeline,
+    OWLRegressionAutoPricePipeline,
+    OWLRegressionCPS85WagesPipeline,
+    # OWLRegressionRadonSeedPipeline,
+    PCPIALMHandgeometryPipeline,
+    RPCALBDHandgeometryPipeline,
+    SSCADMMOneHundredPlantsMarginPipeline,
+    SSCCVXOneHundredPlantsMarginPipeline,
+    SSCOMPOneHundredPlantsMarginPipeline,
+    VGG16HandgeometryPipeline,
+]
 
 pipeline_cmds = []
 
@@ -126,18 +69,18 @@ for prim in primitive_module_names:
     subprocess.check_call(com, shell=True)
 
 # Now make pipelines
-for pl in pipeline_cmd_template_info.keys():
+for pl in pipelines_to_run:
     pl_name = pl.__name__
     instance = pl()
     json_info = instance.get_json()
     instanceid = instance.get_id()
     dataset = instance.dataset
-    prim = pipeline_cmd_template_info[pl]['primitive']
+    prim = instance.get_primitive_entry_point()
 
     print(prim, pl_name, '->', instanceid)
 
     # Fill out the template for this pipeline's run command
-    template = pipeline_cmd_template_info[pl]['command']
+    template = instance.get_fit_score_command_template()
     pipeline_cmd = template.format(
         version=version,
         primitive=prim,

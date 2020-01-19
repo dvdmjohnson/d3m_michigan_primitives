@@ -21,6 +21,9 @@ class OWLRegressionAutoMPGPipeline(BasePipeline):
         self.dataset = '196_autoMpg'
         self.meta_info = self.genmeta(self.dataset)
 
+    def get_primitive_entry_point(self):
+        return 'd3m.primitives.regression.owl_regression.Umich'
+
     #define pipeline object
     def _gen_pipeline(self):
         # pipeline context is just metadata, ignore for now

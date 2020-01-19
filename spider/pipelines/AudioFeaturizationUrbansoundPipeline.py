@@ -20,6 +20,26 @@ class AudioFeaturizationUrbansoundPipeline(BasePipeline):
         self.dataset = '31_urbansound'
         self.meta_info = self.genmeta(self.dataset)
 
+    def get_primitive_entry_point(self):
+        return 'd3m.primitives.feature_extraction.i3d.Umich'
+
+    def get_primitive_entry_point(self):
+        return 'd3m.primitives.feature_extraction.audio_featurization.Umich'
+
+    def get_fit_score_command_template(self):
+        """Override the default template to use a different scoring problem JSON for this particular dataset."""
+        template = 'python3 -m d3m runtime -v /volumes fit-score' \
+                   ' -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json' \
+                   ' -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json' \
+                   ' -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json' \
+                   ' -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json' \
+                   ' -a /datasets/seed_datasets_current/{dataset}/SCORE/dataset_SCORE/datasetDoc.json' \
+                   ' -o /dev/null' \
+                   ' -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml' \
+                   ' > pipeline_results/{pipeline}.txt'
+
+        return template
+
     #define pipeline object
     def _gen_pipeline(self):
         #pipeline context is just metadata, ignore for now
@@ -66,8 +86,8 @@ class AudioFeaturizationUrbansoundPipeline(BasePipeline):
         )
         step_3.add_output('produce')
         pipeline.add_step(step_3)
-		
-		#denormalize to bring audio data collection into primary dataframe
+
+        #denormalize to bring audio data collection into primary dataframe
         step_4 = meta_pipeline.PrimitiveStep(primitive_description = DenormalizePrimitive.metadata.query())
         step_4.add_argument(
                 name = 'inputs',
@@ -76,8 +96,8 @@ class AudioFeaturizationUrbansoundPipeline(BasePipeline):
         )
         step_4.add_output('produce')
         pipeline.add_step(step_4)
-		
-		#transform denormalized dataset into a dataframe
+
+        #transform denormalized dataset into a dataframe
         step_5 = meta_pipeline.PrimitiveStep(primitive_description = DatasetToDataFramePrimitive.metadata.query())
         step_5.add_argument(
                 name = 'inputs',
@@ -86,8 +106,8 @@ class AudioFeaturizationUrbansoundPipeline(BasePipeline):
         )
         step_5.add_output('produce')
         pipeline.add_step(step_5)
-		
-		#Extract target 
+
+        #Extract target
         step_6 = meta_pipeline.PrimitiveStep(primitive_description = ExtractColumnsBySemanticTypesPrimitive.metadata.query())
         step_6.add_argument(
                 name = 'inputs',

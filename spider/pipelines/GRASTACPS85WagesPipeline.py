@@ -25,6 +25,9 @@ class GRASTACPS85WagesPipeline(BasePipeline):
         self.dataset = '534_cps_85_wages'
         self.meta_info = self.genmeta(self.dataset)
 
+    def get_primitive_entry_point(self):
+        return 'd3m.primitives.data_compression.grasta.Umich'
+
     #define pipeline object
     def _gen_pipeline(self):
         #pipeline context is just metadata, ignore for now
