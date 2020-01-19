@@ -1,20 +1,36 @@
-Docker Setup
------
+# michigan-private
+
+This folder contains scripts specifically for development by the Michigan team. If you're wondering, "private" is just a misnomer from a legacy configuration.
+
+Developers from the Michigan team should use this document as the primary resource for how to run things. Other developers should look at the README in the project root.
+
+## Table of Contents
+
+* [Docker Setup](#docker-setup)
+* [Internal Tests and Pipelines](#internal-tests-and-pipelines)
+    - [Internal tests](#internal-tests)
+    - [Pipelines](#pipelines)
+* [Merging Changes](#merging-changes)
+* [[POC] Submitting to datadrivendiscovery/primitives](#poc-submitting-to-datadrivendiscoveryprimitives)
+
+## Docker Setup
+
 The current recommended method to install, test and use this library is by installing it within a pregenerated d3m docker image, which already contains up-to-date versions of the full d3m universe, including the various components that our primitives/pipelines depend on.
 
 1. To install Docker, follow the recommended installation procedure for your OS (for Ubuntu, [installing via Docker's repository is recommended](https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-using-the-repository)).
 
-2. Go into this project's root folder and build the D3M Docker image by running the build script:
+2. Build and launch a fresh D3M Docker image:
 
     ```
-    cd spider
-    michigan-private/dockerbuild.sh
+    cd d3m_michigan_primitives/michigan-private
+    ./docker_build.sh
+    ./docker_reset.sh
     ```
 
-3. Launch the Docker image (with the SPIDER project directory mounted within):
+3. Start bash inside the Docker image:
 
     ```
-    michigan-private/dockerstart.sh
+    ./docker_bash.sh
     ```
 
 4. INSIDE THE DOCKER IMAGE, run the dependency installation script:
@@ -30,22 +46,30 @@ The current recommended method to install, test and use this library is by insta
     ...  # Do stuff
     ```
 
+### Other notes
 
-Running individual tests and debugging
------
+* If no dependencies have been changed, you can generally just run `./docker_bash.sh` to start developing. However, you may want/need to run `./docker_build.sh` and `./docker_reset.sh` if you update the Docker image hash or project dependencies.
 
-**NOTE: If you're using Docker, run these commands inside the Docker image.**
+## Internal Tests and Pipelines
 
-You can use `nose` to either run individual tests or automatically jump into a debugger on failures. `nose` must be installed as a Python package:
+Whenever you're developing, you must make sure that our internal tests pass and that our pipelines give sensible results.
 
+Unless otherwise stated, you should run these commands inside the Docker image from the `/spider` folder.
+
+### Internal tests
+
+You can run all internal tests by running this command:
+
+```bash
+python3 setup.py test
 ```
+
+Make sure this command reports 0 errors and 0 failures.
+
+`nose` provides useful features for running and debugging individual tests. Make sure it's installed:
+
+```bash
 pip3 install nose
-```
-
-Here is an example of running a specific test:
-
-```
-nosetests spider.tests.audio_featurization_test.TestAudio
 ```
 
 To run all tests and automatically enter a debugger at the failure point, run this command:
@@ -54,14 +78,65 @@ To run all tests and automatically enter a debugger at the failure point, run th
 nosetests --pdb
 ```
 
-Finally, to enter a debugger upon failing a specific test:
+#### Running individual tests and debugging
+
+Here is an example of running a specific test:
+
+```
+nosetests spider.tests.audio_featurization_test.TestAudio
+```
+
+Note that the fully-qualified name of a test can be found either from the output of `python3 setup.py test` or by following the directory structure (e.g., the above test is a class located in `/spider/tests/audio_featurization_test.py`).
+
+To enter a debugger upon failing a specific test:
 
 ```
 nosetests --pdb spider.tests.audio_featurization_test.TestAudio
 ```
 
-Merging changes into master
------
+### Pipelines
+
+Pipelines are run on datasets provided by D3M and are used to demonstrate that our primitives can perform well on various data-driven tasks. They should be tuned to produce the highest possible scores.
+
+Pipeline scripts can be found in `spider/pipelines`. Make sure the internal tests pass before you start testing pipelines.
+
+#### Running pipelines
+
+Before running one or all pipelines, you must generate the primitive and pipeline "annotations" (i.e., JSON files that describe our primitives and pipelines in D3M's format):
+
+```bash
+python3 michigan-private/genjson.py 
+```
+
+This creates three things:
+
+* The `Michigan` folder, which contains all the annotations/JSON files
+* `run_pipeline_cmds.txt`, which contains the commands used to run all pipelines and store their output scores
+* The `pipeline_results` folder, which is where the output scores from the pipelines are stored
+
+**This command must be run whenever you make changes to a pipeline.** Also note that all primitives and pipelines are associated with a brand new hash inside `Michigan` whenever this command is run. This is a D3M requirement, and makes the following tasks less intuitive.
+
+##### Running individual pipelines
+
+To run an individual pipeline (e.g., `VGG16HandgeometryPipeline`), look for the line for that pipeline inside `run_pipeline_cmds.txt` and run it inside your bash shell. The following command does this programmatically:
+
+```bash
+eval `cat run_pipeline_cmds.txt | grep VGG16HandgeometryPipeline`
+```
+
+This will create a `.yaml` log inside `Michigan` and a score file inside `pipeline_results`. You should aim to get the reported score as high as possible.
+
+##### Running all pipelines in parallel
+
+You can run all pipelines in parallel with the utility script below:
+
+```bash
+python3 michigan-private/run_pipelines.py
+```
+
+This just runs all the commands in `run_pipeline_cmds.txt` with several workers.
+
+## Merging Changes
 
 When you're developing a new chunk of code, please follow the general workflow outlined below. Note that the instructions cover the possibility of a pre-existing branch, but it's generally bad practice to keep them around unless you're planning to use them soon.
 
@@ -81,8 +156,8 @@ When you're developing a new chunk of code, please follow the general workflow o
 2. Commit your changes to the new branch:
 
     ```
-    git add ...
-    git commit ...
+    git add <files to add>
+    git commit -m <message>
     ```
     
 3. For new branches, push to the remote repo:
@@ -97,10 +172,10 @@ When you're developing a new chunk of code, please follow the general workflow o
     git pull && git push
     ```
 
-4. Create a merge request ([link](https://opticnerve.eecs.umich.edu:8888/darpa_d3m_spider/spider/merge_requests/new))
+4. Create a merge request ([link](https://github.com/dvdmjohnson/d3m_michigan_primitives/compare))
 
-    1. Set source branch to `darpa_d3m_spider/spider`, `new-feature`
-    2. Set target branch to `darpa_d3m_spider/spider`, `master`
+    1. Set base branch to `master`
+    2. Set compare branch to your new branch
     3. Follow on-screen instructions
 
 5. Wait for the merge request to be completed, or make changes as requested by the D3M points-of-contact (POCs)
@@ -111,26 +186,24 @@ When you're developing a new chunk of code, please follow the general workflow o
     git branch -d new-feature
     ```
 
-7. Delete the new branch remotely ([here](https://opticnerve.eecs.umich.edu:8888/darpa_d3m_spider/spider/branches)) by clicking the appropriate Delete icon.
+7. Delete the new branch remotely [here](https://github.com/dvdmjohnson/d3m_michigan_primitives/branches) by clicking the appropriate Delete icon.
 
 
-Submitting to datadrivendiscovery/primitives
------
+## [POC] Submitting to datadrivendiscovery/primitives
 
 **Note: This section only applies to D3M's Michigan points-of-contact (POCs). If you're a normal developer for this project and want to merge changes into `master`, refer to [Merging changes into master](#merging-changes-into-master) or ask the POCs for help.**
 
-This guide describes how to percolate changes in this repository (`darpa_d3m_spider` on opticnerve) to the final D3M repository (`datadrivendiscovery/primitives` on GitLab). It assumes that you are trying to patch the latest commit in this repository's `master` branch into the final D3M repository.
+This guide describes how to percolate changes in this repository (`dvdmjohnson/d3m_michigan_primitives` on GitHub) to the final D3M repository (`datadrivendiscovery/primitives` on GitLab). It assumes that you are trying to patch the latest commit in this repository's `master` branch into the final D3M repository.
 
-This process establishes a connection between a whopping four repositories, each with nuanced differences:
+This process establishes a connection between three repositories, each with nuanced differences:
 
-[opticnerve.eecs.umich.edu:/darpa_d3m_spider/spider](https://opticnerve.eecs.umich.edu:8888/darpa_d3m_spider/spider) -> [github.com:/dvdmjohnson/d3m_michigan_primitives](https://github.com/dvdmjohnson/d3m_michigan_primitives) -> [gitlab.com:/rszeto/primitives](https://gitlab.com/rszeto/primitives) -> [gitlab.com:/datadrivendiscovery/primitives](https://gitlab.com/datadrivendiscovery/primitives)
+[github.com:/dvdmjohnson/d3m_michigan_primitives](https://github.com/dvdmjohnson/d3m_michigan_primitives) -> [gitlab.com:/rszeto/primitives](https://gitlab.com/rszeto/primitives) -> [gitlab.com:/datadrivendiscovery/primitives](https://gitlab.com/datadrivendiscovery/primitives)
 
 1. (Only required the first time you're submitting) Set up local repos
 
-    1. On your local machine, clone the following three repos:
+    1. On your local machine, clone the following repos:
     
         ```bash
-        git clone git@opticnerve.eecs.umich.edu:darpa_d3m_spider/spider.git
         git clone git@github.com:dvdmjohnson/d3m_michigan_primitives.git
         git clone git@gitlab.com:rszeto/primitives.git
         ```
@@ -142,74 +215,50 @@ This process establishes a connection between a whopping four repositories, each
         git remote add d3m git@gitlab.com:datadrivendiscovery/primitives.git
         ```
 
-2. Create a patch branch in the `dvdmjohnson/d3m_michigan_primitives` repo
+2. Start a fresh Docker image and launch a bash shell inside it:
 
-    1. `cd` into the `dvdmjohnson/d3m_michigan_primitives` local repo and update the master branch
+    ```bash
+    cd d3m_michigan_primitives
+    michigan-private/docker_build.sh
+    michigan-private/docker_reset.sh
+    michigan-private/docker_bash.sh 
+    ```
 
-        ```bash
-        cd d3m_michigan_primitives
-        git checkout master && git pull
-        ```
+3. Inside the Docker bash shell:
 
-    2. `cd` into the `darpa_d3m_spider/spider` local repo and update the master branch
-
+    1. Install dependencies:
+    
         ```bash
         cd spider
-        git checkout master && git pull
-        ```
-
-    3. Run the following script in this `darpa_d3m_spider/spider`, which creates and pushes a patch branch to `dvdmjohnson/d3m_michigan_primitives` based on the latest commit in this `darpa_d3m_spider/spider` repo:
-
-        ```bash
-        michigan-primitives/create_github_commit.sh <path to local d3m_michigan_primitives repo>
-        ```
-
-3. Merge the patch branch of `dvdmjohnson/d3m_michigan_primitives` into `master`
-
-    1. If you're not a master member of `dvdmjohnson/d3m_michigan_primitives`, [you must create a pull request on GitHub](https://github.com/dvdmjohnson/d3m_michigan_primitives/pulls).
-    
-    2. If you're a master member of `dvdmjohnson/d3m_michigan_primitives`, you can do the merge locally and push to remote:
-    
-        ```bash
-        cd d3m_michigan_primitives
-        git checkout master && git pull
-        git merge <patch_branch_name>
-        git push
-        ```
-
-4. Export the primitives from `dvdmjohnson/d3m_michigan_primitives` on GitHub to `rszeto/primitives` on GitLab
-
-    1. Pull the latest changes from `datadrivendiscovery/primitives` into `rszeto/primitives`, and push them to the remote repo:
-    
-        ```bash
-        cd primitives
-        # Update local copy of `rszeto/primitives`
-        git checkout master && git pull
-        # Merge changes from upstream datadrivendiscovery/primitives repo into local repo
-        git fetch d3m && git merge d3m/master
-        # Push latest changes into remote rszeto/primitives repo
-        git push
+        michigan-private/install_dependencies.sh
         ```
     
-        This essentially updates `rszeto/primitives` to be in sync with `datadrivendiscovery/primitives` (both remotely and locally).
-
-    2. In the `darpa_d3m_spider/spider` local repo, launch the Docker image
-
+    2. Run local tests:
+    
         ```bash
-        cd spider
-        michigan-primitives/dockerbuild.sh
-        michigan-primitives/dockerstart.sh
+        python3 setup.py test
+        ```
+    
+    3. Generate annotations/JSON files for primitives and pipelines:
+    
+        ```bash
+        python3 michigan-private/genjson.py
+        python3 michigan-private/run_pipelines.py
+        ```
+    
+    4. Post-process the primitive/pipeline export folder (compress pipeline log runs and change permissions to host user)
+    
+        ```bash
+        michigan-private/prepare_primitive_export.sh
         ```
 
-    3. Inside the Docker image, run the following script, which pushes a patch branch to `rszeto/primitives` based on the latest `dvdmjohnson/d3m_michigan_primitives` commit:
+4. Copy `Michigan` folder to local `rszeto/primitives` repo, and push changes:
 
-        ```bash
-        spider/michigan-primitives/export_michigan_primitives.sh
-        ```
+    ```bash
+    michigan-private/export_michigan_primitives.sh ../primitives
+    ```
 
-        This command will ask for your GitLab credentials at the end and possibly your D3M credentials at the beginning. If you enter the incorrect credentials, the new branch will not be created properly. If this happens, go back to the previous step (i.e., restart the Docker image) and try again.
-
-    4. Ensure that the continuous integration (CI) tests in `rszeto/primitives` pass for your new branch. You can check this [here](https://gitlab.com/rszeto/primitives/pipelines) or via the email that gets sent when the tests complete. If this step fails, you must make the changes in your local `darpa_d3m_spider/spider` repo and complete the entire submission process again.
+5. Ensure that the continuous integration (CI) tests in `rszeto/primitives` pass for your new branch. You can check this [here](https://gitlab.com/rszeto/primitives/pipelines) or via the email that gets sent when the tests complete. If this step fails, you must make the changes in your local `dvdmjohnson/d3m_michigan_primitives` repo and complete the entire submission process again.
 
 5. Merge the changes in the new  `rszeto/primitives` branch into `datadrivendiscovery/primitives` via the GitLab website
 
@@ -217,21 +266,9 @@ This process establishes a connection between a whopping four repositories, each
     
         * The source project should be `rszeto/primitives`, and the source branch should be your new branch.
         * The target project should be `datadrivendiscovery/primitives`, and the target branch should be `master`.
+        * Check off "Delete source branch when merge request is accepted."
 
-    2. Once the merge request is complete, update the local and remote `rszeto/primitives` repos:
-    
-        ```bash
-        cd primitives
-        # Update local copy of `rszeto/primitives`
-        git checkout master && git pull
-        # Merge changes from upstream datadrivendiscovery/primitives repo into local repo
-        git fetch d3m && git merge d3m/master
-        # Push latest changes into remote rszeto/primitives repo
-        git push
-        ```
-
-Other notes
------
+## Other notes
 
 Formerly, there was a note in the main README that read:
 
