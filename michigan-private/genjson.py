@@ -38,7 +38,7 @@ pipeline_cmd_template_info = {
     },
     # OWLRegressionRadonSeedPipeline: {
     #     'primitive': 'd3m.primitives.regression.owl_regression.Umich',
-    #     'command': fit_score_command_template
+    #     'command': default_fit_score_command_template
     # },
     OWLRegressionCPS85WagesPipeline: {
         'primitive': 'd3m.primitives.regression.owl_regression.Umich',
@@ -62,7 +62,7 @@ pipeline_cmd_template_info = {
     # },
     # GODECHandgeometryPipeline: {
     #     'primitive': 'd3m.primitives.data_compression.go_dec.Umich',
-    #     'command': fit_score_command_template
+    #     'command': default_fit_score_command_template
     # },
     PCPIALMHandgeometryPipeline: {
         'primitive': 'd3m.primitives.data_compression.pcp_ialm.Umich',
@@ -74,7 +74,7 @@ pipeline_cmd_template_info = {
     },
     # GROUSEAutoMPGPipeline: {
     #     'primitive': 'd3m.primitives.data_compression.grouse.Umich',
-    #     'command': fit_score_command_template
+    #     'command': default_fit_score_command_template
     # },
     GRASTAAutoMPGPipeline: {
         'primitive': 'd3m.primitives.data_compression.grasta.Umich',
@@ -86,7 +86,7 @@ pipeline_cmd_template_info = {
     },
     # GRASTACPS85WagesPipeline: {
     #     'primitive': 'd3m.primitives.data_compression.grasta.Umich',
-    #     'command': fit_score_command_template
+    #     'command': default_fit_score_command_template
     # },
     KSSOneHundredPlantsMarginPipeline: {
         'primitive': 'd3m.primitives.clustering.kss.Umich',
