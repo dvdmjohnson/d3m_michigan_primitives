@@ -107,7 +107,7 @@ This section describes how to set up this project.
 4. To install common primitives (needed for pipelines and tests) run:
 
     ```
-    pip3 install --upgrade-strategy only-if-needed -e git+https://gitlab.com/datadrivendiscovery/common-primitives.git@352233f9d8e1bf813e7f0150ac9f6480df16538f#egg=common_primitives
+    pip3 install --upgrade-strategy only-if-needed -e git+https://gitlab.com/datadrivendiscovery/common-primitives.git@32508af64512aa0151c8358a0a18c0af5ae18418#egg=common_primitives
     ```
 
 5. To install sklearn wrappers (possibly needed for pipelines) run:
