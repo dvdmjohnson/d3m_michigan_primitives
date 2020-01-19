@@ -14,7 +14,7 @@ from sklearn_wrap.SKLinearSVR import SKLinearSVR
 from sklearn_wrap.SKImputer import SKImputer
 
 
-class GRASTAPipelineChallenge1(BasePipeline):
+class GRASTAAutoPricePipeline(BasePipeline):
 
     #specify one seed dataset on which this pipeline can operate
 

@@ -8,7 +8,7 @@ from d3m.metadata import pipeline as meta_pipeline
 from d3m.metadata.base import ArgumentType, Context
 
 from spider.pipelines.base import BasePipeline
-from spider.cluster.ssc_omp import SSC_OMP
+from spider.cluster.ssc_admm import SSC_ADMM
 from d3m.primitives.data_transformation.dataframe_to_ndarray import Common as DataFrameToNDArrayPrimitive
 from d3m.primitives.data_transformation.ndarray_to_dataframe import Common as NDArrayToDataFramePrimitive
 from d3m.primitives.data_transformation.dataset_to_dataframe import Common as DatasetToDataFramePrimitive
@@ -17,7 +17,7 @@ from d3m.primitives.data_transformation.extract_columns_by_semantic_types import
 from d3m.primitives.data_transformation.construct_predictions import Common as ConstructPredictionsPrimitive
 
 
-class SSCOMPPipeline(BasePipeline):
+class SSCADMMOneHundredPlantsMarginPipeline(BasePipeline):
     def __init__(self):
         super().__init__()
         
@@ -74,8 +74,8 @@ class SSCOMPPipeline(BasePipeline):
         step_3.add_output('produce')
         pipeline.add_step(step_3)
         
-        # NDARRAY -> SSC_OMP
-        step_4 = meta_pipeline.PrimitiveStep(primitive_description = SSC_OMP.metadata.query())
+        # NDARRAY -> SSC_ADMM
+        step_4 = meta_pipeline.PrimitiveStep(primitive_description = SSC_ADMM.metadata.query())
         step_4.add_argument(
                 name = 'inputs',
                 argument_type = ArgumentType.CONTAINER,
@@ -86,15 +86,10 @@ class SSCOMPPipeline(BasePipeline):
                 argument_type=ArgumentType.VALUE,
                 data=100
         )
-        step_4.add_hyperparameter(
-                name='sparsity_level',
-                argument_type=ArgumentType.VALUE,
-                data=5
-        )
         step_4.add_output('produce')
         pipeline.add_step(step_4)
         
-        # SSC_OMP -> Dataframe
+        # SSC_ADMM -> Dataframe
         step_5 = meta_pipeline.PrimitiveStep(primitive_description = NDArrayToDataFramePrimitive.metadata.query())
         step_5.add_argument(
                 name = 'inputs',

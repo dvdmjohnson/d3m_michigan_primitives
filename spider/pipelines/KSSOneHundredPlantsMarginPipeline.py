@@ -8,7 +8,7 @@ from d3m.metadata import pipeline as meta_pipeline
 from d3m.metadata.base import ArgumentType, Context
 
 from spider.pipelines.base import BasePipeline
-from spider.cluster.ssc_admm import SSC_ADMM
+from spider.cluster.kss import KSS
 from d3m.primitives.data_transformation.dataframe_to_ndarray import Common as DataFrameToNDArrayPrimitive
 from d3m.primitives.data_transformation.ndarray_to_dataframe import Common as NDArrayToDataFramePrimitive
 from d3m.primitives.data_transformation.dataset_to_dataframe import Common as DatasetToDataFramePrimitive
@@ -17,7 +17,7 @@ from d3m.primitives.data_transformation.extract_columns_by_semantic_types import
 from d3m.primitives.data_transformation.construct_predictions import Common as ConstructPredictionsPrimitive
 
 
-class SSCADMMPipeline(BasePipeline):
+class KSSOneHundredPlantsMarginPipeline(BasePipeline):
     def __init__(self):
         super().__init__()
         
@@ -74,8 +74,8 @@ class SSCADMMPipeline(BasePipeline):
         step_3.add_output('produce')
         pipeline.add_step(step_3)
         
-        # NDARRAY -> SSC_ADMM
-        step_4 = meta_pipeline.PrimitiveStep(primitive_description = SSC_ADMM.metadata.query())
+        # NDARRAY -> SSC_CVX
+        step_4 = meta_pipeline.PrimitiveStep(primitive_description = KSS.metadata.query())
         step_4.add_argument(
                 name = 'inputs',
                 argument_type = ArgumentType.CONTAINER,
@@ -84,12 +84,17 @@ class SSCADMMPipeline(BasePipeline):
         step_4.add_hyperparameter(
                 name='n_clusters',
                 argument_type=ArgumentType.VALUE,
-                data=100
+                data=5000
+        )
+        step_4.add_hyperparameter(
+                name='dim_subspaces',
+                argument_type=ArgumentType.VALUE,
+                data=1
         )
         step_4.add_output('produce')
         pipeline.add_step(step_4)
         
-        # SSC_ADMM -> Dataframe
+        # SSC_CVX -> Dataframe
         step_5 = meta_pipeline.PrimitiveStep(primitive_description = NDArrayToDataFramePrimitive.metadata.query())
         step_5.add_argument(
                 name = 'inputs',

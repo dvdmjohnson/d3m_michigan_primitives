@@ -14,7 +14,7 @@ from sklearn_wrap.SKLinearSVR import SKLinearSVR
 from sklearn_wrap.SKImputer import SKImputer
 
 
-class GRASTAPipeline(BasePipeline):
+class GRASTACPS85WagesPipeline(BasePipeline):
 
     #specify one seed dataset on which this pipeline can operate
 
@@ -22,7 +22,7 @@ class GRASTAPipeline(BasePipeline):
         super().__init__()
         
         #specify one seed dataset on which this pipeline can operate
-        self.dataset = '196_autoMpg'
+        self.dataset = '534_cps_85_wages'
         self.meta_info = self.genmeta(self.dataset)
 
     #define pipeline object
@@ -49,7 +49,7 @@ class GRASTAPipeline(BasePipeline):
         step_2.add_argument(name='inputs', argument_type=ArgumentType.CONTAINER, data_reference='steps.1.produce')
         step_2.add_output('produce')
         step_2.add_hyperparameter(name='semantic_types', argument_type=ArgumentType.VALUE, data=['https://metadata.datadrivendiscovery.org/types/Attribute'] )
-        step_2.add_hyperparameter(name='exclude_columns', argument_type=ArgumentType.VALUE, data=[0, 1, 6, 7] )
+        #step_2.add_hyperparameter(name='exclude_columns', argument_type=ArgumentType.VALUE, data=[0, 1, 6, 7] )
         pipeline.add_step(step_2)
 
         # Step 3 impute missing data and nans

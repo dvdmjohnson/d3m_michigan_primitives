@@ -8,7 +8,7 @@ from d3m.metadata import pipeline as meta_pipeline
 from d3m.metadata.base import ArgumentType, Context
 
 from spider.pipelines.base import BasePipeline
-from spider.cluster.ekss import EKSS
+from spider.cluster.ssc_cvx import SSC_CVX
 from d3m.primitives.data_transformation.dataframe_to_ndarray import Common as DataFrameToNDArrayPrimitive
 from d3m.primitives.data_transformation.ndarray_to_dataframe import Common as NDArrayToDataFramePrimitive
 from d3m.primitives.data_transformation.dataset_to_dataframe import Common as DatasetToDataFramePrimitive
@@ -17,7 +17,7 @@ from d3m.primitives.data_transformation.extract_columns_by_semantic_types import
 from d3m.primitives.data_transformation.construct_predictions import Common as ConstructPredictionsPrimitive
 
 
-class EKSSPipeline(BasePipeline):
+class SSCCVXOneHundredPlantsMarginPipeline(BasePipeline):
     def __init__(self):
         super().__init__()
         
@@ -75,7 +75,7 @@ class EKSSPipeline(BasePipeline):
         pipeline.add_step(step_3)
         
         # NDARRAY -> SSC_CVX
-        step_4 = meta_pipeline.PrimitiveStep(primitive_description = EKSS.metadata.query())
+        step_4 = meta_pipeline.PrimitiveStep(primitive_description = SSC_CVX.metadata.query())
         step_4.add_argument(
                 name = 'inputs',
                 argument_type = ArgumentType.CONTAINER,
@@ -84,7 +84,7 @@ class EKSSPipeline(BasePipeline):
         step_4.add_hyperparameter(
                 name='n_clusters',
                 argument_type=ArgumentType.VALUE,
-                data=200
+                data=100
         )
         step_4.add_output('produce')
         pipeline.add_step(step_4)

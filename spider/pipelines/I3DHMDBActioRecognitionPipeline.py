@@ -13,7 +13,7 @@ from d3m.primitives.data_transformation.extract_columns_by_semantic_types import
 from d3m.primitives.classification.random_forest import Common as RandomForestClassifierPrimitive
 from d3m.primitives.data_transformation.construct_predictions import Common as ConstructPredictionsPrimitive
 
-class FeaturizationI3DPipeline(BasePipeline):
+class I3DHMDBActioRecognitionPipeline(BasePipeline):
     def __init__(self):
         super().__init__()
 

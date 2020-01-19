@@ -32,75 +32,79 @@ default_fit_score_command_template = 'python3 -m d3m runtime -v /volumes fit-sco
 
 # Stores information required to generate the command to run each pipeline
 pipeline_cmd_template_info = {
-    OWLRegressionPipeline: {
+    OWLRegressionAutoPricePipeline: {
         'primitive': 'd3m.primitives.regression.owl_regression.Umich',
         'command': default_fit_score_command_template
     },
-    # OWLRegressionPipelineChallenge1: {
+    # OWLRegressionRadonSeedPipeline: {
     #     'primitive': 'd3m.primitives.regression.owl_regression.Umich',
     #     'command': fit_score_command_template
     # },
-    OWLRegressionPipelineChallenge2: {
+    OWLRegressionCPS85WagesPipeline: {
         'primitive': 'd3m.primitives.regression.owl_regression.Umich',
         'command': default_fit_score_command_template
     },
-    OWLRegressionPipelineChallenge3: {
+    OWLRegressionAutoMPGPipeline: {
         'primitive': 'd3m.primitives.regression.owl_regression.Umich',
         'command': default_fit_score_command_template
     },
-    # FeaturizationAudioFeaturizationPipeline: {
+    # AudioFeaturizationUrbansoundPipeline: {
     #     'primitive': 'd3m.primitives.feature_extraction.audio_featurization.Umich',
     #     'command': 'python3 -m d3m runtime -v /volumes fit-score -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -a /datasets/seed_datasets_current/{dataset}/SCORE/dataset_SCORE/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml > pipeline_results/{pipeline}.txt'
     # },
-    FeaturizationVGG16Pipeline: {
+    VGG16HandgeometryPipeline: {
         'primitive': 'd3m.primitives.feature_extraction.vgg16.Umich',
         'command': default_fit_score_command_template
     },
-    # GO_DECPipeline: {
+    # I3DHMDBActioRecognitionPipeline: {
+    #     'primitive': 'd3m.primitives.feature_extraction.i3d.Umich',
+    #     'command': default_fit_score_command_template
+    # },
+    # GODECHandgeometryPipeline: {
     #     'primitive': 'd3m.primitives.data_compression.go_dec.Umich',
     #     'command': fit_score_command_template
     # },
-    PCP_IALMPipeline: {
+    PCPIALMHandgeometryPipeline: {
         'primitive': 'd3m.primitives.data_compression.pcp_ialm.Umich',
         'command': default_fit_score_command_template
     },
-    RPCA_LBDPipeline: {
+    RPCALBDHandgeometryPipeline: {
         'primitive': 'd3m.primitives.data_compression.rpca_lbd.Umich',
         'command': default_fit_score_command_template
     },
-    # GROUSEPipeline: {
+    # GROUSEAutoMPGPipeline: {
     #     'primitive': 'd3m.primitives.data_compression.grouse.Umich',
     #     'command': fit_score_command_template
     # },
-    GRASTAPipeline: {
+    GRASTAAutoMPGPipeline: {
         'primitive': 'd3m.primitives.data_compression.grasta.Umich',
         'command': default_fit_score_command_template
     },
-    GRASTAPipelineChallenge1: {
+    GRASTAAutoPricePipeline: {
         'primitive': 'd3m.primitives.data_compression.grasta.Umich',
         'command': default_fit_score_command_template
     },
-    # GRASTAPipelineChallenge2: {
+    # GRASTACPS85WagesPipeline: {
     #     'primitive': 'd3m.primitives.data_compression.grasta.Umich',
     #     'command': fit_score_command_template
     # },
-    KSSPipeline: {
+    KSSOneHundredPlantsMarginPipeline: {
         'primitive': 'd3m.primitives.clustering.kss.Umich',
         'command': default_fit_score_command_template
     },
-    EKSSPipeline: {
+    EKSSOneHundredPlantsMarginPipeline: {
         'primitive': 'd3m.primitives.clustering.ekss.Umich',
         'command': default_fit_score_command_template
     },
-    SSCADMMPipeline: {
+    SSCADMMOneHundredPlantsMarginPipeline: {
         'primitive': 'd3m.primitives.clustering.ssc_admm.Umich',
         'command': default_fit_score_command_template
     },
-    SSCCVXPipeline: {
+    SSCCVXOneHundredPlantsMarginPipeline: {
         'primitive': 'd3m.primitives.clustering.ssc_cvx.Umich',
         'command': default_fit_score_command_template
     },
-    SSCOMPPipeline: {
+    SSCOMPOneHundredPlantsMarginPipeline: {
         'primitive': 'd3m.primitives.clustering.ssc_omp.Umich',
         'command': default_fit_score_command_template
     },

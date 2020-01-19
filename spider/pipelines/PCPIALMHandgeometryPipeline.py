@@ -15,7 +15,7 @@ from d3m.primitives.data_transformation.extract_columns_by_semantic_types import
 from sklearn_wrap.SKLinearSVR import SKLinearSVR
 
 
-class PCP_IALMPipeline(BasePipeline):
+class PCPIALMHandgeometryPipeline(BasePipeline):
     def __init__(self):
         super().__init__()
 

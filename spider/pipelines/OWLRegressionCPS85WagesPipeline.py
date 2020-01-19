@@ -13,12 +13,12 @@ from sklearn_wrap.SKImputer import SKImputer
 
 
 
-class OWLRegressionPipelineChallenge1(BasePipeline):
+class OWLRegressionCPS85WagesPipeline(BasePipeline):
     def __init__(self):
         super().__init__()
 
         #specify one seed dataset on which this pipeline can operate
-        self.dataset = '26_radon_seed'
+        self.dataset = '534_cps_85_wages'
         self.meta_info = self.genmeta(self.dataset)
 
     #define pipeline object
@@ -131,7 +131,7 @@ class OWLRegressionPipelineChallenge1(BasePipeline):
         step_7.add_hyperparameter(
             name='weight_min_off',
             argument_type=ArgumentType.VALUE,
-            data=26)
+            data=9)
         step_7.add_argument(
             name='inputs',
             argument_type=ArgumentType.CONTAINER,

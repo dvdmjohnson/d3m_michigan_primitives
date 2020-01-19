@@ -12,7 +12,7 @@ from d3m.primitives.data_transformation.construct_predictions import Common as C
 from d3m.primitives.data_transformation.dataset_to_dataframe import Common as DatasetToDataFramePrimitive
 from sklearn_wrap.SKRandomForestClassifier import SKRandomForestClassifier as RandomForestClassifierPrimitive
 
-class FeaturizationAudioFeaturizationPipeline(BasePipeline):
+class AudioFeaturizationUrbansoundPipeline(BasePipeline):
     def __init__(self):
         super().__init__()
         

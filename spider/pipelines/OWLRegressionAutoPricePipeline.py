@@ -13,7 +13,7 @@ from sklearn_wrap.SKImputer import SKImputer
 
 
 
-class OWLRegressionPipeline(BasePipeline):
+class OWLRegressionAutoPricePipeline(BasePipeline):
     def __init__(self):
         super().__init__()
 
