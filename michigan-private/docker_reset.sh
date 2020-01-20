@@ -6,6 +6,7 @@
 SCRIPT_DIR="$(cd $(dirname $0); pwd)"
 PROJ_DIR="$(cd $SCRIPT_DIR/..; pwd)"
 
+DOCKER_IMAGE_NAME="spider_${USER}_image"
 DOCKER_CONTAINER_NAME="spider_$USER"
 
 cd "$PROJ_DIR"
@@ -30,4 +31,4 @@ docker run -d \
   --env "GIT_COMMITTER_EMAIL=$(git config user.email)" \
   --env "GIT_AUTHOR_NAME=$(git config user.name)" \
   --env "GIT_AUTHOR_EMAIL=$(git config user.email)" \
-  spider
+  "$DOCKER_IMAGE_NAME"
