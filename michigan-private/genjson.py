@@ -37,7 +37,6 @@ pipelines_to_run = [
     # GODECHandgeometryPipeline,
     GRASTAAutoMPGPipeline,
     GRASTAAutoPricePipeline,
-    # GRASTACPS85WagesPipeline,
     # GROUSEAutoMPGPipeline,
     # I3DHMDBActioRecognitionPipeline,
     KSSOneHundredPlantsMarginPipeline,

@@ -3,7 +3,6 @@ from .EKSSOneHundredPlantsMarginPipeline import EKSSOneHundredPlantsMarginPipeli
 from .GODECHandgeometryPipeline import GODECHandgeometryPipeline
 from .GRASTAAutoMPGPipeline import GRASTAAutoMPGPipeline
 from .GRASTAAutoPricePipeline import GRASTAAutoPricePipeline
-from .GRASTACPS85WagesPipeline import GRASTACPS85WagesPipeline
 from .GROUSEAutoMPGPipeline import GROUSEAutoMPGPipeline
 from .I3DHMDBActioRecognitionPipeline import I3DHMDBActioRecognitionPipeline
 from .KSSOneHundredPlantsMarginPipeline import KSSOneHundredPlantsMarginPipeline
