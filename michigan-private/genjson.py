@@ -45,12 +45,12 @@ pipelines_to_run = [
     OWLRegressionAutoPricePipeline,
     OWLRegressionCPS85WagesPipeline,
     # OWLRegressionRadonSeedPipeline,
-    PCPIALMHandgeometryPipeline,
-    RPCALBDHandgeometryPipeline,
+    # PCPIALMHandgeometryPipeline,
+    # RPCALBDHandgeometryPipeline,
     SSCADMMOneHundredPlantsMarginPipeline,
     SSCCVXOneHundredPlantsMarginPipeline,
     SSCOMPOneHundredPlantsMarginPipeline,
-    VGG16HandgeometryPipeline,
+    # VGG16HandgeometryPipeline,
 ]
 
 pipeline_cmds = []
