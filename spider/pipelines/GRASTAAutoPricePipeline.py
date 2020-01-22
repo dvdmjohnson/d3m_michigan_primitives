@@ -87,6 +87,7 @@ class GRASTAAutoPricePipeline(BasePipeline):
             argument_type = ArgumentType.CONTAINER,
             data_reference = 'steps.5.produce' #inputs here are the outputs from step 5
         )
+        step_6.add_hyperparameter(name='constant_step', argument_type=ArgumentType.VALUE, data=0.1)
         step_6.add_output('produce')
         pipeline.add_step(step_6)
         
