@@ -390,43 +390,42 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
 
             if grastaOPTIONS.constant_step > 0:
                 step = grastaOPTIONS.constant_step
-                MAX_ITER = ITER_MAX
             else:
                 step = step_scale * level_factor ** (-level) * sG / (1 + mu)
 
                 if step >= np.pi / 3:
                     step = np.pi / 3
 
-                bShrUpd = 0
+            bShrUpd = 0
 
-                if mu <= MIN_MU:
-                    if level > 1:
-                        bShrUpd = 1
-                        level = level - 1
+            if mu <= MIN_MU:
+                if level > 1:
+                    bShrUpd = 1
+                    level = level - 1
 
-                    mu = DEFAULT_MU_LOW
+                mu = DEFAULT_MU_LOW
 
-                elif mu > MAX_MU:
-                    if level < MAX_LEVEL:
-                        bShrUpd = 1
-                        level = level + 1
-                        mu = DEFAULT_MU_HIGH
-                    else:
-                        mu = MAX_MU
+            elif mu > MAX_MU:
+                if level < MAX_LEVEL:
+                    bShrUpd = 1
+                    level = level + 1
+                    mu = DEFAULT_MU_HIGH
+                else:
+                    mu = MAX_MU
 
-                if bShrUpd:
-                    if level >= 0 and level < 4:
-                        MAX_ITER = grastaOPTIONS.admm_min_itr
-                    elif level >= 4 and level < 7:
-                        MAX_ITER = min(MIN_ITER * 2, ITER_MAX)
-                    elif level >= 7 and level < 10:
-                        MAX_ITER = min(MIN_ITER * 4, ITER_MAX)
-                    elif level >= 10 and level < 14:
-                        MAX_ITER = min(MIN_ITER * 8, ITER_MAX)
-                    else:
-                        MAX_ITER = ITER_MAX
+            if bShrUpd:
+                if level >= 0 and level < 4:
+                    MAX_ITER = grastaOPTIONS.admm_min_itr
+                elif level >= 4 and level < 7:
+                    MAX_ITER = min(MIN_ITER * 2, ITER_MAX)
+                elif level >= 7 and level < 10:
+                    MAX_ITER = min(MIN_ITER * 4, ITER_MAX)
+                elif level >= 10 and level < 14:
+                    MAX_ITER = min(MIN_ITER * 8, ITER_MAX)
                 else:
                     MAX_ITER = ITER_MAX
+            else:
+                MAX_ITER = ITER_MAX
 
             STATUS_new = _STATUS(mu, w, gamma, level, step_scale)
             ADMM_OPTS_new = _OPTS(MAX_ITER, admm_OPTS.rho, admm_OPTS.tol)
@@ -458,8 +457,6 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
 
         t, STATUS_new, admm_OPTS_new = calculate_mla_step(self._grastaSTATUS, self._grastaOPTIONS, self._admm_OPTS,
                                                           gamma, w_hat, sG)
-        t = 0.1
-        logger.warn(str(t))
 
         step = np.multiply.outer([((np.cos(t) - 1) * (Uhat @ w_hat) / w_norm) + (np.sin(t) * gamma / gamma_norm)],
                                  (w_hat / w_norm))
