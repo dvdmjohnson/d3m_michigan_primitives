@@ -443,15 +443,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         xOmega = x[xIdx]
         Uomega = Uhat[xIdx, :]
 
-        #logger.warn(str(Uomega))
-        #logger.warn(str(xOmega))
-        #logger.warn(str(vars(self._admm_OPTS)))
         w_hat, s_hat, y_hat, h = admm(Uomega, xOmega, self._admm_OPTS)
-        #logger.warn(str(w_hat))
-        #logger.warn(str(s_hat))
-        #logger.warn(str(y_hat))
-        logger.warn(str(h))  # DIFFERENT
-        assert False
 
         gamma1 = y_hat + (xOmega - Uomega @ w_hat - s_hat)
         gamma2 = Uomega.T @ gamma1
@@ -466,6 +458,8 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
 
         t, STATUS_new, admm_OPTS_new = calculate_mla_step(self._grastaSTATUS, self._grastaOPTIONS, self._admm_OPTS,
                                                           gamma, w_hat, sG)
+        t = 0.1
+        logger.warn(str(t))
 
         step = np.multiply.outer([((np.cos(t) - 1) * (Uhat @ w_hat) / w_norm) + (np.sin(t) * gamma / gamma_norm)],
                                  (w_hat / w_norm))
