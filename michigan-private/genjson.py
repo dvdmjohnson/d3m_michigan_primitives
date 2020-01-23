@@ -32,7 +32,6 @@ default_fit_score_command_template = 'python3 -m d3m runtime -v /volumes fit-sco
 
 # List of pipelines to run and export
 pipelines_to_run = [
-    # AudioFeaturizationUrbansoundPipeline,
     # EKSSOneHundredPlantsMarginPipeline,
     # GODECHandgeometryPipeline,
     GRASTAAutoMPGPipeline,
