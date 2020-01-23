@@ -10,8 +10,6 @@ __all__ = ('GRASTA',)
 Inputs = container.ndarray
 Outputs = container.ndarray
 
-import logging
-logger = logging.getLogger(__name__)
 
 class GRASTAHyperparams(hyperparams.Hyperparams):
     # dim = hyperparams.Bounded[int](lower=1,
@@ -285,7 +283,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         Lhat = np.zeros(_X.shape)
         for i in range(0, numVectors):
             _x = _X[:, i]
-            U, w, _, _, _ = self._grasta_stream(Uhat, _x)
+            U, w, s, STATUS_new, admm_OPTS = self._grasta_stream(Uhat, _x)
             Lhat[:, i] = U @ w
 
         return base.CallResult(container.ndarray(Lhat.T, generate_metadata=True))
