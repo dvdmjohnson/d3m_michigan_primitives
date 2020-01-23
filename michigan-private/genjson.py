@@ -43,7 +43,6 @@ pipelines_to_run = [
     OWLRegressionAutoMPGPipeline,
     OWLRegressionAutoPricePipeline,
     OWLRegressionCPS85WagesPipeline,
-    # OWLRegressionRadonSeedPipeline,
     # PCPIALMHandgeometryPipeline,
     # RPCALBDHandgeometryPipeline,
     # SSCADMMOneHundredPlantsMarginPipeline,
