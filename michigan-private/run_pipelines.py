@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+
+"""
+Run all pipelines in parallel. Reads commands from "run_pipeline_cmds.txt" and prints any failed commands to
+"failed_cmds.txt".
+"""
+
 import os
 import queue
 import subprocess
