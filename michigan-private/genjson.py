@@ -7,9 +7,10 @@ Convenience script for generating the entire primitive JSON file structure for s
 import os
 import pkg_resources
 import shutil
-import subprocess
 
 from spider.pipelines import *
+
+from utils import BashCommandWorkerPool
 
 
 def main():
@@ -53,6 +54,7 @@ def main():
         # VGG16HandgeometryPipeline,
     ]
 
+    primitive_cmds = []
     pipeline_cmds = []
 
     for prim in primitive_module_names:
@@ -64,9 +66,14 @@ def main():
         pipeline_runs_path = os.path.join(version_path, 'pipeline_runs')
         os.makedirs(pipeline_runs_path)
 
-        com = 'python3 -m d3m index describe -i 4 ' + prim + ' > ' + os.path.join(version_path, 'primitive.json')
-        print('Running command: %s' % str(com))
-        subprocess.check_call(com, shell=True)
+        cmd = 'python3 -m d3m index describe -i 4 ' + prim + ' > ' + os.path.join(version_path, 'primitive.json')
+        primitive_cmds.append(cmd)
+
+    # Run describe commands in parallel
+    pool = BashCommandWorkerPool(8)
+    for cmd in primitive_cmds:
+        pool.add_work(cmd)
+    pool.join()
 
     # Now make pipelines
     for pl in pipelines_to_run:
