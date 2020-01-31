@@ -13,7 +13,7 @@ from d3m.primitives.data_transformation.extract_columns_by_semantic_types import
 from d3m.primitives.classification.random_forest import Common as RandomForestClassifierPrimitive
 from d3m.primitives.data_transformation.construct_predictions import Common as ConstructPredictionsPrimitive
 
-class I3DHMDBActioRecognitionPipeline(BasePipeline):
+class I3DHMDBActionRecognitionPipeline(BasePipeline):
     def __init__(self):
         super().__init__()
 
@@ -24,7 +24,7 @@ class I3DHMDBActioRecognitionPipeline(BasePipeline):
         #Creating pipeline
         pipeline = meta_pipeline.Pipeline()
         pipeline.add_input(name = 'inputs')
-        
+
         #denormalize to bring video data collection into primary dataframe
         step_0 = meta_pipeline.PrimitiveStep(primitive_description = DenormalizePrimitive.metadata.query())
         step_0.add_argument(
@@ -122,5 +122,4 @@ class I3DHMDBActioRecognitionPipeline(BasePipeline):
 
         #Add output step to the pipeline
         pipeline.add_output(name = 'Links', data_reference = 'steps.7.produce')
-        return pipeline 
-
+        return pipeline

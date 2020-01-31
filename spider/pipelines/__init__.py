@@ -3,7 +3,7 @@ from .GODECHandgeometryPipeline import GODECHandgeometryPipeline
 from .GRASTAAutoMPGPipeline import GRASTAAutoMPGPipeline
 from .GRASTAAutoPricePipeline import GRASTAAutoPricePipeline
 from .GROUSEAutoMPGPipeline import GROUSEAutoMPGPipeline
-from .I3DHMDBActioRecognitionPipeline import I3DHMDBActioRecognitionPipeline
+from .I3DHMDBActionRecognitionPipeline import I3DHMDBActionRecognitionPipeline
 from .KSSOneHundredPlantsMarginPipeline import KSSOneHundredPlantsMarginPipeline
 from .OWLRegressionAutoPricePipeline import OWLRegressionAutoPricePipeline
 from .PCPIALMHandgeometryPipeline import PCPIALMHandgeometryPipeline
