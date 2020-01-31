@@ -8,7 +8,7 @@ import os
 import pkg_resources
 import shutil
 
-from spider.pipelines import *
+import spider.pipelines as spls
 
 from utils import BashCommandWorkerPool
 
@@ -32,24 +32,22 @@ def main():
     primitive_module_names = ['d3m.primitives.{}'.format(x) for x in
                               pkg_resources.get_entry_map('spider')['d3m.primitives'].keys()]
 
-    default_fit_score_command_template = 'python3 -m d3m runtime -v /volumes fit-score -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json -a /datasets/seed_datasets_current/{dataset}/SCORE/dataset_TEST/datasetDoc.json -o /dev/null -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml > pipeline_results/{pipeline}.txt'
-
     # List of pipelines to run and export
     pipelines_to_run = [
-        # EKSSOneHundredPlantsMarginPipeline,
-        # GODECHandgeometryPipeline,
-        GRASTAAutoMPGPipeline,
-        GRASTAAutoPricePipeline,
-        # GROUSEAutoMPGPipeline,
-        # I3DHMDBActioRecognitionPipeline,
-        # KSSOneHundredPlantsMarginPipeline,
-        OWLRegressionAutoPricePipeline,
-        # PCPIALMHandgeometryPipeline,
-        # RPCALBDHandgeometryPipeline,
-        # SSCADMMOneHundredPlantsMarginPipeline,
-        # SSCCVXOneHundredPlantsMarginPipeline,
-        # SSCOMPOneHundredPlantsMarginPipeline,
-        # VGG16HandgeometryPipeline,
+        # spls.EKSSOneHundredPlantsMarginPipeline,
+        # spls.GODECHandgeometryPipeline,
+        spls.GRASTAAutoMPGPipeline,
+        spls.GRASTAAutoPricePipeline,
+        # spls.GROUSEAutoMPGPipeline,
+        # spls.I3DHMDBActioRecognitionPipeline,
+        # spls.KSSOneHundredPlantsMarginPipeline,
+        spls.OWLRegressionAutoPricePipeline,
+        # spls.PCPIALMHandgeometryPipeline,
+        # spls.RPCALBDHandgeometryPipeline,
+        # spls.SSCADMMOneHundredPlantsMarginPipeline,
+        # spls.SSCCVXOneHundredPlantsMarginPipeline,
+        # spls.SSCOMPOneHundredPlantsMarginPipeline,
+        # spls.VGG16HandgeometryPipeline,
     ]
 
     primitive_cmds = []
@@ -74,9 +72,9 @@ def main():
     pool.join()
 
     # Now make pipelines
-    for pl in pipelines_to_run:
-        pl_name = pl.__name__
-        instance = pl()
+    for pipeline in pipelines_to_run:
+        pl_name = pipeline.__name__
+        instance = pipeline()
         json_info = instance.get_json()
         instanceid = instance.get_id()
         dataset = instance.dataset
