@@ -18,7 +18,6 @@ class I3DHMDBActionRecognitionPipeline(BasePipeline):
         super().__init__()
 
         self.dataset = 'LL1_3476_HMDB_actio_recognition'
-        self.meta_info = self.genmeta(self.dataset)
 
     def _gen_pipeline(self):
         #Creating pipeline

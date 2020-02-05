@@ -22,8 +22,7 @@ class GRASTAAutoPricePipeline(BasePipeline):
         super().__init__()
         
         #specify one seed dataset on which this pipeline can operate
-        self.dataset = 'LL0_207_autoPrice'
-        self.meta_info = self.genmeta(self.dataset)
+        self.dataset = 'LL0_207_autoPrice_MIN_METADATA'
 
     def get_primitive_entry_point(self):
         return 'd3m.primitives.data_compression.grasta.Umich'
