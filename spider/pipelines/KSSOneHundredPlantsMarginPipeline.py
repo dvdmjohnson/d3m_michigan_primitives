@@ -23,7 +23,6 @@ class KSSOneHundredPlantsMarginPipeline(BasePipeline):
         
         #choose one or more seed datasets on which this pipeline can operate
         self.dataset = '1491_one_hundred_plants_margin'
-        self.meta_info = self.genmeta(self.dataset)
 
     def get_primitive_entry_point(self):
         return 'd3m.primitives.clustering.kss.Umich'

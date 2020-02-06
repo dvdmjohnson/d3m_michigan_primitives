@@ -4,9 +4,11 @@
 Convenience script for generating the entire primitive JSON file structure for spider.
 """
 
+import json
 import os
 import pkg_resources
 import shutil
+from subprocess import check_output, CalledProcessError
 
 import spider.pipelines as spls
 
@@ -18,6 +20,17 @@ def main():
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     PROJ_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..'))
     os.chdir(PROJ_DIR)
+
+    # Get remote and current commit info from the dataset repo
+    DATASETS_DIR = '/datasets'
+    commit_hash, origin_url = get_git_info(DATASETS_DIR)
+    # Make sure the current dataset repo matches the version supported by this project
+    with open(os.path.join(PROJ_DIR, 'michigan-private', 'dataset_repo_info.json')) as f:
+        dataset_repo_info = json.load(f)
+    assert commit_hash == dataset_repo_info['commit_hash'], \
+        'Expected commit hash {} at {}, but got {}'.format(dataset_repo_info['commit_hash'], DATASETS_DIR, commit_hash)
+    assert origin_url == dataset_repo_info['origin_url'], \
+        'Expected origin URL {} at {}, but got {}'.format(dataset_repo_info['origin_url'], DATASETS_DIR, origin_url)
 
     # Clear out any existing directory
     if os.path.isdir('Michigan'):
@@ -110,6 +123,27 @@ def main():
     # Generate folder to store pipeline results
     if not os.path.isdir('pipeline_results'):
         os.makedirs('pipeline_results')
+
+
+def get_git_info(git_dir):
+    """Gets the commit hash and origin URL of the Git repo at the given location.
+
+    :param git_dir: The path to the Git repository
+    :return: tuple containing the commit hash and the origin url
+    """
+    try:
+        commit_hash_bytes = check_output('cd {} && git rev-parse HEAD'.format(git_dir), shell=True)
+    except CalledProcessError:
+        raise RuntimeError('Failed to get commit hash of {}'.format(git_dir))
+    commit_hash = commit_hash_bytes.strip().decode()
+
+    try:
+        origin_url_bytes = check_output('cd {} && git config --get remote.origin.url'.format(git_dir), shell=True)
+    except CalledProcessError:
+        raise RuntimeError('Failed to get remote origin URL of {}'.format(git_dir))
+    origin_url = origin_url_bytes.strip().decode()
+
+    return commit_hash, origin_url
 
 
 if __name__ == '__main__':

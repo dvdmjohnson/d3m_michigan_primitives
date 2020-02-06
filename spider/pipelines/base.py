@@ -28,15 +28,6 @@ class BasePipeline(object):
     def get_id(self):
         return self._pipeline.id
         
-    def genmeta(self, dataset):
-        meta_info = {
-            'problem': dataset + "_problem",
-            'full_inputs': [ dataset + "_dataset" ],
-            'train_inputs': [ dataset + "_dataset_TRAIN" ],
-            'test_inputs': [ dataset + "_dataset_TEST" ],
-            'score_inputs': [ dataset + "_dataset_SCORE" ]}
-        return meta_info
-
     def get_json(self):
         # Make it pretty.
         return json.dumps(json.loads(self._pipeline.to_json()), indent = 4)
@@ -62,7 +53,7 @@ class BasePipeline(object):
                    ' -r /datasets/seed_datasets_current/{dataset}/{dataset}_problem/problemDoc.json' \
                    ' -i /datasets/seed_datasets_current/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json' \
                    ' -t /datasets/seed_datasets_current/{dataset}/TEST/dataset_TEST/datasetDoc.json' \
-                   ' -a /datasets/seed_datasets_current/{dataset}/SCORE/dataset_TEST/datasetDoc.json' \
+                   ' -a /datasets/seed_datasets_current/{dataset}/SCORE/dataset_SCORE/datasetDoc.json' \
                    ' -o /dev/null' \
                    ' -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml' \
                    ' > pipeline_results/{pipeline}.txt'
