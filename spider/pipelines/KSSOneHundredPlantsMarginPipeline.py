@@ -22,10 +22,38 @@ class KSSOneHundredPlantsMarginPipeline(BasePipeline):
         super().__init__()
         
         #choose one or more seed datasets on which this pipeline can operate
-        self.dataset = '1491_one_hundred_plants_margin'
+        self.dataset = '1491_one_hundred_plants_margin_clust'
 
     def get_primitive_entry_point(self):
         return 'd3m.primitives.clustering.kss.Umich'
+
+    def get_fit_score_command_template(self):
+        """Returns the template for the command used to run this pipeline.
+
+        This method gets used with str.format() to generate the pipeline command. The returned string should contain
+        these fields:
+        - {version} (the d3m package version)
+        - {primitive} (the fully-qualified path of the primitive being evaluated by this pipeline)
+        - {pipeline} (the name of this BasePipeline object)
+        - {instanceid} (the hash of this BasePipeline object, generated automatically by d3m)
+        - {dataset} (the name of the dataset that this pipeline is using for evaluation)
+
+        For most pipelines, this method does not need to be overridden. However, there are some datasets that require a
+        slightly different template, and thus require this method to be overridden.
+
+        :return: str
+        """
+        template = 'python3 -m d3m runtime -v /volumes fit-score' \
+                   ' -p Michigan/{primitive}/{version}/pipelines/{instanceid}.json' \
+                   ' -r /datasets/seed_datasets_unsupervised/{dataset}/{dataset}_problem/problemDoc.json' \
+                   ' -i /datasets/seed_datasets_unsupervised/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json' \
+                   ' -t /datasets/seed_datasets_unsupervised/{dataset}/TEST/dataset_TEST/datasetDoc.json' \
+                   ' -a /datasets/seed_datasets_unsupervised/{dataset}/SCORE/dataset_TEST/datasetDoc.json' \
+                   ' -o /dev/null' \
+                   ' -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml' \
+                   ' > pipeline_results/{pipeline}.txt'
+
+        return template
         
     #define pipeline object
     def _gen_pipeline(self):

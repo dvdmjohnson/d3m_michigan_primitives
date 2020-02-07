@@ -47,13 +47,13 @@ def main():
 
     # List of pipelines to run and export
     pipelines_to_run = [
-        # spls.EKSSOneHundredPlantsMarginPipeline,
+        spls.EKSSOneHundredPlantsMarginPipeline,
         # spls.GODECHandgeometryPipeline,
         spls.GRASTAAutoMPGPipeline,
         spls.GRASTAAutoPricePipeline,
         # spls.GROUSEAutoMPGPipeline,
         # spls.I3DHMDBActionRecognitionPipeline,
-        # spls.KSSOneHundredPlantsMarginPipeline,
+        spls.KSSOneHundredPlantsMarginPipeline,
         spls.OWLRegressionAutoPricePipeline,
         # spls.PCPIALMHandgeometryPipeline,
         # spls.RPCALBDHandgeometryPipeline,

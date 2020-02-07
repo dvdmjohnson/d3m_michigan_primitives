@@ -134,7 +134,7 @@ This creates three things:
 To run an individual pipeline (e.g., `VGG16HandgeometryPipeline`), look for the line for that pipeline inside `run_pipeline_cmds.txt` and run it inside your bash shell. The following command does this programmatically:
 
 ```bash
-eval `cat run_pipeline_cmds.txt | grep VGG16HandgeometryPipeline`
+eval `cat run_pipeline_cmds.txt | grep /VGG16HandgeometryPipeline`
 ```
 
 This will create a `.yaml` log inside `Michigan` and a score file inside `pipeline_results`. You should aim to get the reported score as high as possible.
