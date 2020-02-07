@@ -13,6 +13,8 @@ from d3m.primitives.schema_discovery.profiler import Common as SimpleProfilerPri
 from sklearn_wrap.SKLinearSVR import SKLinearSVR
 from sklearn_wrap.SKImputer import SKImputer
 
+from .datasets import AutoPriceMinMetadataDataset
+
 
 class GRASTAAutoPricePipeline(BasePipeline):
 
@@ -20,9 +22,7 @@ class GRASTAAutoPricePipeline(BasePipeline):
 
     def __init__(self):
         super().__init__()
-        
-        #specify one seed dataset on which this pipeline can operate
-        self.dataset = 'LL0_207_autoPrice_MIN_METADATA'
+        self.dataset_class = AutoPriceMinMetadataDataset
 
     def get_primitive_entry_point(self):
         return 'd3m.primitives.data_compression.grasta.Umich'

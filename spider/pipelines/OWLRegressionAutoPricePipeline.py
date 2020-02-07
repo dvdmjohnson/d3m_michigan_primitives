@@ -12,13 +12,13 @@ from d3m.primitives.data_transformation.extract_columns_by_semantic_types import
 from d3m.primitives.schema_discovery.profiler import Common as SimpleProfilerPrimitive
 from sklearn_wrap.SKImputer import SKImputer
 
+from .datasets import AutoPriceMinMetadataDataset
+
 
 class OWLRegressionAutoPricePipeline(BasePipeline):
     def __init__(self):
         super().__init__()
-
-        #specify one seed dataset on which this pipeline can operate
-        self.dataset = 'LL0_207_autoPrice_MIN_METADATA'
+        self.dataset_class = AutoPriceMinMetadataDataset
 
     def get_primitive_entry_point(self):
         return 'd3m.primitives.regression.owl_regression.Umich'
