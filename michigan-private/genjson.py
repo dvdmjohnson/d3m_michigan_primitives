@@ -87,16 +87,15 @@ def main():
     # Now make pipelines
     for pipeline in pipelines_to_run:
         pl_name = pipeline.__name__
-        instance = pipeline()
-        json_info = instance.get_json()
-        instanceid = instance.get_id()
-        dataset = instance.get_dataset_class().get_dataset_name()
-        prim = instance.get_primitive_entry_point()
+        json_info = pipeline.get_json()
+        instanceid = pipeline.get_id()
+        dataset = pipeline.get_dataset_class().get_dataset_name()
+        prim = pipeline.get_primitive_entry_point()
 
         print(prim, pl_name, '->', instanceid)
 
         # Fill out the template for this pipeline's run command
-        template = instance.get_dataset_class().get_fit_score_command_template()
+        template = pipeline.get_dataset_class().get_fit_score_command_template()
         pipeline_cmd = template.format(
             version=version,
             primitive=prim,

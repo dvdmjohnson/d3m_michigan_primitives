@@ -17,14 +17,16 @@ from .datasets import AutoPriceMinMetadataDataset
 
 class OWLRegressionAutoPricePipeline(BasePipeline):
 
-    def get_dataset_class(self):
+    @staticmethod
+    def get_dataset_class():
         return AutoPriceMinMetadataDataset
 
-    def get_primitive_entry_point(self):
+    @staticmethod
+    def get_primitive_entry_point():
         return 'd3m.primitives.regression.owl_regression.Umich'
 
-    #define pipeline object
-    def _gen_pipeline(self):
+    @staticmethod
+    def _gen_pipeline():
         #pipeline context is just metadata, ignore for now
         pipeline = meta_pipeline.Pipeline()
         #define inputs.  This will be read in automatically as a Dataset object.
