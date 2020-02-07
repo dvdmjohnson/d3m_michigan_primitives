@@ -60,10 +60,13 @@ setuptools.setup(
     keywords='d3m_primitive',
     entry_points = {
         'd3m.primitives': [
+            'clustering.ekss.Umich = spider.cluster.ekss.ekss:EKSS',
+            'clustering.kss.Umich = spider.cluster.kss.kss:KSS',
             # 'clustering.ssc_admm.Umich = spider.cluster.ssc_admm.ssc_admm:SSC_ADMM',
             # 'clustering.ssc_cvx.Umich = spider.cluster.ssc_cvx.ssc_cvx:SSC_CVX',
             # 'clustering.ssc_omp.Umich = spider.cluster.ssc_omp.ssc_omp:SSC_OMP',
             # 'data_compression.go_dec.Umich = spider.dimensionality_reduction.go_dec.go_dec:GO_DEC',
+            'data_compression.grasta.Umich = spider.unsupervised_learning.grasta.grasta:GRASTA',
             # 'data_compression.grasta_masked.Umich = spider.unsupervised_learning.grasta_masked.grasta_masked:GRASTA_MASKED',
             # 'data_compression.grouse.Umich = spider.unsupervised_learning.grouse.grouse:GROUSE',
             # 'data_compression.pcp_ialm.Umich = spider.dimensionality_reduction.pcp_ialm.pcp_ialm:PCP_IALM',
@@ -75,11 +78,8 @@ setuptools.setup(
             # 'feature_extraction.log_mel_spectrogram.Umich = spider.featurization.logmelspectrogram.logmelspectrogram:LogMelSpectrogram',
             # 'feature_extraction.vgg16.Umich = spider.featurization.vgg16.vgg16:VGG16',
             # 'learner.goturn.Umich = spider.supervised_learning.goturn.goturn:GoTurn'
-            # 'similarity_modeling.rfd.Umich = spider.distance.rfd.rfd:RFD',
-            'clustering.ekss.Umich = spider.cluster.ekss.ekss:EKSS',
-            'clustering.kss.Umich = spider.cluster.kss.kss:KSS',
-            'data_compression.grasta.Umich = spider.unsupervised_learning.grasta.grasta:GRASTA',
             'regression.owl_regression.Umich = spider.supervised_learning.owl.owl:OWLRegression',
+            # 'similarity_modeling.rfd.Umich = spider.distance.rfd.rfd:RFD',
         ],
     },
     test_suite='spider.tests.suite'
