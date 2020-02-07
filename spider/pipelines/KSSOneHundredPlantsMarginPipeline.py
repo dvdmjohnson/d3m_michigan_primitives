@@ -21,13 +21,8 @@ from .datasets import OneHundredPlantsMarginClustDataset
 
 class KSSOneHundredPlantsMarginPipeline(BasePipeline):
 
-    @staticmethod
-    def get_dataset_class():
-        return OneHundredPlantsMarginClustDataset
-
-    @staticmethod
-    def get_primitive_entry_point():
-        return 'd3m.primitives.clustering.kss.Umich'
+    dataset_class = OneHundredPlantsMarginClustDataset
+    primitive_entry_point = 'd3m.primitives.clustering.kss.Umich'
 
     @staticmethod
     def _gen_pipeline():

@@ -18,13 +18,8 @@ from .datasets import AutoMPGMinMetadataDataset
 
 class GRASTAAutoMPGPipeline(BasePipeline):
 
-    @staticmethod
-    def get_dataset_class():
-        return AutoMPGMinMetadataDataset
-
-    @staticmethod
-    def get_primitive_entry_point():
-        return 'd3m.primitives.data_compression.grasta.Umich'
+    dataset_class = AutoMPGMinMetadataDataset
+    primitive_entry_point = 'd3m.primitives.data_compression.grasta.Umich'
 
     @staticmethod
     def _gen_pipeline():
