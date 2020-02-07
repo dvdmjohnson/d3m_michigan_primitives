@@ -16,19 +16,15 @@ from d3m.primitives.data_transformation.column_parser import Common as ColumnPar
 from d3m.primitives.data_transformation.extract_columns_by_semantic_types import Common as ExtractColumnsBySemanticTypesPrimitive
 from d3m.primitives.data_transformation.construct_predictions import Common as ConstructPredictionsPrimitive
 
+from .datasets import OneHundredPlantsMarginClustDataset
+
 
 class SSCCVXOneHundredPlantsMarginPipeline(BasePipeline):
-    def __init__(self):
-        super().__init__()
-        
-        #choose one or more seed datasets on which this pipeline can operate
-        self.dataset = '1491_one_hundred_plants_margin'
 
-    def get_primitive_entry_point(self):
-        return 'd3m.primitives.clustering.ssc_cvx.Umich'
-        
-    #define pipeline object
-    def _gen_pipeline(self):
+    dataset_class = OneHundredPlantsMarginClustDataset
+    primitive_entry_point = 'd3m.primitives.clustering.ssc_cvx.Umich'
+
+    def _gen_pipeline():
         #pipeline context is just metadata, ignore for now
         pipeline = meta_pipeline.Pipeline()
         #define inputs.  This will be read in automatically as a Dataset object.

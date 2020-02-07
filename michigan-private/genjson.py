@@ -57,9 +57,9 @@ def main():
         spls.OWLRegressionAutoPricePipeline,
         # spls.PCPIALMHandgeometryPipeline,
         # spls.RPCALBDHandgeometryPipeline,
-        # spls.SSCADMMOneHundredPlantsMarginPipeline,
-        # spls.SSCCVXOneHundredPlantsMarginPipeline,
-        # spls.SSCOMPOneHundredPlantsMarginPipeline,
+        spls.SSCADMMOneHundredPlantsMarginPipeline,
+        spls.SSCCVXOneHundredPlantsMarginPipeline,
+        spls.SSCOMPOneHundredPlantsMarginPipeline,
         # spls.VGG16HandgeometryPipeline,
     ]
 

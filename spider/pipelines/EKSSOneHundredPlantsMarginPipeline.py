@@ -5,7 +5,7 @@ Created on Sun Jul  1 20:06:16 2018
 @author: shanthakumar
 """
 from d3m.metadata import pipeline as meta_pipeline
-from d3m.metadata.base import ArgumentType, Context
+from d3m.metadata.base import ArgumentType
 
 from spider.pipelines.base import BasePipeline
 from spider.cluster.ekss import EKSS

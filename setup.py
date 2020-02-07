@@ -62,9 +62,9 @@ setuptools.setup(
         'd3m.primitives': [
             'clustering.ekss.Umich = spider.cluster.ekss.ekss:EKSS',
             'clustering.kss.Umich = spider.cluster.kss.kss:KSS',
-            # 'clustering.ssc_admm.Umich = spider.cluster.ssc_admm.ssc_admm:SSC_ADMM',
-            # 'clustering.ssc_cvx.Umich = spider.cluster.ssc_cvx.ssc_cvx:SSC_CVX',
-            # 'clustering.ssc_omp.Umich = spider.cluster.ssc_omp.ssc_omp:SSC_OMP',
+            'clustering.ssc_admm.Umich = spider.cluster.ssc_admm.ssc_admm:SSC_ADMM',
+            'clustering.ssc_cvx.Umich = spider.cluster.ssc_cvx.ssc_cvx:SSC_CVX',
+            'clustering.ssc_omp.Umich = spider.cluster.ssc_omp.ssc_omp:SSC_OMP',
             # 'data_compression.go_dec.Umich = spider.dimensionality_reduction.go_dec.go_dec:GO_DEC',
             'data_compression.grasta.Umich = spider.unsupervised_learning.grasta.grasta:GRASTA',
             # 'data_compression.grasta_masked.Umich = spider.unsupervised_learning.grasta_masked.grasta_masked:GRASTA_MASKED',
