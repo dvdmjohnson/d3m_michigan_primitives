@@ -20,12 +20,9 @@ from .datasets import OneHundredPlantsMarginClustDataset
 
 
 class KSSOneHundredPlantsMarginPipeline(BasePipeline):
-    def __init__(self):
-        super().__init__()
-        
-        #choose one or more seed datasets on which this pipeline can operate
-        self.dataset = '1491_one_hundred_plants_margin_clust'
-        self.dataset_class = OneHundredPlantsMarginClustDataset
+
+    def get_dataset_class(self):
+        return OneHundredPlantsMarginClustDataset
 
     def get_primitive_entry_point(self):
         return 'd3m.primitives.clustering.kss.Umich'

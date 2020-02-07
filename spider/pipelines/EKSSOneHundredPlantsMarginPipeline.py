@@ -20,9 +20,9 @@ from .datasets import OneHundredPlantsMarginClustDataset
 
 
 class EKSSOneHundredPlantsMarginPipeline(BasePipeline):
-    def __init__(self):
-        super().__init__()
-        self.dataset_class = OneHundredPlantsMarginClustDataset
+
+    def get_dataset_class(self):
+        return OneHundredPlantsMarginClustDataset
 
     def get_primitive_entry_point(self):
         return 'd3m.primitives.clustering.ekss.Umich'

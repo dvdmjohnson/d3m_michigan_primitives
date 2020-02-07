@@ -18,11 +18,8 @@ from .datasets import AutoPriceMinMetadataDataset
 
 class GRASTAAutoPricePipeline(BasePipeline):
 
-    #specify one seed dataset on which this pipeline can operate
-
-    def __init__(self):
-        super().__init__()
-        self.dataset_class = AutoPriceMinMetadataDataset
+    def get_dataset_class(self):
+        return AutoPriceMinMetadataDataset
 
     def get_primitive_entry_point(self):
         return 'd3m.primitives.data_compression.grasta.Umich'

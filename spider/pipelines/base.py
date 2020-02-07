@@ -5,6 +5,13 @@ class BasePipeline(object):
     def __init__(self):
         self._pipeline = self._gen_pipeline()
 
+    def get_dataset_class(self):
+        """Returns the dataset class, i.e., which dataset to run this pipeline on.
+
+        :return: BasePipeline class
+        """
+        raise NotImplementedError
+
     @abc.abstractmethod
     def get_primitive_entry_point(self):
         """Returns the qualified name of the primitive that this pipeline is evaluating.
