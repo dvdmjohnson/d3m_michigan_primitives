@@ -32,7 +32,8 @@ SHORT_HASH=`git rev-parse --short HEAD`
 cd "$PRIMITIVES_REPO_PATH"
 git checkout master
 git pull
-git lfs fetch --all d3m && git merge d3m/master
+git lfs fetch --all d3m
+git fetch d3m && git merge d3m/master
 git push
 
 # Go into newest primitives collection
