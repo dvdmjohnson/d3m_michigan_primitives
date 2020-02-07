@@ -1,6 +1,9 @@
+from abc import abstractmethod
+
 class BaseDataset(object):
 
     @staticmethod
+    @abstractmethod
     def get_dataset_name():
         """Returns the proper name of this dataset as it appears the dataset repository.
 
