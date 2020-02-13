@@ -1,5 +1,4 @@
 from .EKSSOneHundredPlantsMarginPipeline import EKSSOneHundredPlantsMarginPipeline
-from .GODECHandgeometryPipeline import GODECHandgeometryPipeline
 from .GRASTAAutoMPGPipeline import GRASTAAutoMPGPipeline
 from .GRASTAAutoPricePipeline import GRASTAAutoPricePipeline
 from .GROUSEAutoMPGPipeline import GROUSEAutoMPGPipeline

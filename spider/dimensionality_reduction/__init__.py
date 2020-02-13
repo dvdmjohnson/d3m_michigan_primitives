@@ -10,7 +10,8 @@
 """
 
 # to allow from spider.dimensionality_reduction import *
-__all__ = ["pcp_ialm",
-           "go_dec",
-           "rpca_lbd"]
+__all__ = [
+    "pcp_ialm",
+    "rpca_lbd"
+]
 
