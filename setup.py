@@ -47,7 +47,7 @@ setuptools.setup(
         'spider.featurization.i3d',
         'spider.featurization.logmelspectrogram',
         'spider.featurization.vgg16',
-        'spider.pipelines'
+        'spider.pipelines',
         'spider.preprocessing',
         'spider.preprocessing.trecs',
         'spider.supervised_learning',
