@@ -10,7 +10,8 @@
 """
 
 # to allow from spider.featurization import *
-__all__ = ["audio_featurization",
-           "audio_slicer",
-           "logmelspectrogram",
-           "vgg16"]
+__all__ = [
+    "audio_slicer",
+    "logmelspectrogram",
+    "vgg16"
+]
