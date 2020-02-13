@@ -43,7 +43,6 @@ setuptools.setup(
         'spider.featurization.vgg16',
         'spider.pipelines',
         'spider.supervised_learning',
-        'spider.supervised_learning.goturn',
         'spider.supervised_learning.owl',
         'spider.unsupervised_learning.grasta',
         'spider.unsupervised_learning.grasta_masked',
@@ -64,7 +63,6 @@ setuptools.setup(
             # 'data_compression.rpca_lbd.Umich = spider.dimensionality_reduction.rpca_lbd.rpca_lbd:RPCA_LBD',
             # 'feature_extraction.i3d.Umich = spider.featurization.i3d.i3d:I3D',
             # 'feature_extraction.vgg16.Umich = spider.featurization.vgg16.vgg16:VGG16',
-            # 'learner.goturn.Umich = spider.supervised_learning.goturn.goturn:GoTurn'
             'regression.owl_regression.Umich = spider.supervised_learning.owl.owl:OWLRegression',
         ],
     },

@@ -9,4 +9,6 @@
     difines the model index
 """
 
-__all__ = ["OWLRegression", "GoTurn"]
+__all__ = [
+    "OWLRegression",
+]
