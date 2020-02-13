@@ -48,7 +48,6 @@ def main():
     # List of pipelines to run and export
     pipelines_to_run = [
         spls.EKSSOneHundredPlantsMarginPipeline,
-        # spls.GODECHandgeometryPipeline,
         spls.GRASTAAutoMPGPipeline,
         spls.GRASTAAutoPricePipeline,
         # spls.GROUSEAutoMPGPipeline,
