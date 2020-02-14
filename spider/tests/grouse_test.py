@@ -13,7 +13,7 @@ import scipy.stats
 from scipy import sparse
 from random import randint
 
-from spider.unsupervised_learning.grouse import GROUSE, GROUSEHyperparams
+from spider.unsupervised_learning.grouse import GROUSE, GROUSEHyperparams, GROUSEParams, _OPTIONS
 
 
 class Test_GROUSE(unittest.TestCase):
@@ -35,20 +35,15 @@ class Test_GROUSE(unittest.TestCase):
 
         Y = Utrue @ np.random.randn(rank,n)
 
-        Mask = np.zeros([D, n])
-        for i in range(0, n):
-            numObservations = int(np.ceil(0.7 * D))
-            midx = np.random.choice(D, numObservations, replace=False)
-            Mask[midx, i] = 1
-
         hp = GROUSEHyperparams(
             rank=5,
             constant_step=0,
             max_train_cycles=10,
+            subsample=0.7
         )
 
         grouse = GROUSE(hyperparams=hp, random_seed=randint(0, 2 ** 32 - 1))
-        grouse.set_training_data(inputs=Y.T, mask=Mask.T)
+        grouse.set_training_data(inputs=Y.T)
         grouse.fit()
         Uhat = grouse._U
 
@@ -60,12 +55,13 @@ class Test_GROUSE(unittest.TestCase):
         self.assertLess(err, 1e-6)
         self.assertLess(determ_discrep, 1e-6)
 
-        # Test streaming capability
+        params = GROUSEParams(OPTIONS=_OPTIONS(rank,0,1), U=Uhat)
+        grouse.set_params(params=params)
+
+        # TEST STREAMING CAPABILITY
         n = 1500  # number of "streaming" test data
         Y = np.zeros([D, n])
-        Mask = np.zeros([D, n])
         for i in range(0, n):
-
             # Random subspace change at 500 samples: test tracking
             if i == 500:
                 rando_mat = np.random.randn(D, D)
@@ -75,11 +71,12 @@ class Test_GROUSE(unittest.TestCase):
             wtrue = np.random.randn(rank)
             Y[:,i] = Utrue @ wtrue
 
-            numObservations = int(np.ceil(0.7 * D))
-            midx = np.random.choice(D, numObservations, replace=False)
-            Mask[midx, i] = 1
+        Mask = np.zeros((D,n))
+        Mask[(np.random.rand(D,n) > 0.7)] = np.nan
 
-        grouse.set_training_data(inputs=Y.T, mask=Mask.T)
+        Ymissing = Y + Mask
+
+        grouse.set_training_data(inputs=Ymissing.T)
         grouse.continue_fit()
 
         Ustream = grouse._U
@@ -92,22 +89,23 @@ class Test_GROUSE(unittest.TestCase):
         # print("Streaming subspace error: ",U_err)
         # print("Streaming determinant discrepancy: ",determ_discrep)
 
+        params = GROUSEParams(OPTIONS=_OPTIONS(rank,0,1), U=Ustream)
+        grouse.set_params(params=params)
+
         # TEST PRODUCE FUNCTION
-        n = 500;
+        n = 50;
         W = np.random.randn(rank, n)
         Y = Utrue @ W
 
-        dens = 0.1;
-        Mask = np.zeros([D, n])
-        for i in range(0, n):
-            numObservations = int(np.ceil(0.7 * D))
-            midx = np.random.choice(D, numObservations, replace=False)
-            Mask[midx, i] = 1
+        Mask = np.zeros((D,n))
+        Mask[(np.random.rand(D,n) > 0.7)] = np.nan
 
-        Yhat = grouse.produce(inputs=Y.T).value
+        Ymissing = Y + Mask
+
+        Yhat = grouse.produce(inputs=Ymissing.T).value.T
         Yerr = np.linalg.norm(Yhat - Y, 'fro') / np.linalg.norm(Y, 'fro')
         # print('Lerr error is: ',Lerr)
-        Yerr_tolerance = 0.2
+        Yerr_tolerance = 1e-6
         self.assertLess(Yerr, Yerr_tolerance)
 
         U = grouse.produce_Subspace(inputs=Y.T).value

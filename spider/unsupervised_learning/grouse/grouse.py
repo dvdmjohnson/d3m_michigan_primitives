@@ -12,11 +12,7 @@ Outputs = container.ndarray
 
 
 class GROUSEHyperparams(hyperparams.Hyperparams):
-    # dim = hyperparams.Bounded[int](lower=1,
-    #                                upper=None,
-    #                                default=500,
-    #                                semantic_types=['https://metadata.datadrivendiscovery.org/types/TuningParameter'],
-    #                                description="Ambient dimension of data")
+
     rank = hyperparams.Bounded[int](lower=1,
                                     upper=None,
                                     default=5,
@@ -30,18 +26,16 @@ class GROUSEHyperparams(hyperparams.Hyperparams):
     max_train_cycles = hyperparams.Bounded[int](lower=1, upper=None, default=10, semantic_types=[
         'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
                                                 description="Number of times to cycle over training data")
-
-    # training_size = hyperparams.Bounded[int](lower=1, upper=None, default=50, semantic_types=[
-    #     'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
-    #                                          description="Number of random training samples")
+    subsample = hyperparams.Bounded[float](lower=0.01, upper=1, default=1, semantic_types=[
+        'https://metadata.datadrivendiscovery.org/types/TuningParameter'],
+                                                description="Matrix sub-sampling parameter during training")
 
 ### GROUSE OPTIONS CLASS
 class _OPTIONS(object):
-    def __init__(self, dim_m, rank, constant_step=0):
-        self.dim_m = dim_m
+    def __init__(self, rank, constant_step=0, subsample=1):
         self.rank = rank
         self.constant_step = constant_step
-
+        self.subsample = subsample
 
 class GROUSEParams(params.Params):
     OPTIONS: _OPTIONS
@@ -99,21 +93,18 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
     def __init__(self, *, hyperparams: GROUSEHyperparams, random_seed: int = 0,
                  docker_containers: typing.Dict[str, base.DockerContainer] = None) -> None:
         super().__init__(hyperparams=hyperparams, random_seed=random_seed, docker_containers=docker_containers)
-        # self._dim = hyperparams['dim']
         self._rank = hyperparams['rank']
 
         self._constant_step = hyperparams['constant_step']
         self._max_train_cycles = hyperparams['max_train_cycles']
-        # self._training_size = hyperparams['training_size']
+        self._subsample = hyperparams['subsample']
 
         self._X: Inputs = None
-        self._Mask: Inputs = None
         self._U = None
         self._random_state = np.random.RandomState(random_seed)
 
-    def set_training_data(self, *, inputs: Inputs, mask: Inputs) -> None:
+    def set_training_data(self, *, inputs: Inputs) -> None:
         self._X = inputs
-        self._Mask = mask
         self._dim = inputs.shape[1]
         self._training_size = inputs.shape[0]
 
@@ -132,37 +123,36 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
         assert self._rank <= self._X.shape[1], "Dim_subspaces should be less than ambient dimension."
 
         _X = self._X.T  # Get the training data
-        _Mask = self._Mask.T  # Get the mask
 
         # Begin training
         # Instantiate a random low-rank subspace
-        d = self._dim
+        d = _X.shape[0]
         r = self._rank
         U = generateLRMatrix(d, r)
 
         # Set the training control params
-        self._grouseOPTIONS = _OPTIONS(self._dim, self._rank, self._constant_step)
+        self._grouseOPTIONS = _OPTIONS(self._rank, self._constant_step, self._subsample)
 
-        U = self._train_grouse(_X, _Mask, U)
+        U = self._train_grouse(_X, U)
         self._U = U  # update global variable
 
         return base.CallResult(None)
 
     # GROUSE training internal function
-    def _train_grouse(self, X, Mask, U):
+    def _train_grouse(self, X, U):
 
         max_cycles = self._max_train_cycles
         train_size = self._training_size
-        # train_size = self._training_size
-        # train_size = Mask.shape[1]
-
         for i in range(0, max_cycles):
             perm = self._random_state.choice(train_size, train_size, replace=False)  # randomly permute training data
             for j in range(0, train_size):
-                vec = X[:, perm[j]]
-                x = vec / np.max(vec)  # get a column of data
-                xidx = np.where(Mask[:, perm[j]])[0]
-                U, w = self._grouse_stream(U, x, xidx)
+                _x = X[:, perm[j]]
+                if(self._grouseOPTIONS.subsample < 1):
+                    _xidx = self._random_state.choice(self._dim, int(np.ceil(self._grouseOPTIONS.subsample * self._dim)),replace=False)
+                else:
+                    _xidx = np.where(~np.isnan(_x))[0]
+
+                U, _ = self._grouse_stream(U, _x, _xidx)
                 self._U = U
 
         return U
@@ -171,30 +161,43 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
 
         # Get the vector input, and the subspace
         _X = self._X.T  # Get the data
-        _Mask = self._Mask.T       #Get the mask indicating observed indices
+        # _Mask = self._Mask.T       #Get the mask indicating observed indices
         d, numVectors = _X.shape
-        Uhat = self._U
-
+        U = self._U
 
         for i in range(0, numVectors):
             _x = _X[:, i]
-            _xidx = np.where(_Mask[:, i])[0]
+
+            if(self._grouseOPTIONS.subsample < 1):
+                _xidx = self._random_state.choice(self._dim, int(np.ceil(self._grouseOPTIONS.subsample * self._dim)),replace=False)
+            else:
+                _xidx = np.where(~np.isnan(_x))[0]
 
             # Call GROUSE iteration
-            U, w = self._grouse_stream(Uhat, _x, _xidx)
-
+            U, w = self._grouse_stream(U, _x, _xidx)
             self._U = U
-
-            Uhat = U
 
         return base.CallResult(None)
 
     def produce(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[Outputs]:
-        X = inputs
-        U = self._U
 
-        Y = U @ (U.T @ X.T)
-        return base.CallResult(container.ndarray(Y, generate_metadata=True))
+        U = self._U
+        _X = inputs.T
+        d,numVectors = _X.shape
+
+        Y = np.zeros((d,numVectors))
+        for i in range(0,numVectors):
+            _x = _X[:, i]
+            if(self._grouseOPTIONS.subsample < 1):
+                _xidx = self._random_state.choice(self._dim, int(np.ceil(self._grouseOPTIONS.subsample * self._dim)),replace=False)
+            else:
+                _xidx = np.where(~np.isnan(_x))[0]
+
+            # Call GROUSE iteration
+            _, w = self._grouse_stream(U, _x, _xidx)
+            Y[:,i] = U @ w
+
+        return base.CallResult(container.ndarray(Y.T, generate_metadata=True))
 
     def produce_Subspace(self, *, inputs: Inputs, iterations: int = None) -> base.CallResult[
         Outputs]:
@@ -204,8 +207,8 @@ class GROUSE(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[
         return base.CallResult(container.ndarray(U, generate_metadata=True))
 
 
-    def fit_multi_produce(self, *, produce_methods: typing.Sequence[str], mask: Inputs, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.MultiCallResult:
-        return self._fit_multi_produce(produce_methods=produce_methods, timeout=timeout, iterations=iterations, inputs=inputs, mask=mask)
+    def fit_multi_produce(self, *, produce_methods: typing.Sequence[str], inputs: Inputs, timeout: float = None, iterations: int = None) -> base.MultiCallResult:
+        return self._fit_multi_produce(produce_methods=produce_methods, timeout=timeout, iterations=iterations, inputs=inputs)
 
     ### MAIN GROUSE UPDATE FUNCTION
     def _grouse_stream(self, U, v, xIdx):

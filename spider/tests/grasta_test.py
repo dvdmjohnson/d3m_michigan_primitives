@@ -46,7 +46,7 @@ class Test_GRASTA(unittest.TestCase):
 
         hp = GRASTAHyperparams(
             rank = 5,
-            sampling = 1,
+            subsample = 0.7,
             train_sampling = 1,
             admm_max_iter = 20,
             admm_min_iter = 20,
@@ -55,8 +55,7 @@ class Test_GRASTA(unittest.TestCase):
             max_mu = 15,
             min_mu = 1,
             constant_step = 0,
-            max_train_cycles = 10,
-            training_size = n
+            max_train_cycles = 10
         )
 
         grasta = GRASTA(hyperparams=hp, random_seed=randint(0, 2 ** 32 - 1))
