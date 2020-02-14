@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$#" != 1 ]; then
-  echo "Usage: ./export_michigan_primitives.sh <path to local copy of rszeto/primitives"
+  echo "Usage: ./export_michigan_primitives.sh <path to local copy of rszeto/primitives>"
   exit 1
 fi
 
@@ -32,6 +32,7 @@ SHORT_HASH=`git rev-parse --short HEAD`
 cd "$PRIMITIVES_REPO_PATH"
 git checkout master
 git pull
+git lfs fetch --all d3m
 git fetch d3m && git merge d3m/master
 git push
 

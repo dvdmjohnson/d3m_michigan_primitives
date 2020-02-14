@@ -5,7 +5,7 @@ Created on Sun Jul  1 20:06:16 2018
 @author: shanthakumar
 """
 from d3m.metadata import pipeline as meta_pipeline
-from d3m.metadata.base import ArgumentType, Context
+from d3m.metadata.base import ArgumentType
 
 from spider.pipelines.base import BasePipeline
 from spider.cluster.ssc_admm import SSC_ADMM
@@ -16,20 +16,16 @@ from d3m.primitives.data_transformation.column_parser import Common as ColumnPar
 from d3m.primitives.data_transformation.extract_columns_by_semantic_types import Common as ExtractColumnsBySemanticTypesPrimitive
 from d3m.primitives.data_transformation.construct_predictions import Common as ConstructPredictionsPrimitive
 
+from .datasets import OneHundredPlantsMarginClustDataset
+
 
 class SSCADMMOneHundredPlantsMarginPipeline(BasePipeline):
-    def __init__(self):
-        super().__init__()
-        
-        #choose one or more seed datasets on which this pipeline can operate
-        self.dataset = '1491_one_hundred_plants_margin'
-        self.meta_info = self.genmeta(self.dataset)
 
-    def get_primitive_entry_point(self):
-        return 'd3m.primitives.clustering.ssc_admm.Umich'
-        
-    #define pipeline object
-    def _gen_pipeline(self):
+    dataset_class = OneHundredPlantsMarginClustDataset
+    primitive_entry_point = 'd3m.primitives.clustering.ssc_admm.Umich'
+
+    @staticmethod
+    def _gen_pipeline():
         #pipeline context is just metadata, ignore for now
         pipeline = meta_pipeline.Pipeline()
         #define inputs.  This will be read in automatically as a Dataset object.

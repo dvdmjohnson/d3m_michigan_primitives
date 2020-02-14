@@ -6,12 +6,25 @@ Developers from the Michigan team should use this document as the primary resour
 
 ## Table of Contents
 
+* [Git LFS setup](#git-lfs-setup)
 * [Docker Setup](#docker-setup)
 * [Internal Tests and Pipelines](#internal-tests-and-pipelines)
     - [Internal tests](#internal-tests)
     - [Pipelines](#pipelines)
 * [Merging Changes](#merging-changes)
 * [[POC] Submitting to datadrivendiscovery/primitives](#poc-submitting-to-datadrivendiscoveryprimitives)
+
+## Git LFS setup
+
+This project requires a very recent version of Git LFS, one that's more recent than the one provided on Ubuntu. You can install Git LFS 2.10.0 (tested for Ubuntu 16.04 64-bit) by running the commands below:
+
+```
+wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz
+mkdir -p git-lfs-linux-amd64-v2.10.0
+tar xzvf git-lfs-linux-amd64-v2.10.0.tar.gz -C git-lfs-linux-amd64-v2.10.0
+sudo git-lfs-linux-amd64-v2.10.0/install.sh
+rm -rf git-lfs-linux-amd64-v2.10.0
+```
 
 ## Docker Setup
 
@@ -121,7 +134,7 @@ This creates three things:
 To run an individual pipeline (e.g., `VGG16HandgeometryPipeline`), look for the line for that pipeline inside `run_pipeline_cmds.txt` and run it inside your bash shell. The following command does this programmatically:
 
 ```bash
-eval `cat run_pipeline_cmds.txt | grep VGG16HandgeometryPipeline`
+eval `cat run_pipeline_cmds.txt | grep /VGG16HandgeometryPipeline`
 ```
 
 This will create a `.yaml` log inside `Michigan` and a score file inside `pipeline_results`. You should aim to get the reported score as high as possible.

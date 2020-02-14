@@ -18,7 +18,6 @@ class VGG16HandgeometryPipeline(BasePipeline):
         super().__init__()
 
         self.dataset = '22_handgeometry'
-        self.meta_info = self.genmeta(self.dataset)
 
     def get_primitive_entry_point(self):
         return 'd3m.primitives.feature_extraction.vgg16.Umich'

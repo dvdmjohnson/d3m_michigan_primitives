@@ -9,7 +9,10 @@
     defines the module index
 """
 
-# to allow from spider.preprocessing import *
-__all__ = ["grasta","grasta_masked",]
+# to allow from spider.unsupervized_learning import *
+__all__ = [
+    "grasta",
+    "grasta_masked",
+]
 
 
