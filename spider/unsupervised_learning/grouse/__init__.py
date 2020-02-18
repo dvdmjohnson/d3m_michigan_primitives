@@ -9,5 +9,5 @@
     defines the module index
 """
 
-from .grouse import GROUSE, GROUSEHyperparams
+from .grouse import GROUSE, GROUSEHyperparams, GROUSEParams, _OPTIONS
 
