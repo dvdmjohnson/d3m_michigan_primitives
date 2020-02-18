@@ -85,13 +85,14 @@ class _OPTIONS(object):
 
 
 class _STATUS(object):
-    def __init__(self, last_mu, last_w, last_gamma, level=0, step_scale=0, train=0):
+    def __init__(self, last_mu, last_w, last_gamma, level=0, step_scale=0, train=0, step = np.pi/3):
         self.last_mu = last_mu
         self.level = level
         self.step_scale = step_scale
         self.last_w = last_w
         self.last_gamma = last_gamma
         self.train = train
+        self.step = step
 
 
 class _OPTS(object):
@@ -167,17 +168,13 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         self._U = None
         self._random_state = np.random.RandomState(random_seed)
 
-        # Instantiate GRASTA status and admm control params
-        # self._grastaSTATUS = _STATUS(last_mu=self._min_mu, last_w=np.zeros(self._rank),
-        #                       last_gamma=np.zeros(self._dim), train=1)
+        #Instantiate GRASTA status and admm control params
         self._admm_OPTS = _OPTS()
 
     def set_training_data(self, *, inputs: Inputs) -> None:
         self._X = inputs
         self._dim = inputs.shape[1]  # row vector data
         self._training_size = inputs.shape[0]
-        self._grastaSTATUS = _STATUS(last_mu=self._min_mu, last_w=np.zeros(self._rank),
-                                     last_gamma=np.zeros(self._dim), train=1)
 
     # GRASTA fit function: learns low-rank subspace from training data
     def fit(self, *, timeout: float = None, iterations: int = None) -> base.CallResult[None]:
@@ -210,7 +207,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
                                        self._max_level, self._max_mu, self._min_mu, self._constant_step)
 
         U = self._train_grasta(_X, U)
-        self._U = U  # update global variable
+        self._U = U.copy()  # update global variable
 
         return base.CallResult(None)
 
@@ -219,6 +216,8 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
 
         max_cycles = self._max_train_cycles
         train_size = self._training_size
+        self._grastaSTATUS = _STATUS(last_mu=self._min_mu, last_w=np.zeros(self._rank),
+                                     last_gamma=np.zeros(self._dim), train=1)
 
         for i in range(0, max_cycles):
             perm = self._random_state.choice(train_size, train_size, replace=False)  # randomly permute training data
@@ -242,7 +241,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         # Get the vector input, and the subspace
         _X = self._X.T  # Get the data
         d, numVectors = _X.shape
-        U = self._U
+        U = self._U.copy()
 
         # Set the proper subsampling for streaming
         self._grastaOPTIONS.subsampling = self._subsampling
@@ -250,19 +249,18 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
         for i in range(0, numVectors):
             _x = _X[:, i]
             if(self._grastaOPTIONS.subsampling < 1):
-                 _xidx = self._random_state.choice(self._dim, int(np.ceil(self._grastaOPTIONS.subsampling * self._dim)),replace=False)
+                _xidx = self._random_state.choice(self._dim, int(np.ceil(self._grastaOPTIONS.subsampling * self._dim)),replace=False)
             else:
                 _xidx = np.where(~np.isnan(_x))[0]
 
             # Call GRASTA iteration
             U, w, s, STATUS_new, admm_OPTS_new = self._grasta_stream(U, _x, _xidx)
+            # print("iteration: " + np.str(i) + ' Step: ' + np.str(STATUS_new.step))
 
             # Update subspace and control variables
             self._grastaSTATUS = STATUS_new
             self._admm_OPTS = admm_OPTS_new
-            self._U = U
-
-            Uhat = U
+            self._U = U.copy()
 
         return base.CallResult(None)
 
@@ -288,7 +286,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
     def produce_subspace(self, *, inputs: Inputs, timeout: float = None, iterations: int = None) -> base.CallResult[
         Outputs]:
         X = inputs
-        U = self._U
+        U = self._U.copy()
 
         return base.CallResult(container.ndarray(U, generate_metadata=True))
 
@@ -369,8 +367,7 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
                 step_scale = 0.5 * np.pi * (1 + MIN_MU) / sG
 
             # 2. Inner product of previous and current gradients
-            test_mat = (last_gamma.T @ gamma) * np.multiply.outer(last_w, w)
-            grad_ip = np.trace(test_mat)
+            grad_ip = np.trace((last_gamma.T @ gamma) * np.multiply.outer(last_w, w))
 
             # Avoid too large of inner products
             normalization = np.linalg.norm(np.multiply.outer(last_gamma, last_w.T), 'fro') * np.linalg.norm(
@@ -391,38 +388,38 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
                 if step >= np.pi / 3:
                     step = np.pi / 3
 
-            bShrUpd = 0
+                bShrUpd = 0
 
-            if mu <= MIN_MU:
-                if level > 1:
-                    bShrUpd = 1
-                    level = level - 1
+                if mu <= MIN_MU:
+                    if level > 1:
+                        bShrUpd = 1
+                        level = level - 1
 
-                mu = DEFAULT_MU_LOW
+                    mu = DEFAULT_MU_LOW
 
-            elif mu > MAX_MU:
-                if level < MAX_LEVEL:
-                    bShrUpd = 1
-                    level = level + 1
-                    mu = DEFAULT_MU_HIGH
-                else:
-                    mu = MAX_MU
+                elif mu > MAX_MU:
+                    if level < MAX_LEVEL:
+                        bShrUpd = 1
+                        level = level + 1
+                        mu = DEFAULT_MU_HIGH
+                    else:
+                        mu = MAX_MU
 
-            if bShrUpd:
-                if level >= 0 and level < 4:
-                    MAX_ITER = grastaOPTIONS.admm_min_itr
-                elif level >= 4 and level < 7:
-                    MAX_ITER = min(MIN_ITER * 2, ITER_MAX)
-                elif level >= 7 and level < 10:
-                    MAX_ITER = min(MIN_ITER * 4, ITER_MAX)
-                elif level >= 10 and level < 14:
-                    MAX_ITER = min(MIN_ITER * 8, ITER_MAX)
+                if bShrUpd:
+                    if level >= 0 and level < 4:
+                        MAX_ITER = grastaOPTIONS.admm_min_itr
+                    elif level >= 4 and level < 7:
+                        MAX_ITER = min(MIN_ITER * 2, ITER_MAX)
+                    elif level >= 7 and level < 10:
+                        MAX_ITER = min(MIN_ITER * 4, ITER_MAX)
+                    elif level >= 10 and level < 14:
+                        MAX_ITER = min(MIN_ITER * 8, ITER_MAX)
+                    else:
+                        MAX_ITER = ITER_MAX
                 else:
                     MAX_ITER = ITER_MAX
-            else:
-                MAX_ITER = ITER_MAX
 
-            STATUS_new = _STATUS(mu, w, gamma, level, step_scale)
+            STATUS_new = _STATUS(mu, w, gamma, level, step_scale, step=step)
             ADMM_OPTS_new = _OPTS(MAX_ITER, admm_OPTS.rho, admm_OPTS.tol)
 
             return step, STATUS_new, ADMM_OPTS_new
@@ -450,10 +447,8 @@ class GRASTA(unsupervised_learning.UnsupervisedLearnerPrimitiveBase[Inputs, Outp
 
         step = np.multiply.outer([((np.cos(t) - 1) * (Uhat @ w_hat) / w_norm) + (np.sin(t) * gamma / gamma_norm)],
                                  (w_hat / w_norm))
-        step = np.squeeze(step)
-        Unew = Uhat + step
 
-        test = Unew.T @ Unew
+        Unew = Uhat + np.squeeze(step)
 
         return Unew, w_hat, s_hat, STATUS_new, admm_OPTS_new
 

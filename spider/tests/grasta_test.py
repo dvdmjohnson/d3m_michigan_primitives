@@ -46,7 +46,7 @@ class Test_GRASTA(unittest.TestCase):
 
         hp = GRASTAHyperparams(
             rank = 5,
-            subsampling = 0.7,
+            subsampling = 1,
             admm_max_iter = 20,
             admm_min_iter = 20,
             admm_rho = 1.8,
@@ -78,7 +78,7 @@ class Test_GRASTA(unittest.TestCase):
         for i in range(0,n):
 
             #Random subspace change at 500 samples: test tracking
-            if i == 500:
+            if i == 200:
                 rando_mat = np.random.randn(D, D)
                 Q, R = np.linalg.qr(rando_mat)
                 Utrue = Q[:, 0:rank]
