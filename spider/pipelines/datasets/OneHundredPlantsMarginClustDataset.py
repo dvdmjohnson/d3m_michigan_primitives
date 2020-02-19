@@ -9,7 +9,7 @@ class OneHundredPlantsMarginClustDataset(BaseDataset):
 
         :return: str
         """
-        return '1491_one_hundred_plants_margin_clust'
+        return '1491_one_hundred_plants_margin_clust_MIN_METADATA'
 
     @staticmethod
     def get_fit_score_command_template():
@@ -33,7 +33,7 @@ class OneHundredPlantsMarginClustDataset(BaseDataset):
                    ' -r /datasets/seed_datasets_unsupervised/{dataset}/{dataset}_problem/problemDoc.json' \
                    ' -i /datasets/seed_datasets_unsupervised/{dataset}/TRAIN/dataset_TRAIN/datasetDoc.json' \
                    ' -t /datasets/seed_datasets_unsupervised/{dataset}/TEST/dataset_TEST/datasetDoc.json' \
-                   ' -a /datasets/seed_datasets_unsupervised/{dataset}/SCORE/dataset_TEST/datasetDoc.json' \
+                   ' -a /datasets/seed_datasets_unsupervised/{dataset}/SCORE/dataset_SCORE/datasetDoc.json' \
                    ' -o /dev/null' \
                    ' -O Michigan/{primitive}/0.0.5/pipeline_runs/{pipeline}.yaml' \
                    ' > pipeline_results/{pipeline}.txt'
