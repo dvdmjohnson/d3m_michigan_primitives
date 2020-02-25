@@ -51,15 +51,11 @@ def main():
         spls.GRASTAAutoMPGPipeline,
         spls.GRASTAAutoPricePipeline,
         # spls.GROUSEAutoMPGPipeline,
-        # spls.I3DHMDBActionRecognitionPipeline,
         spls.KSSOneHundredPlantsMarginPipeline,
         spls.OWLRegressionAutoPricePipeline,
-        # spls.PCPIALMHandgeometryPipeline,
-        # spls.RPCALBDHandgeometryPipeline,
         spls.SSCADMMOneHundredPlantsMarginPipeline,
         spls.SSCCVXOneHundredPlantsMarginPipeline,
         spls.SSCOMPOneHundredPlantsMarginPipeline,
-        # spls.VGG16HandgeometryPipeline,
     ]
 
     primitive_cmds = []
