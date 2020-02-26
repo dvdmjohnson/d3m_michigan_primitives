@@ -79,7 +79,7 @@ python3 setup.py test
 
 Make sure this command reports 0 errors and 0 failures.
 
-`nose` provides useful features for running and debugging individual tests. Make sure it's installed:
+`nose` provides useful features for running and debugging individual test suites. Make sure it's installed:
 
 ```bash
 pip3 install nose
@@ -91,20 +91,20 @@ To run all tests and automatically enter a debugger at the failure point, run th
 nosetests --pdb
 ```
 
-#### Running individual tests and debugging
+#### Running individual test suites and debugging
 
-Here is an example of running a specific test:
-
-```
-nosetests spider.tests.audio_featurization_test.TestAudio
-```
-
-Note that the fully-qualified name of a test can be found either from the output of `python3 setup.py test` or by following the directory structure (e.g., the above test is a class located in `/spider/tests/audio_featurization_test.py`).
-
-To enter a debugger upon failing a specific test:
+Here is an example of running a specific test suite:
 
 ```
-nosetests --pdb spider.tests.audio_featurization_test.TestAudio
+nosetests spider.tests.supervised_learning_owl_test.TestOWLRegression
+```
+
+Note that the fully-qualified name of a suite can be found either from the output of `python3 setup.py test` or by following the directory structure (e.g., the above test suite is a class located in `/spider/tests/supervised_learning_owl_test.py`).
+
+To enter a debugger upon failing a specific test suite:
+
+```
+nosetests --pdb spider.tests.supervised_learning_owl_test.TestOWLRegression
 ```
 
 ### Pipelines
@@ -131,10 +131,10 @@ This creates three things:
 
 ##### Running individual pipelines
 
-To run an individual pipeline (e.g., `VGG16HandgeometryPipeline`), look for the line for that pipeline inside `run_pipeline_cmds.txt` and run it inside your bash shell. The following command does this programmatically:
+To run an individual pipeline (e.g., `GRASTAAutoMPGPipeline`), look for the line for that pipeline inside `run_pipeline_cmds.txt` and run it inside your bash shell. The following command does this programmatically:
 
 ```bash
-eval `cat run_pipeline_cmds.txt | grep /VGG16HandgeometryPipeline`
+eval `cat run_pipeline_cmds.txt | grep /GRASTAAutoMPGPipeline`
 ```
 
 This will create a `.yaml` log inside `Michigan` and a score file inside `pipeline_results`. You should aim to get the reported score as high as possible.
