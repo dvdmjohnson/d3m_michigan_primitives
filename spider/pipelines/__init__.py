@@ -1,7 +1,6 @@
 from .EKSSOneHundredPlantsMarginPipeline import EKSSOneHundredPlantsMarginPipeline
 from .GRASTAAutoMPGPipeline import GRASTAAutoMPGPipeline
 from .GRASTAAutoPricePipeline import GRASTAAutoPricePipeline
-from .GROUSEAutoMPGPipeline import GROUSEAutoMPGPipeline
 from .KSSOneHundredPlantsMarginPipeline import KSSOneHundredPlantsMarginPipeline
 from .OWLRegressionAutoPricePipeline import OWLRegressionAutoPricePipeline
 from .SSCADMMOneHundredPlantsMarginPipeline import SSCADMMOneHundredPlantsMarginPipeline

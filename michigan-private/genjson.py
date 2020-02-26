@@ -50,7 +50,6 @@ def main():
         spls.EKSSOneHundredPlantsMarginPipeline,
         spls.GRASTAAutoMPGPipeline,
         spls.GRASTAAutoPricePipeline,
-        # spls.GROUSEAutoMPGPipeline,
         spls.KSSOneHundredPlantsMarginPipeline,
         spls.OWLRegressionAutoPricePipeline,
         spls.SSCADMMOneHundredPlantsMarginPipeline,

@@ -39,7 +39,6 @@ setuptools.setup(
         'spider.supervised_learning',
         'spider.supervised_learning.owl',
         'spider.unsupervised_learning.grasta',
-        # 'spider.unsupervised_learning.grouse',
     ],
     keywords='d3m_primitive',
     entry_points = {
@@ -50,7 +49,6 @@ setuptools.setup(
             'clustering.ssc_cvx.Umich = spider.cluster.ssc_cvx.ssc_cvx:SSC_CVX',
             'clustering.ssc_omp.Umich = spider.cluster.ssc_omp.ssc_omp:SSC_OMP',
             'data_compression.grasta.Umich = spider.unsupervised_learning.grasta.grasta:GRASTA',
-            # 'data_compression.grouse.Umich = spider.unsupervised_learning.grouse.grouse:GROUSE',
             'regression.owl_regression.Umich = spider.supervised_learning.owl.owl:OWLRegression',
         ],
     },

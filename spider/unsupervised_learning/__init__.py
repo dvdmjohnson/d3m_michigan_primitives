@@ -12,5 +12,4 @@
 # to allow from spider.unsupervized_learning import *
 __all__ = [
     "grasta",
-    "grouse",
 ]
